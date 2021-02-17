@@ -24,13 +24,13 @@ namespace Mazeinator
         public Rectangle Bounds;
 
         //Node's center
-        public Point Center
+        public PointF Center
         {
             get
             {
-                int x = Bounds.X + Bounds.Width / 2;
-                int y = Bounds.Y + Bounds.Height / 2;
-                return new Point(x, y);
+                float x = Bounds.X + (float)Bounds.Width / 2;
+                float y = Bounds.Y + (float)Bounds.Height / 2;
+                return new PointF(x, y);
             }
         }
 
@@ -55,9 +55,8 @@ namespace Mazeinator
             Bounds = new Rectangle(xPixel, yPixel, width, height);
         }
 
-        public void DrawWall(Graphics gr, Pen pen, bool smooth = true)
+        public void DrawWall(Graphics gr, Pen pen)
         {
-            float size = pen.Width;
             for (int direction = 0; direction < Neighbours.Length; direction++)
             {
                 //draws the walls
@@ -81,62 +80,53 @@ namespace Mazeinator
                             gr.DrawLine(pen, Bounds.Left, Bounds.Top, Bounds.Left, Bounds.Bottom);
                             break;
                     }
-
-                    //draws circles in the corners of the walls IF the line is thick enough
-                    if (smooth && size > 2)
-                    {
-                        switch (direction)
-                        {
-                            case North:
-                                gr.FillEllipse(pen.Brush, Bounds.Right - size / 2, Bounds.Top - size / 2, size, size);
-                                break;
-
-                            case East:
-                                gr.FillEllipse(pen.Brush, Bounds.Right - size / 2, Bounds.Bottom - size / 2, size, size);
-                                break;
-
-                            case South:
-                                gr.FillEllipse(pen.Brush, Bounds.Left - size / 2, Bounds.Bottom - size / 2, size, size);
-                                break;
-
-                            case West:
-                                gr.FillEllipse(pen.Brush, Bounds.Left - size / 2, Bounds.Top - size / 2, size, size);
-                                break;
-                        }
-                    }
                 }
             }
         }
 
         public void DrawBox(Graphics gr, Pen pen, int inset = 0)
         {
-            int offset = (int)(pen.Width / 2.0) + inset;
+            float offset = (float)(pen.Width / 2.0) + inset;
             gr.DrawRectangle(pen, Bounds.X + offset, Bounds.Y + offset, Bounds.Width - 2 * offset, Bounds.Height - 2 * offset);
         }
 
         //Method for visualizing the node's centre
         public void DrawCentre(Graphics gr, Pen pen)
         {
-            int size = (int)pen.Width;
+            float size = pen.Width;
             gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
         }
 
-        //Method for drawing node's root via a gradient
+        //Method for drawing node's root via a normal pen
         public void DrawRootNode(Graphics gr, Pen pen)
         {
             if (Root != null && Root != this)
             {
-                Pen pen2 = new Pen(new System.Drawing.Drawing2D.LinearGradientBrush(Center, Root.Center, Color.Black, Color.Blue), pen.Width);
-                gr.DrawLine(pen2, Center, Root.Center);
+                gr.DrawLine(pen, Center, Root.Center);
             }
         }
 
         //Highlight the start node
-        public void DrawStartNode(Graphics gr, Pen pen)
+        public void DrawRootRootNode(Graphics gr, Pen pen)
         {
-            int size = (int)pen.Width;
+            float size = pen.Width;
             if (Root == this)
                 gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
+        }
+
+        //Method overload for a gradient drawing
+        public void DrawRootNode(Graphics gr, Tuple<Color, Color, float> brushHolder)
+        {
+            if (Root != null && Root != this)
+            {
+                Pen pen = new Pen(new System.Drawing.Drawing2D.LinearGradientBrush(Root.Center, Center, brushHolder.Item1, brushHolder.Item2), brushHolder.Item3);
+                gr.DrawLine(pen, Center, Root.Center);
+            }
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + ",X:" + X + ",Y:" + Y;
         }
     }
 }
