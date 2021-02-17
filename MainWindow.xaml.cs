@@ -3,13 +3,13 @@ using System.Windows;
 using System.Windows.Media;
 
 /*  ===TODO===
- *  CORNERS
- *  PORT GRAPHICS TO DIRECT CANVAS DRAWING
- *  Export
- *  either create new file or load another one
+ *  Make every PEN/drawing ifs into correct order
+ *  Export window
+ *  Either create new file or load another one
  *  Async save/loading/export
  *  progress bar is nonexistent as hell
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
+ *  http://www.astrolog.org/labyrnth/algrithm.htm
  */
 
 namespace Mazeinator
@@ -40,7 +40,7 @@ namespace Mazeinator
         private void LoadMaze(object sender, RoutedEventArgs e)
         {
             _controller.LoadMaze();
-            _controller.DisplayMaze(GetCanvasSizePixels());
+            _controller.Render(GetCanvasSizePixels());
         }
 
         private void ExportMaze(object sender, RoutedEventArgs e)
@@ -86,16 +86,26 @@ namespace Mazeinator
             return new Tuple<int, int>(canvasSizeX, canvasSizeY);
         }
 
-        //private DateTime lastUpdate = new DateTime(DateTime.Now.Ticks);
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //Console.WriteLine(lastUpdate);
-            //Console.WriteLine(DateTime.Now);
-            //if (_controller.MainMaze != null && lastUpdate < DateTime.Now)
-            //{
-            //    _controller.DisplayMaze(GetCanvasSizePixels());
-            //    lastUpdate = DateTime.Now.AddSeconds(10);
-            //}
+            //if(_controller.MainMaze != null)
+            //    _controller.Render(GetCanvasSizePixels());
+            
+            //big button with [redraw]
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            _controller.MainMaze.Dijkstra();
+        }
+
+        private void pictureBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            string text;
+            //https://stackoverflow.com/questions/741956/pan-zoom-image
+            text = (e.GetPosition(pictureBox).X).ToString() + " | " + e.GetPosition(pictureBox).Y.ToString();
+
+            Console.WriteLine(text);
         }
     }
 }
