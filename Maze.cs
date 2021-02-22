@@ -21,12 +21,6 @@ namespace Mazeinator
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
         private Tuple<Color, Color, float> _rootPenHolder = new Tuple<Color, Color, float>(Color.Blue, Color.Black, 5);
 
-        public bool RenderWall = true;
-        public bool RenderBox = true;
-        public bool RenderCenter = true;
-        public bool RenderRootRootNode = true;
-        public bool RenderRoot = true;
-
         #endregion Variables
 
         /// <summary>

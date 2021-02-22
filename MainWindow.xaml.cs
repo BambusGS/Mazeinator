@@ -85,8 +85,8 @@ namespace Mazeinator
             double dx = m.M11, dy = m.M22;    //get the current "WPF DPI units"
 
             //get canvas size & work out the rectangular cell size from the current window size
-            int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * dx));
-            int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * dy));
+            int canvasSizeX = (int)Math.Round(MainCanvas.ActualWidth * dx);
+            int canvasSizeY = (int)Math.Round(MainCanvas.ActualHeight * dy);
             return new Tuple<int, int>(canvasSizeX, canvasSizeY);
         }
 
@@ -122,16 +122,12 @@ namespace Mazeinator
         {
             Style currentStyle = (Style)_controller.MazeStyle.Clone();
 
-            StyleSettings settings = new StyleSettings();
-            settings.DataContext = currentStyle;
+            StyleSettings settings = new StyleSettings(currentStyle);
             
-            //settings.WallColorPicker.SelectedColor = Utilities.ConvertColor(currentStyle.WallColor);           
-
             if (settings.ShowDialog() == true)
             {                    
-                _controller.MazeStyle = (Style)settings.DataContext;
-                _controller.MazeStyle.GetTest();
-                this.Title = "Setting applied";
+                _controller.MazeStyle = settings.SettingsStyle;
+                _controller.Status = "Setting applied";
             }
         }
     }

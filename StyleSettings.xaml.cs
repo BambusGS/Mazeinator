@@ -22,9 +22,18 @@ namespace Mazeinator
     /// </summary>
     public partial class StyleSettings : Window
     {
-        public StyleSettings()
+        public Style SettingsStyle = null;
+        private Maze _maze = new Maze(2, 2);
+
+        public StyleSettings(Style style)
         {
             InitializeComponent();
+
+            SettingsStyle = style;
+            _maze.GenerateMaze(_maze.nodes[0, 0]);
+            RedrawPreview();
+
+            this.DataContext = SettingsStyle;
         }
 
         private void btnDialogOK_Click(object sender, RoutedEventArgs e)
@@ -34,7 +43,26 @@ namespace Mazeinator
 
         private void DefaultValues(object sender, RoutedEventArgs e)
         {
-            this.DataContext = new Style();
+            SettingsStyle = new Style();
+            RedrawPreview();
+        }
+
+        private void RedrawPreview()
+        {
+
+            Matrix m = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice;
+            double dx = m.M11, dy = m.M22;    //get the current "WPF DPI units"
+
+            //get canvas size & work out the rectangular cell size from the current window size
+            int canvasSizeX = (int)Math.Round((MainCanvas.Width * dx));
+            int canvasSizeY = (int)Math.Round((MainCanvas.Height * dy));
+
+            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle));
+        }
+
+        private void SelectedColorChangedEvent(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            RedrawPreview();
         }
     }
 }
