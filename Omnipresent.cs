@@ -44,6 +44,9 @@ namespace Mazeinator
         //define the powerful Maze class
         public Maze MainMaze = null;
 
+        //define the maze style class
+        public Style MazeStyle = new Style();
+
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private bool _isSquare = true; public bool IsSquare { get => _isSquare; set { _isSquare = value; OnPropertyChanged(nameof(IsSquare)); } }
 
@@ -88,6 +91,8 @@ namespace Mazeinator
 
         public void MazeGeneration(int NodeCountX, int NodeCountY, Tuple<int, int> CanvasSize)
         {
+            _currentFilePath = null; //reset the "save without asking" path
+
             //stopwatch to measure the generation time and make user predictions
             Stopwatch GenTime = new Stopwatch();
             GenTime.Start();
@@ -113,7 +118,7 @@ namespace Mazeinator
             Stopwatch RenderTime = new Stopwatch();
             RenderTime.Start();
 
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, IsSquare));
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle, IsSquare));
             //new Task(() => { test = MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, IsSquare); }).Start();
 
             RenderTime.Stop();
@@ -133,6 +138,7 @@ namespace Mazeinator
         public void NewMaze()
         {
             MainMaze = null;
+            _currentFilePath = null;
             Maze = null;
         }
 
@@ -158,9 +164,7 @@ namespace Mazeinator
                 if (_currentFilePath == null)
                 {
                     if (dialog.ShowDialog() == true)
-                    {
                         _currentFilePath = dialog.FileName;
-                    }
                 }
 
                 if (_currentFilePath != null)
@@ -186,7 +190,11 @@ namespace Mazeinator
             };
             try
             {
+                _currentFilePath = null;
                 if (dialog.ShowDialog() == true)
+                    _currentFilePath = dialog.FileName;
+
+                if (_currentFilePath != null)
                 {
                     MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
                     Status = "Loading done";
@@ -221,7 +229,7 @@ namespace Mazeinator
                 if (dialog.ShowDialog() == true)
                 {
                     //generate bitmap and save it to file
-                    MainMaze.RenderMaze(CanvasSize.Item1 * 2, CanvasSize.Item2 * 2, false).Save(dialog.FileName);
+                    MainMaze.RenderMaze(CanvasSize.Item1 * 2, CanvasSize.Item2 * 2, MazeStyle, false).Save(dialog.FileName);
                     Status = "Export done";
                 }
             }

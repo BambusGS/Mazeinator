@@ -15,13 +15,10 @@ namespace Mazeinator
         private int _nodeCountX, _nodeCountY;
         public int renderSizeX, renderSizeY;
 
-        //Pen holders - hold color + user offset for thicker/slimmer lines
-        private Tuple<Color, float, LineCap> _wallPenHolder = new Tuple<Color, float, LineCap>(Color.Black, 0, LineCap.Triangle);
 
         private Tuple<Color, float> _boxPenHolder = new Tuple<Color, float>(Color.LightGray, 0);
         private Tuple<Color, float> _pointPenHolder = new Tuple<Color, float>(Color.Yellow, 0);
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
-        private Tuple<Color, float> _backGroundPenHolder = new Tuple<Color, float>(Color.SteelBlue, 1);
         private Tuple<Color, Color, float> _rootPenHolder = new Tuple<Color, Color, float>(Color.Blue, Color.Black, 5);
 
         public bool RenderWall = true;
@@ -151,29 +148,78 @@ namespace Mazeinator
         }
 
         /// <summary>
+        /// Blank maze generation algorithm that connects every cell's four sides
+        /// </summary>
+        /// <param name="startNode">Specific node to start generating from</param>
+        /// <returns>Blank maze logic map</returns>
+        public bool GenerateMazeBlank()
+        {
+            //fill in NORTH
+            for (int column = 0; column < _nodeCountX; column++)
+            {
+                for (int row = 1; row < _nodeCountY; row++)
+                {
+                    nodes[column, row].Neighbours[Node.North] = nodes[column, row - 1];
+                }
+            }
+
+            //fill in EAST
+            for (int column = 0; column < _nodeCountX - 1; column++)
+            {
+                for (int row = 0; row < _nodeCountY; row++)
+                {
+                    nodes[column, row].Neighbours[Node.East] = nodes[column + 1, row];
+                }
+            }
+
+            //fill in SOUTH
+            for (int column = 0; column < _nodeCountX; column++)
+            {
+                for (int row = 0; row < _nodeCountY - 1; row++)
+                {
+                    nodes[column, row].Neighbours[Node.South] = nodes[column, row + 1];
+                }
+            }
+
+            //fill in WEST
+            for (int column = 1; column < _nodeCountX; column++)
+            {
+                for (int row = 0; row < _nodeCountY; row++)
+                {
+                    nodes[column, row].Neighbours[Node.West] = nodes[column - 1, row];
+                }
+            }
+
+            foreach (Node node in nodes)
+                node.Root = node;
+
+            return true;
+        }
+
+        /// <summary>
         /// Maze rendering function
         /// </summary>
         /// <param name="canvasWidth">Deised image width in px</param>
         /// <param name="canvasHeight">Desired image height in px</param>
         /// <param name="square">Whether cells should be square</param>
         /// <param name="fill">Specifies whether to fill background with solid color up to specified parameters </param>
-        /// <returns>Bitmap of the specified size</returns>
-        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, bool square = true, bool fill = false)
+        /// <returns>Bitmap rendered maze of the specified size</returns>
+        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool square = true, bool fill = false)
         {
             //this pen's width is needed for tight cellSize calculation; therefore, I cannot use cellSize for it's width
-            int cellWallWidthX = (int)((canvasWidth) / ((_nodeCountX + 4) * (5 + _wallPenHolder.Item2)));
-            int cellWallWidthY = (int)((canvasHeight) / ((_nodeCountY + 4) * (5 + _wallPenHolder.Item2)));
+            int cellWallWidthX = (int)((canvasWidth) / ((_nodeCountX + 4) * (5 + style.WallThickness)));
+            int cellWallWidthY = (int)((canvasHeight) / ((_nodeCountY + 4) * (5 + style.WallThickness)));
 
             //prevent the cell from dissapearing
             if (cellWallWidthX <= 1) cellWallWidthX = 1;
             if (cellWallWidthY <= 1) cellWallWidthY = 1;
 
             int cellWallWidth = (cellWallWidthX < cellWallWidthY) ? cellWallWidthX : cellWallWidthY;
-            Pen _wallsPen = new Pen(_wallPenHolder.Item1, cellWallWidth)
+            Pen _wallsPen = new Pen(style.WallColor, cellWallWidth)
             {
-                StartCap = _wallPenHolder.Item3,
-                EndCap = _wallPenHolder.Item3
-            };
+                StartCap = style.WallEndCap,
+                EndCap = style.WallEndCap
+            };               
 
             //calculate the needed cell size in the specific dimension + take into account the thickness of the walls
             int cellSizeX = (int)(canvasWidth - _wallsPen.Width) / (_nodeCountX);
@@ -205,76 +251,74 @@ namespace Mazeinator
             Pen _boxPen = new Pen(_boxPenHolder.Item1, cellSize / (16 + _boxPenHolder.Item2));
             Pen _pointPen = new Pen(_pointPenHolder.Item1, cellSize / (4 + _pointPenHolder.Item2));
             Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
-            Pen _backgroundPen = new Pen(_backGroundPenHolder.Item1);
+            Pen _backgroundPen = new Pen(style.BackgroundColor);
 
             //generate a large bitmap as a multiple of maximum node width/height; use of integer division as flooring
             renderSizeX = cellSizeX * _nodeCountX + (int)_wallsPen.Width;
             renderSizeY = cellSizeY * _nodeCountY + (int)_wallsPen.Width;
             Bitmap bmp = new Bitmap(renderSizeX, renderSizeY);
 
-            //draw the notes onto the bitmap
+            //draw the nodes onto the bitmap
             using (Graphics gr = Graphics.FromImage(bmp))
             {
                 //sets up graphics for smooth circles and fills the background with solid color
                 gr.SmoothingMode = SmoothingMode.AntiAlias;
                 gr.CompositingQuality = CompositingQuality.HighSpeed;
                 gr.FillRectangle(_backgroundPen.Brush, 0, 0, renderSizeX, renderSizeY);
-                //fill corners
-                {
-                    gr.FillRectangle(_wallsPen.Brush, 0, 0, cellWallWidth, cellWallWidth);  //top-left
-                    gr.FillRectangle(_wallsPen.Brush, 0, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);    //top-right
-                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, 0, cellWallWidth, cellWallWidth);    //bottom-left
-                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);  //bottom-right
-                }
 
                 //this for loop draws the single nodes onto the image (with automatic disabling of features when cells get too small)
-                if (RenderBox == true && cellSize > 3)
+                if (style.RenderNode == true && cellSize > 3)
                     foreach (Node node in nodes) { node.DrawBox(gr, _boxPen, (int)_wallsPen.Width / 2 + 1); }
 
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
-
-                if (RenderRoot == true && cellSize > 7)
+                if (style.RenderRoot == true && cellSize > 7)
                     foreach (Node node in nodes) { node.DrawRootNode(gr, _rootPenHolder); }
 
-                sw.Stop();
-                Console.WriteLine(sw.ElapsedMilliseconds);
-
-                if (RenderCenter == true && cellSize > 3)
+                if (style.RenderPoint == true && cellSize > 3)
                     foreach (Node node in nodes) { node.DrawCentre(gr, _pointPen); }
 
-                if (RenderRootRootNode == true && cellSize > 7)
+                if (style.RenderRootRootNode == true && cellSize > 7)
                     foreach (Node node in nodes) { node.DrawRootRootNode(gr, _startNodePen); }
 
-                //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
-                //  ☒☒☒☒☒☒☒☒☒
-                //  ☒☐☒☐☒☐☒☐☒
-                //  ☒☒☐☒☐☒☐☒☒
-                //  ☒☐☒☐☒☐☒☐☒
-                //  ☒☒☐☒☐☒☐☒☒
-                //  ☒☐☒☐☒☐☒☐☒
-
-                if (_nodeCountX > 2 || _nodeCountY > 2)
+                if (style.RenderWall == true)
                 {
-                    for (int column = 1; column < _nodeCountX; column++)
+                    //fill corners
                     {
-                        for (int row = 1; row < _nodeCountY; row += 2)
+                        gr.FillRectangle(_wallsPen.Brush, 0, 0, cellWallWidth, cellWallWidth);  //top-left
+                        gr.FillRectangle(_wallsPen.Brush, 0, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);    //top-right
+                        gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, 0, cellWallWidth, cellWallWidth);    //bottom-left
+                        gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);  //bottom-right
+                    }
+
+                    //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
+                    //  ☒☒☒☒☒☒☒☒☒
+                    //  ☒☐☒☐☒☐☒☐☒
+                    //  ☒☒☐☒☐☒☐☒☒
+                    //  ☒☐☒☐☒☐☒☐☒
+                    //  ☒☒☐☒☐☒☐☒☒
+                    //  ☒☐☒☐☒☐☒☐☒
+
+                    if (_nodeCountX > 2 || _nodeCountY > 2)
+                    {
+                        for (int column = 1; column < _nodeCountX; column++)
                         {
-                            nodes[column, (column % 2 == 0) ? row - 1 : row].DrawWall(gr, _wallsPen);
+                            for (int row = 1; row < _nodeCountY; row += 2)
+                            {
+                                nodes[column, (column % 2 == 0) ? row - 1 : row].DrawWall(gr, _wallsPen);
+                            }
                         }
                     }
-                }
-                //fill the horizontal edges
-                for (int column = 0; column < _nodeCountX; column++)
-                {
-                    nodes[column, 0].DrawWall(gr, _wallsPen);
-                    nodes[column, _nodeCountY - 1].DrawWall(gr, _wallsPen);
-                }
-                //fill the vertical edges
-                for (int row = 0; row < _nodeCountY; row++)
-                {
-                    nodes[0, row].DrawWall(gr, _wallsPen);
-                    nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
+                    //fill the horizontal edges
+                    for (int column = 0; column < _nodeCountX; column++)
+                    {
+                        nodes[column, 0].DrawWall(gr, _wallsPen);
+                        nodes[column, _nodeCountY - 1].DrawWall(gr, _wallsPen);
+                    }
+                    //fill the vertical edges
+                    for (int row = 0; row < _nodeCountY; row++)
+                    {
+                        nodes[0, row].DrawWall(gr, _wallsPen);
+                        nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
+                    }
                 }
             }
 
@@ -292,13 +336,13 @@ namespace Mazeinator
         }
 
         public Node startNode, endNode;
-        public Node[] path = null;
+        public List<Node> path = new List<Node>();
 
         public bool Dijkstra()
         {
             //4TESTING↓
-            startNode = nodes[0, 0];
-            endNode = nodes[_nodeCountX - 1, _nodeCountY - 1];
+            startNode = nodes[_nodeCountX / 2, _nodeCountY / 2];
+            endNode = nodes[_nodeCountX - 1, 0];
 
             if (startNode == null || endNode == null)
                 return false;
@@ -309,17 +353,41 @@ namespace Mazeinator
             int edgeLength = 1;
             List<Tuple<int, Node>> frontier = new List<Tuple<int, Node>>();
 
-            bool[,] visited = new bool[_nodeCountX, _nodeCountY];
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+            //4TESTING↓ ?
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node
             frontier.Add(new Tuple<int, Node>(0, startNode));
 
+            //4TESTING↓
+            foreach (Node node in nodes)
+                node.Root = null;
+
             //try to find distance from the startnode for all reachable nodes
-            while (frontier.Count > 0)
+            while (frontier[0].Item2 != endNode)   /*(frontier.Count > 0)*/
             {
-                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first
+                int currentNodeDistance = frontier[0].Item1;
+                Node currentNode = frontier[0].Item2;
+                frontier.RemoveAt(0);
+
+                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Node nodeToVisit = currentNode.Neighbours[i];
+                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    {
+                        frontier.Add(new Tuple<int, Node>(currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
+                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+
+                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                        nodeToVisit.Root = currentNode;
+                    }
+                }
+
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; unnecessary for this square maze
 
                 //4TESTING↓
                 for (int i = 0; i < frontier.Count; i++)
@@ -327,39 +395,33 @@ namespace Mazeinator
                     Console.Write(frontier[i].Item2.ToString() + "|d:" + frontier[i].Item1 + " \t");
                 }
                 Console.WriteLine();
-
-                int currentNodeDistance = frontier[0].Item1;
-                Node currentNode = frontier[0].Item2;
-                frontier.RemoveAt(0);
-
-                visited[currentNode.X, currentNode.Y] = true;
-                for (int i = 0; i < 4; i++)
-                {
-                    Node nodeToVisit = currentNode.Neighbours[i];
-                    if (nodeToVisit != null && !visited[nodeToVisit.X, nodeToVisit.Y])
-                    {
-                        frontier.Add(new Tuple<int, Node>(currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
-
-                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
-                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
-                    }
-                }
             }
 
-
-
-            //4TESTING↓
-            for (int i = 0; i < path.Length; i++)
+            _rootPenHolder = new Tuple<Color, Color, float>(Color.Red, Color.Black, 8);
+            //clear and write the backtracked shortest path
+            path.Clear();
+            path.Add(endNode);
+            Node backTrackNode = endNode;
+            while (backTrackNode != startNode && backTrackNode != null)
             {
-                Console.Write(path[i].ToString() + " \t");
+                path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
             }
-            Console.WriteLine();
 
             return true;
         }
 
         public Bitmap RenderPath(int canvasWidth, int canvasHeight, bool square = true)
         {
+            Console.WriteLine("PATH" + path.Count);
+            //4TESTING↓
+            for (int i = 0; i < path.Count; i++)        //real length is Count-1
+            {
+                if (path[i] != null)
+                    Console.Write(path[i].ToString() + " \t");
+            }
+            Console.WriteLine();
+
             return null;
         }
     }
