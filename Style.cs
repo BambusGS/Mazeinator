@@ -11,11 +11,9 @@ namespace Mazeinator
     /// <summary>
     /// Maze style class; holds the colors and thickness properties + booleans of what should be rendered
     /// </summary>
-    class Style : ICloneable
+    public class Style : ICloneable
     {
         #region Variables
-        public int Test { get; set; } = 0;
-
         private LineCap[] LineCapOptions = { LineCap.Square, LineCap.Triangle, LineCap.Round, LineCap.SquareAnchor, LineCap.DiamondAnchor, LineCap.RoundAnchor };
         public LineCap WallEndCap { get; set; } = LineCap.Triangle;
 
@@ -43,11 +41,6 @@ namespace Mazeinator
         public object Clone()
         {
             return this.MemberwiseClone();
-        }
-
-        public void GetTest()
-        {
-            WallEndCap = LineCapOptions[Test];
         }
     }
 }

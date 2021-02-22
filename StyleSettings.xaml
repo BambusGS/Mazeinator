@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Maze Visual Settings" Height="200" Width="400" Topmost="True" ResizeMode="CanMinimize"
+        UseLayoutRounding="True"
+        Title="Maze Visual Settings" Height="400" Width="400" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="ColorPickerStyle" TargetType="xctk:ColorPicker">
-            <Setter Property="MinWidth" Value="40" />
-            <Setter Property="MinHeight" Value="10" />
+            <Setter Property="MinWidth" Value="120" />
             <Setter Property="UsingAlphaChannel" Value="False" />
             <Setter Property="DisplayColorAndName" Value="True" />
             <Setter Property="DisplayColorTooltip" Value="True" />
@@ -34,8 +34,11 @@
         <!--https://github.com/xceedsoftware/wpftoolkit/wiki/ColorPicker-->
         <!--ZOOMBOX could be useful with transitions (aka rendering in higher resolutions)-->
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
-            <xctk:ColorPicker SelectedColor="{Binding Path=WallColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
-            <xctk:ColorPicker  SelectedColor="{Binding Path=BackgroundColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <xctk:ColorPicker SelectedColorChanged="SelectedColorChangedEvent" SelectedColor="{Binding Path=WallColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <xctk:ColorPicker SelectedColorChanged="SelectedColorChangedEvent" SelectedColor="{Binding Path=BackgroundColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <Canvas x:Name="MainCanvas" Background="Transparent" Width="200" Height="200" Margin="10,10,10,10">
+                <Image x:Name="MazePreview" Stretch="None"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+            </Canvas>
         </StackPanel>
 
         <WrapPanel Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Right">
