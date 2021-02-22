@@ -26,6 +26,12 @@ namespace Mazeinator
             }
         }
 
+        //Almost automatic color conversion functions between the older Drawing.Color and the newer WPF required Windows.Media.Color
+        public static System.Windows.Media.Color ConvertColor(System.Drawing.Color DColor) => System.Windows.Media.Color.FromRgb(DColor.R, DColor.G, DColor.B);
+
+        public static System.Drawing.Color ConvertColor(System.Windows.Media.Color WMColor) => System.Drawing.Color.FromArgb(WMColor.R, WMColor.G, WMColor.B);
+
+
         public static bool isWorking = false;
 
         //https://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-of-an-object-in-net
@@ -44,6 +50,7 @@ namespace Mazeinator
             {
                 throw new Exception();
             }
+            isWorking = false;
             return true;
         }
 

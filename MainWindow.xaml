@@ -86,6 +86,7 @@
             <Canvas Grid.Row="1" x:Name="MainCanvas" Grid.Column="0" Background="Transparent">
                 <Canvas.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Header="_Settings" Click="SettingOpen" Padding="3,0" Margin="1,0"/>
                         <MenuItem Header="_Properties" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
                         <MenuItem Header="_Display" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
                     </ContextMenu>

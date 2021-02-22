@@ -29,7 +29,7 @@ namespace Mazeinator
 
         private void btnDialogOK_Click(object sender, RoutedEventArgs e)
         {                        
-            this.DialogResult = true;
+            this.DialogResult = true;            
         }
 
         private void DefaultValues(object sender, RoutedEventArgs e)
