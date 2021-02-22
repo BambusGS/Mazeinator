@@ -124,9 +124,11 @@ namespace Mazeinator
 
             StyleSettings settings = new StyleSettings();
             settings.DataContext = currentStyle;
+            
+            //settings.WallColorPicker.SelectedColor = Utilities.ConvertColor(currentStyle.WallColor);           
 
             if (settings.ShowDialog() == true)
-            {
+            {                    
                 _controller.MazeStyle = (Style)settings.DataContext;
                 _controller.MazeStyle.GetTest();
                 this.Title = "Setting applied";

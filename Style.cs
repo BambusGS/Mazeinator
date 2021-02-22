@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Drawing;   //Color
+using System.Windows.Media;   //Color
 using System.Drawing.Drawing2D; //LineCap
 
 namespace Mazeinator
@@ -14,17 +14,18 @@ namespace Mazeinator
     class Style : ICloneable
     {
         #region Variables
-        //private int _test = 10; public int Test { get => _test; set => _test = value; }
         public int Test { get; set; } = 0;
 
         private LineCap[] LineCapOptions = { LineCap.Square, LineCap.Triangle, LineCap.Round, LineCap.SquareAnchor, LineCap.DiamondAnchor, LineCap.RoundAnchor };
         public LineCap WallEndCap { get; set; } = LineCap.Triangle;
 
-        public Color WallColor { get; set; } = Color.Black;
+        //public Color WallColor { get; set; } = Color.Black;
+        public Color WallColor { get; set; } = Colors.Black;
+
         public Color NodeColor, PointColor, RootColorBegin, RootColorEnd;
-        public Color StartPoinColor { get; set; } = Color.Green;
-        public Color EndPointColor { get; set; } = Color.DarkRed;
-        public Color BackgroundColor { get; set; } = Color.SteelBlue;
+        public Color StartPoinColor { get; set; } = Colors.Green;
+        public Color EndPointColor { get; set; } = Colors.DarkRed;
+        public Color BackgroundColor { get; set; } = Colors.SteelBlue;
 
         public int WallThickness { get; set; } = 0;
         public int NodeThickness { get; set; } = 0;

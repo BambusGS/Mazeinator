@@ -215,7 +215,7 @@ namespace Mazeinator
             if (cellWallWidthY <= 1) cellWallWidthY = 1;
 
             int cellWallWidth = (cellWallWidthX < cellWallWidthY) ? cellWallWidthX : cellWallWidthY;
-            Pen _wallsPen = new Pen(style.WallColor, cellWallWidth)
+            Pen _wallsPen = new Pen(Utilities.ConvertColor(style.WallColor), cellWallWidth)
             {
                 StartCap = style.WallEndCap,
                 EndCap = style.WallEndCap
@@ -251,7 +251,7 @@ namespace Mazeinator
             Pen _boxPen = new Pen(_boxPenHolder.Item1, cellSize / (16 + _boxPenHolder.Item2));
             Pen _pointPen = new Pen(_pointPenHolder.Item1, cellSize / (4 + _pointPenHolder.Item2));
             Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
-            Pen _backgroundPen = new Pen(style.BackgroundColor);
+            Pen _backgroundPen = new Pen(Utilities.ConvertColor(style.BackgroundColor));
 
             //generate a large bitmap as a multiple of maximum node width/height; use of integer division as flooring
             renderSizeX = cellSizeX * _nodeCountX + (int)_wallsPen.Width;
