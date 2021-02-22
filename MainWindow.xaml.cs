@@ -4,6 +4,10 @@ using System.Windows.Media;
 
 /*  ===TODO===
  *  Make every PEN/drawing ifs into correct order
+ *  redo how pens are held - maybe turn it into a separate class object with width, color1, color2 etc.
+ *      add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there
+ *      is always assigned to the maze when it's or rendered
+ *  add blank maze option
  *  Export window
  *  Either create new file or load another one
  *  Async save/loading/export
@@ -68,7 +72,7 @@ namespace Mazeinator
 
             if (!(NodeCountX > 0 && NodeCountY > 0))
             {
-                MessageBox.Show("Maze size error – must be an integer", "Maze size error", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+                MessageBox.Show("Maze size error – must be a positive integer", "Maze size error", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
                 return;
             }
 
@@ -90,22 +94,43 @@ namespace Mazeinator
         {
             //if(_controller.MainMaze != null)
             //    _controller.Render(GetCanvasSizePixels());
-            
+
             //big button with [redraw]
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            _controller.MainMaze.Dijkstra();
+            if (_controller.MainMaze != null)
+            {
+                _controller.MainMaze.GenerateMazeBlank();
+                _controller.MainMaze.Dijkstra();
+                _controller.MainMaze.RenderPath(10, 10);
+                _controller.Render(GetCanvasSizePixels());
+            }
         }
 
         private void pictureBox_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            string text;
-            //https://stackoverflow.com/questions/741956/pan-zoom-image
-            text = (e.GetPosition(pictureBox).X).ToString() + " | " + e.GetPosition(pictureBox).Y.ToString();
+            //string text;
+            ////https://stackoverflow.com/questions/741956/pan-zoom-image
+            //text = (e.GetPosition(pictureBox).X).ToString() + " | " + e.GetPosition(pictureBox).Y.ToString();
 
-            Console.WriteLine(text);
+            //Console.WriteLine(text);
+        }
+
+        private void SettingOpen(object sender, RoutedEventArgs e)
+        {
+            Style currentStyle = (Style)_controller.MazeStyle.Clone();
+
+            StyleSettings settings = new StyleSettings();
+            settings.DataContext = currentStyle;
+
+            if (settings.ShowDialog() == true)
+            {
+                _controller.MazeStyle = (Style)settings.DataContext;
+                _controller.MazeStyle.GetTest();
+                this.Title = "Setting applied";
+            }
         }
     }
 }
