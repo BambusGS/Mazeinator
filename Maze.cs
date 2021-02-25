@@ -12,12 +12,15 @@ namespace Mazeinator
 
         public Node[,] nodes = null;
 
+        public Node startNode, endNode;
+        public List<Node> path = new List<Node>();
+
         private int _nodeCountX, _nodeCountY;
         public int renderSizeX, renderSizeY;
 
+        [NonSerialized]
+        private Pen _wallsPen = null, _nodePen = null, _pointPen;
 
-        private Tuple<Color, float> _boxPenHolder = new Tuple<Color, float>(Color.LightGray, 0);
-        private Tuple<Color, float> _pointPenHolder = new Tuple<Color, float>(Color.Yellow, 0);
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
         private Tuple<Color, Color, float> _rootPenHolder = new Tuple<Color, Color, float>(Color.Blue, Color.Black, 5);
 
@@ -191,7 +194,7 @@ namespace Mazeinator
         }
 
         /// <summary>
-        /// Maze rendering function
+        /// Maze rendering function; works in real pixels
         /// </summary>
         /// <param name="canvasWidth">Deised image width in px</param>
         /// <param name="canvasHeight">Desired image height in px</param>
@@ -213,7 +216,7 @@ namespace Mazeinator
             {
                 StartCap = style.WallEndCap,
                 EndCap = style.WallEndCap
-            };               
+            };
 
             //calculate the needed cell size in the specific dimension + take into account the thickness of the walls
             int cellSizeX = (int)(canvasWidth - _wallsPen.Width) / (_nodeCountX);
@@ -242,10 +245,15 @@ namespace Mazeinator
             }
 
             //initialize all the pens that can be changed by serialization or by user
-            Pen _boxPen = new Pen(_boxPenHolder.Item1, cellSize / (16 + _boxPenHolder.Item2));
-            Pen _pointPen = new Pen(_pointPenHolder.Item1, cellSize / (4 + _pointPenHolder.Item2));
+            Pen _nodePen = new Pen(Utilities.ConvertColor(style.NodeColor), cellSize / (16 + style.NodeThickness));
+            Pen _pointPen = new Pen(Utilities.ConvertColor(style.PointColor), cellSize / (4 + style.PointThickness));
             Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
             Pen _backgroundPen = new Pen(Utilities.ConvertColor(style.BackgroundColor));
+
+            //set the pen instances fot this entire class (are held until the next render)
+            this._wallsPen = _wallsPen;
+            this._nodePen = _nodePen;
+            this._pointPen = _pointPen;
 
             //generate a large bitmap as a multiple of maximum node width/height; use of integer division as flooring
             renderSizeX = cellSizeX * _nodeCountX + (int)_wallsPen.Width;
@@ -258,11 +266,12 @@ namespace Mazeinator
                 //sets up graphics for smooth circles and fills the background with solid color
                 gr.SmoothingMode = SmoothingMode.AntiAlias;
                 gr.CompositingQuality = CompositingQuality.HighSpeed;
+
                 gr.FillRectangle(_backgroundPen.Brush, 0, 0, renderSizeX, renderSizeY);
 
                 //this for loop draws the single nodes onto the image (with automatic disabling of features when cells get too small)
                 if (style.RenderNode == true && cellSize > 3)
-                    foreach (Node node in nodes) { node.DrawBox(gr, _boxPen, (int)_wallsPen.Width / 2 + 1); }
+                    foreach (Node node in nodes) { node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2); }
 
                 if (style.RenderRoot == true && cellSize > 7)
                     foreach (Node node in nodes) { node.DrawRootNode(gr, _rootPenHolder); }
@@ -314,6 +323,20 @@ namespace Mazeinator
                         nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
                     }
                 }
+
+                //if (startNode != null)
+                //{
+                //    Pen startNodePen = new Pen(Utilities.ConvertColor(style.StartPointColor), _boxPen.Width * 3);
+                //    //startNode.DrawBox(gr, startNodePen, (int)_wallsPen.Width / 2 + 1);
+                //    startNode.DrawCentre(gr, startNodePen);
+                //}
+
+                //if (endNode != null)
+                //{
+                //    Pen endNodePen = new Pen(Utilities.ConvertColor(style.EndPointColor), _boxPen.Width * 3);
+                //    //endNode.DrawBox(gr, endNodePen, (int)_wallsPen.Width / 2 + 1);
+                //    endNode.DrawCentre(gr, endNodePen);
+                //}
             }
 
             if (fill == true)
@@ -326,22 +349,19 @@ namespace Mazeinator
                 }
                 bmp = backBmp;
             }
+
             return bmp;
         }
 
-        public Node startNode, endNode;
-        public List<Node> path = new List<Node>();
+        #region PathPlanning
 
         public bool Dijkstra()
         {
             //4TESTING↓
-            startNode = nodes[_nodeCountX / 2, _nodeCountY / 2];
+            //startNode = nodes[_nodeCountX / 2, _nodeCountY / 2];
             endNode = nodes[_nodeCountX - 1, 0];
 
-            if (startNode == null || endNode == null)
-                return false;
-
-            if (nodes == null)
+            if (startNode == null || endNode == null || nodes == null)
                 return false;
 
             int edgeLength = 1;
@@ -349,6 +369,7 @@ namespace Mazeinator
 
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+
             //4TESTING↓ ?
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
@@ -392,6 +413,7 @@ namespace Mazeinator
             }
 
             _rootPenHolder = new Tuple<Color, Color, float>(Color.Red, Color.Black, 8);
+
             //clear and write the backtracked shortest path
             path.Clear();
             path.Add(endNode);
@@ -405,19 +427,50 @@ namespace Mazeinator
             return true;
         }
 
-        public Bitmap RenderPath(int canvasWidth, int canvasHeight, bool square = true)
+        public Bitmap RenderPath(Bitmap originalBMP, Style style)
         {
-            Console.WriteLine("PATH" + path.Count);
-            //4TESTING↓
-            for (int i = 0; i < path.Count; i++)        //real length is Count-1
+            if (_wallsPen != null && _nodePen != null && _pointPen != null)
             {
-                if (path[i] != null)
-                    Console.Write(path[i].ToString() + " \t");
-            }
-            Console.WriteLine();
+                using (Graphics gr = Graphics.FromImage(originalBMP))
+                {
+                    gr.SmoothingMode = SmoothingMode.AntiAlias;
+                    gr.CompositingQuality = CompositingQuality.HighSpeed;
 
-            return null;
+                    if (path.Count > 0)
+                    {
+                        foreach (Node node in path)
+                            node.DrawRootNode(gr, new Pen(Color.Blue, 8));
+
+                        Console.WriteLine("PATH" + path.Count);
+                        //4TESTING↓
+                        for (int i = 0; i < path.Count; i++)        //real length is Count-1
+                        {
+                            if (path[i] != null)
+                                Console.Write(path[i].ToString() + " \t");
+                        }
+                        Console.WriteLine();
+                    }
+
+                    if (startNode != null)
+                    {
+                        startNode.DrawBox(gr, new Pen(Utilities.ConvertColor(style.StartPointColor), _nodePen.Width), (int)_wallsPen.Width / 2);
+                        startNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.StartPointColor), _pointPen.Width / 2));
+                    }
+
+                    if (endNode != null)
+                    {
+                        endNode.DrawBox(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), _nodePen.Width), (int)_wallsPen.Width / 2);
+                        endNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), _pointPen.Width / 2));
+                    }
+                }
+
+
+            }
+
+            return originalBMP;
         }
+
+        #endregion PathPlanning
     }
 
     //Percent = (column * 100 / (_nodeCountX - 1));    //https://designforge.wordpress.com/2008/07/03/wpf-data-binding-to-a-simple-c-class/

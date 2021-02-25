@@ -97,6 +97,14 @@ namespace Mazeinator
             gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
         }
 
+        //Highlight the start node
+        public void DrawRootRootNode(Graphics gr, Pen pen)
+        {
+            float size = pen.Width;
+            if (Root == this)
+                gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
+        }
+
         //Method for drawing node's root via a normal pen
         public void DrawRootNode(Graphics gr, Pen pen)
         {
@@ -104,14 +112,6 @@ namespace Mazeinator
             {
                 gr.DrawLine(pen, Center, Root.Center);
             }
-        }
-
-        //Highlight the start node
-        public void DrawRootRootNode(Graphics gr, Pen pen)
-        {
-            float size = pen.Width;
-            if (Root == this)
-                gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
         }
 
         //Method overload for a gradient drawing

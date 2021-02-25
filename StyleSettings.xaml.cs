@@ -24,13 +24,15 @@ namespace Mazeinator
     {
         public Style SettingsStyle = null;
         private Maze _maze = new Maze(2, 2);
+        private double DPI;
 
-        public StyleSettings(Style style)
+        public StyleSettings(Style style, double DPI)
         {
             InitializeComponent();
 
             SettingsStyle = style;
-            _maze.GenerateMaze(_maze.nodes[0, 0]);
+            this.DPI = DPI;
+            _maze.GenerateMazeBlank();
             RedrawPreview();
 
             this.DataContext = SettingsStyle;
@@ -49,13 +51,9 @@ namespace Mazeinator
 
         private void RedrawPreview()
         {
-
-            Matrix m = PresentationSource.FromVisual(Application.Current.MainWindow).CompositionTarget.TransformToDevice;
-            double dx = m.M11, dy = m.M22;    //get the current "WPF DPI units"
-
             //get canvas size & work out the rectangular cell size from the current window size
-            int canvasSizeX = (int)Math.Round((MainCanvas.Width * dx));
-            int canvasSizeY = (int)Math.Round((MainCanvas.Height * dy));
+            int canvasSizeX = (int)Math.Round((MainCanvas.Width * DPI));
+            int canvasSizeY = (int)Math.Round((MainCanvas.Height * DPI));
 
             MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle));
         }

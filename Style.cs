@@ -20,9 +20,11 @@ namespace Mazeinator
         //public Color WallColor { get; set; } = Color.Black;
         public Color WallColor { get; set; } = Colors.Black;
 
-        public Color NodeColor, PointColor, RootColorBegin, RootColorEnd;
-        public Color StartPoinColor { get; set; } = Colors.Green;
-        public Color EndPointColor { get; set; } = Colors.DarkRed;
+        public Color NodeColor { get; set; } = Colors.LightGray;
+        public Color PointColor { get; set; } = Colors.Yellow;
+        public Color RootColorBegin, RootColorEnd;
+        public Color StartPointColor { get; set; } = Colors.LawnGreen;
+        public Color EndPointColor { get; set; } = Colors.Red;
         public Color BackgroundColor { get; set; } = Colors.SteelBlue;
 
         public int WallThickness { get; set; } = 0;

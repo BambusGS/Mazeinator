@@ -47,6 +47,9 @@ namespace Mazeinator
         //define the maze style class
         public Style MazeStyle = new Style();
 
+        //holds the current window scaling factor
+        public double DPI = 1;
+
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private bool _isSquare = true; public bool IsSquare { get => _isSquare; set { _isSquare = value; OnPropertyChanged(nameof(IsSquare)); } }
 
@@ -61,7 +64,9 @@ namespace Mazeinator
 
         private string _status = "Ready"; public string Status { get => _status; set { _status = value; OnPropertyChanged(nameof(Status)); } }
         private string _currentFilePath = null;
+
         private BitmapImage _maze = null; public BitmapImage Maze { get => _maze; set { _maze = value; OnPropertyChanged(nameof(Maze)); } }
+        private System.Drawing.Bitmap _mazeBMP = null;      //stored raw rendered maze; used as a base image for further drawing of start/end nodes and path
 
         public long AvgGenTime = 0, AvgRenderTime = 0;
 
@@ -87,7 +92,7 @@ namespace Mazeinator
 
         #endregion Global_shortcuts
 
-        #region Maze_generation
+        #region Maze_functions
 
         public void MazeGeneration(int NodeCountX, int NodeCountY, Tuple<int, int> CanvasSize)
         {
@@ -118,7 +123,9 @@ namespace Mazeinator
             Stopwatch RenderTime = new Stopwatch();
             RenderTime.Start();
 
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle, IsSquare));
+            _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle, IsSquare);
+
+            Maze = Utilities.BitmapToImageSource(_mazeBMP);
             //new Task(() => { test = MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, IsSquare); }).Start();
 
             RenderTime.Stop();
@@ -131,7 +138,67 @@ namespace Mazeinator
             CanvasSizeY = CanvasSize.Item2;
         }
 
-        #endregion Maze_generation
+        /// <summary>
+        /// Function that selects the start and end Node in the Maze class
+        /// </summary>
+        /// <param name="coordX">Mouse click X coordinate</param>
+        /// <param name="coordY">Mouse click Y coordinate</param>
+        /// <param name="selector">0 for startNode; 1 for endNode</param>
+        public void MazeNodeSelect(double coordX, double coordY, int selector)
+        {
+            if (MainMaze != null)
+            {
+                //(x coordinates - wallThickness) / cell.width -> floor & clamp (0 and nodes length) -> maze node selector
+                int cellWidth = MainMaze.nodes[0, 0].Bounds.Width;
+                int cellHeight = MainMaze.nodes[0, 0].Bounds.Height;
+
+                int cellXStart = MainMaze.nodes[0, 0].Bounds.X;
+                int cellYStart = MainMaze.nodes[0, 0].Bounds.Y;
+
+                int selectX = Utilities.Clamp((int)((coordX - cellXStart) / cellWidth), 0, MainMaze.nodes.GetLength(0) - 1);
+                int selectY = Utilities.Clamp((int)((coordY - cellYStart) / cellHeight), 0, MainMaze.nodes.GetLength(1) - 1);
+
+                //string text = (selectX).ToString() + " | " + (selectY).ToString();
+                //Console.WriteLine(text);
+                //text = (coordX).ToString() + " | " + (coordY).ToString();
+                //Console.WriteLine(text);
+
+                MainMaze.path.Clear();
+
+                switch (selector)
+                {
+                    case 0:
+                        MainMaze.startNode = MainMaze.nodes[selectX, selectY];
+                        break;
+
+                    case 1:
+                        MainMaze.endNode = MainMaze.nodes[selectX, selectY];
+                        break;
+
+                    default:
+                        break;
+                }
+
+                RenderPath();
+            }
+        }
+
+        public void RenderPath()
+        {
+            Stopwatch RenderTime = new Stopwatch();
+            RenderTime.Start();
+
+            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+
+            RenderTime.Stop();
+            LastRenderTime = RenderTime.ElapsedMilliseconds;
+           
+            GC.Collect();   //collect the leftovers
+
+        }
+
+        #endregion Maze_functions
 
         #region Data_manipulation
 
