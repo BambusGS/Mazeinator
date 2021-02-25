@@ -1,0 +1,30 @@
+﻿<Window x:Class="Mazeinator.NodeSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="NodeSettings" Height="200" Width="200" WindowStartupLocation="Manual"
+        WindowStyle="None" Background="Transparent" AllowsTransparency="True">
+    <Window.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="5,5" />
+            <Setter Property="Padding" Value="5,5" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Click="Button_Click" Grid.Column="1" Grid.Row="0" Style="{StaticResource ButtonStyle}">UP</Button>
+        <Button Click="Button_Click_1" Grid.Column="1" Grid.Row="1" Style="{StaticResource ButtonStyle}">THIS</Button>
+    </Grid>
+</Window>

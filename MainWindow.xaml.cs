@@ -98,8 +98,7 @@ namespace Mazeinator
             if (_controller.MainMaze != null)
             {
                 //_controller.MainMaze.GenerateMazeBlank();
-                _controller.MainMaze.Dijkstra();
-                _controller.RenderPath();
+                _controller.PathDijkstra();
             }
         }
 
@@ -108,28 +107,22 @@ namespace Mazeinator
             //https://stackoverflow.com/questions/741956/pan-zoom-image
             if (pictureBox.Source != null)
             {
-                Point point = e.GetPosition(pictureBox);
-
+                Point pointPicture = e.GetPosition(pictureBox);
                 //Point * scaling * (real_Width / WPF_Width) -> x clicked coordinate in image
-                double x = point.X * _controller.DPI * pictureBox.Source.Width / pictureBox.ActualWidth;
-                double y = point.Y * _controller.DPI * pictureBox.Source.Height / pictureBox.ActualHeight;
+                double x = pointPicture.X * _controller.DPI * pictureBox.Source.Width / pictureBox.ActualWidth;
+                double y = pointPicture.Y * _controller.DPI * pictureBox.Source.Height / pictureBox.ActualHeight;
 
-                _controller.MazeNodeSelect(x, y, 0);
-                //_controller.Render(GetCanvasSizePixels());
+                pointPicture = new Point(x, y);
+
+                Point monitorPoint = PointToScreen(e.GetPosition(null));
+
+                _controller.MazeNodeSelect(monitorPoint, pointPicture);
             }
         }
 
         private void SettingOpen(object sender, RoutedEventArgs e)
         {
-            Style currentStyle = (Style)_controller.MazeStyle.Clone();
-
-            StyleSettings settings = new StyleSettings(currentStyle, _controller.DPI);
-
-            if (settings.ShowDialog() == true)
-            {
-                _controller.MazeStyle = settings.SettingsStyle;
-                _controller.Status = "Setting applied";
-            }
+            _controller.SettingOpen();
         }
 
         #region CustomFunctions

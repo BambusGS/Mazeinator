@@ -115,11 +115,11 @@ namespace Mazeinator
         }
 
         //Method overload for a gradient drawing
-        public void DrawRootNode(Graphics gr, Tuple<Color, Color, float> brushHolder)
+        public void DrawRootNode(Graphics gr, Color startColor, Color endColor, float width)
         {
             if (Root != null && Root != this)
             {
-                Pen pen = new Pen(new System.Drawing.Drawing2D.LinearGradientBrush(Root.Center, Center, brushHolder.Item1, brushHolder.Item2), brushHolder.Item3);
+                Pen pen = new Pen(new System.Drawing.Drawing2D.LinearGradientBrush(Root.Center, Center, startColor, endColor), width);
                 gr.DrawLine(pen, Center, Root.Center);
             }
         }

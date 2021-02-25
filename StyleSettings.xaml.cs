@@ -23,7 +23,7 @@ namespace Mazeinator
     public partial class StyleSettings : Window
     {
         public Style SettingsStyle = null;
-        private Maze _maze = new Maze(2, 2);
+        private Maze _maze = new Maze(2, 2);        
         private double DPI;
 
         public StyleSettings(Style style, double DPI)
@@ -32,7 +32,13 @@ namespace Mazeinator
 
             SettingsStyle = style;
             this.DPI = DPI;
+
+            //preview maze setup
             _maze.GenerateMazeBlank();
+            _maze.startNode = _maze.nodes[0, 0];
+            _maze.endNode= _maze.nodes[1, 1];
+            _maze.Dijkstra();
+
             RedrawPreview();
 
             this.DataContext = SettingsStyle;
@@ -55,7 +61,8 @@ namespace Mazeinator
             int canvasSizeX = (int)Math.Round((MainCanvas.Width * DPI));
             int canvasSizeY = (int)Math.Round((MainCanvas.Height * DPI));
 
-            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle));
+            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
+
         }
 
         private void SelectedColorChangedEvent(object sender, RoutedPropertyChangedEventArgs<Color?> e)
