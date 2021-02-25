@@ -19,9 +19,11 @@ namespace Mazeinator
         public int renderSizeX, renderSizeY;
 
         [NonSerialized]
-        private Pen _wallsPen = null, _nodePen = null, _pointPen;
+        private Pen _wallsPen, _nodePen, _pointPen, _rootPen;
 
+        //TESTING OLD
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
+
         private Tuple<Color, Color, float> _rootPenHolder = new Tuple<Color, Color, float>(Color.Blue, Color.Black, 5);
 
         #endregion Variables
@@ -248,12 +250,14 @@ namespace Mazeinator
             Pen _nodePen = new Pen(Utilities.ConvertColor(style.NodeColor), cellSize / (16 + style.NodeThickness));
             Pen _pointPen = new Pen(Utilities.ConvertColor(style.PointColor), cellSize / (4 + style.PointThickness));
             Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
+            Pen _rootPen = new Pen(Utilities.ConvertColor(style.RootColorBegin), cellSize / (16 + style.RootThickness));
             Pen _backgroundPen = new Pen(Utilities.ConvertColor(style.BackgroundColor));
 
             //set the pen instances fot this entire class (are held until the next render)
             this._wallsPen = _wallsPen;
             this._nodePen = _nodePen;
             this._pointPen = _pointPen;
+            this._rootPen = _rootPen;
 
             //generate a large bitmap as a multiple of maximum node width/height; use of integer division as flooring
             renderSizeX = cellSizeX * _nodeCountX + (int)_wallsPen.Width;
@@ -274,7 +278,7 @@ namespace Mazeinator
                     foreach (Node node in nodes) { node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2); }
 
                 if (style.RenderRoot == true && cellSize > 7)
-                    foreach (Node node in nodes) { node.DrawRootNode(gr, _rootPenHolder); }
+                    foreach (Node node in nodes) { node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width); }
 
                 if (style.RenderPoint == true && cellSize > 3)
                     foreach (Node node in nodes) { node.DrawCentre(gr, _pointPen); }
@@ -353,13 +357,44 @@ namespace Mazeinator
             return bmp;
         }
 
+        public Bitmap RenderNode(Bitmap originalBMP, Node node, Style style)
+        {
+            if (_wallsPen != null && _nodePen != null && _pointPen != null || _rootPen != null)
+            {
+                using (Graphics gr = Graphics.FromImage(originalBMP))
+                {
+                    gr.SmoothingMode = SmoothingMode.AntiAlias;
+                    gr.CompositingQuality = CompositingQuality.HighSpeed;
+
+                    //int cellSize = (node.Bounds.Width < node.Bounds.Height) ? node.Bounds.Width : node.Bounds.Height;
+
+                    //if (style.RenderNode == true && cellSize > 3)
+                    //    node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2);
+
+                    //if (style.RenderRoot == true && cellSize > 7)
+                    //    node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width);
+
+                    //if (style.RenderPoint == true && cellSize > 3)
+                    //    node.DrawCentre(gr, _pointPen);
+
+                    if (style.RenderWall == true)
+                    {
+                        node.DrawWall(gr, _wallsPen);
+                    }
+                }
+            }
+
+            return originalBMP;
+        }
+
         #region PathPlanning
 
         public bool Dijkstra()
         {
             //4TESTING↓
             //startNode = nodes[_nodeCountX / 2, _nodeCountY / 2];
-            endNode = nodes[_nodeCountX - 1, 0];
+            if (endNode == null)
+                endNode = nodes[_nodeCountX - 1, 0];
 
             if (startNode == null || endNode == null || nodes == null)
                 return false;
@@ -429,7 +464,7 @@ namespace Mazeinator
 
         public Bitmap RenderPath(Bitmap originalBMP, Style style)
         {
-            if (_wallsPen != null && _nodePen != null && _pointPen != null)
+            if (_wallsPen != null && _nodePen != null && _pointPen != null || _rootPen != null)
             {
                 using (Graphics gr = Graphics.FromImage(originalBMP))
                 {
@@ -439,7 +474,7 @@ namespace Mazeinator
                     if (path.Count > 0)
                     {
                         foreach (Node node in path)
-                            node.DrawRootNode(gr, new Pen(Color.Blue, 8));
+                            node.DrawRootNode(gr, new Pen(Color.Blue, _rootPen.Width * 2));
 
                         Console.WriteLine("PATH" + path.Count);
                         //4TESTING↓
@@ -463,8 +498,6 @@ namespace Mazeinator
                         endNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), _pointPen.Width / 2));
                     }
                 }
-
-
             }
 
             return originalBMP;

@@ -22,7 +22,8 @@ namespace Mazeinator
 
         public Color NodeColor { get; set; } = Colors.LightGray;
         public Color PointColor { get; set; } = Colors.Yellow;
-        public Color RootColorBegin, RootColorEnd;
+        public Color RootColorBegin { get; set; } = Colors.Blue;
+        public Color RootColorEnd { get; set; } = Colors.Black;
         public Color StartPointColor { get; set; } = Colors.LawnGreen;
         public Color EndPointColor { get; set; } = Colors.Red;
         public Color BackgroundColor { get; set; } = Colors.SteelBlue;
