@@ -8,6 +8,7 @@
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
         SizeChanged="Window_SizeChanged"
         Closing="Window_Closing"
+        Loaded="Window_Loaded"
         ResizeMode="CanResizeWithGrip"
         Background="Ivory">
 
@@ -91,7 +92,7 @@
                         <MenuItem Header="_Display" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
-                <Image x:Name="pictureBox" MouseLeftButtonDown="pictureBox_MouseDown" Stretch="None" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+                <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
             </Canvas>
 
             <StatusBar Grid.Row="2">
@@ -108,7 +109,7 @@
                     <TextBlock Grid.Column="0" Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                     </TextBlock>
-                    <TextBlock Grid.Column="1" Text="Generation time: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Grid.Column="1" Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastGenTime, Mode=OneWay}" />
                     </TextBlock>
                     <TextBlock Grid.Column="2" Text="Render time: " Style="{StaticResource StatusBarTextStyle}">

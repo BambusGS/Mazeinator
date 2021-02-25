@@ -31,6 +31,15 @@ namespace Mazeinator
 
         public static System.Drawing.Color ConvertColor(System.Windows.Media.Color WMColor) => System.Drawing.Color.FromArgb(WMColor.R, WMColor.G, WMColor.B);
 
+        public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
+        {
+            if (val.CompareTo(min) < 0)
+                return min;
+            else if (val.CompareTo(max) > 0)
+                return max;
+            else
+                return val;
+        }
 
         public static bool isWorking = false;
 
