@@ -236,10 +236,14 @@ namespace Mazeinator
                             break;
 
                         case 10:
+                            if (targetNode == MainMaze.endNode)
+                                MainMaze.endNode = null;
                             MainMaze.startNode = targetNode;
                             break;
 
                         case 11:
+                            if (targetNode == MainMaze.startNode)
+                                MainMaze.startNode = null;
                             MainMaze.endNode = targetNode;
                             break;
 
@@ -261,6 +265,7 @@ namespace Mazeinator
             if (settings.ShowDialog() == true)
             {
                 MazeStyle = settings.SettingsStyle;
+                Render(new Tuple<int, int>(CanvasSizeX, CanvasSizeY));
                 Status = "Setting applied";
             }
         }

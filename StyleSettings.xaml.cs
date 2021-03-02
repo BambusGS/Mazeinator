@@ -26,11 +26,18 @@ namespace Mazeinator
 
             //preview maze setup
             _maze.GenerateMazeBlank();
+
             _maze.startNode = _maze.nodes[0, 0];
-            _maze.endNode = _maze.nodes[1, 1];
-            _maze.ToggleNeighbour(_maze.nodes[0, 0], Node.South);
+            _maze.endNode = _maze.nodes[2, 2];
+
+            _maze.ToggleNeighbour(_maze.nodes[1, 1], Node.North);
+            _maze.ToggleNeighbour(_maze.nodes[1, 1], Node.West);
+            _maze.ToggleNeighbour(_maze.nodes[1, 2], Node.West);
+            _maze.ToggleNeighbour(_maze.nodes[2, 2], Node.North);
+
             _maze.Dijkstra();
 
+            //combobox line end cap setup
             cmbLineCap.ItemsSource = SettingsStyle.LineCapOptions;
             cmbLineCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.WallEndCap);
             cmbPathCap.ItemsSource = SettingsStyle.LineCapOptions;
@@ -64,6 +71,11 @@ namespace Mazeinator
             MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
         }
 
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            RedrawPreview();
+        }
+
         private void SelectedColorChangedEvent(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
             RedrawPreview();
@@ -80,5 +92,7 @@ namespace Mazeinator
             SettingsStyle.PathEndCap = SettingsStyle.LineCapOptions[cmbPathCap.SelectedIndex];
             RedrawPreview();
         }
+
+        
     }
 }
