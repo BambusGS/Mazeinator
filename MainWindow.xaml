@@ -52,9 +52,9 @@
             </MenuItem>
 
             <MenuItem Header="_Options">
-                <MenuItem Header="_Settings" Click="SettingOpen" Padding="3,0" Margin="1,0"/>
-                <MenuItem Header="_Properties" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
-                <MenuItem x:Name="DisplayMenuBool" Header="_Display" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
+                <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
+                <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
+                <MenuItem x:Name="DisplayMenuBool" Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
             </MenuItem>
 
             <MenuItem Header="About" />
@@ -72,24 +72,23 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <TextBox Name="WidthBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="8"></TextBox>
+                <TextBox Name="WidthBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="12"></TextBox>
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <TextBox Name="HeightBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="4"></TextBox>
-                <Button Name="MazeGenBTN" Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">
-                    <TextBlock>Generate</TextBlock>
-                </Button>
+                <TextBox Name="HeightBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="6"></TextBox>
+                <Button Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">Generate</Button>
                 <TextBlock Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                     <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                 </TextBlock>
+                <Button Click="RedrawMaze" Height="auto" Padding="3,0" Margin="3,0,0,0">Redraw</Button>
             </StackPanel>
 
             <!--Canvas for maze drawing-->
             <Canvas Grid.Row="1" x:Name="MainCanvas" Grid.Column="0" Background="Transparent">
                 <Canvas.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="_Settings" Click="SettingOpen" Padding="3,0" Margin="1,0"/>
-                        <MenuItem Header="_Properties" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
-                        <MenuItem Header="_Display" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
+                        <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
+                        <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
+                        <MenuItem Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
                 <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />

@@ -4,9 +4,10 @@ using System.Windows.Media;
 
 /*  ===TODO===
  *  Make every PEN/drawing ifs into correct order
+ *  check style.RenderWall booleans
+ *  app ICON
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%
  *  Check if canvas size has changed and only then update
- *  add node edit option  
  *  add blank maze option
  *  Export window - resolution, (colors and fileformat)
  *  Either create new file or load another one
@@ -93,13 +94,14 @@ namespace Mazeinator
             _controller.MazeGeneration(NodeCountX, NodeCountY, GetCanvasSizePixels());
         }
 
+        private void RedrawMaze(object sender, RoutedEventArgs e)
+        {
+            _controller.Render(GetCanvasSizePixels());
+        }
+
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (_controller.MainMaze != null)
-            {
-                //_controller.MainMaze.GenerateMazeBlank();
-                _controller.PathDijkstra();
-            }
+            _controller.PathDijkstra();
         }
 
         private void SelectNode(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -108,15 +110,15 @@ namespace Mazeinator
             if (pictureBox.Source != null)
             {
                 Point pointPicture = e.GetPosition(pictureBox);
-                //Point * scaling * (real_Width / WPF_Width) -> x clicked coordinate in image
-                double x = pointPicture.X * _controller.DPI * pictureBox.Source.Width / pictureBox.ActualWidth;
-                double y = pointPicture.Y * _controller.DPI * pictureBox.Source.Height / pictureBox.ActualHeight;
+                Point monitorPoint = PointToScreen(e.GetPosition(this));
 
-                pointPicture = new Point(x, y);
+                //(real_Width / WPF_Width) -> image scaling
+                double x = pictureBox.Source.Width / pictureBox.ActualWidth;
+                double y = pictureBox.Source.Height / pictureBox.ActualHeight;
 
-                Point monitorPoint = PointToScreen(e.GetPosition(null));
+                Point transfrom = new Point(x, y);
 
-                _controller.MazeNodeSelect(monitorPoint, pointPicture);
+                _controller.MazeNodeSelect(monitorPoint, pointPicture, transfrom);
             }
         }
 

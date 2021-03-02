@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace Mazeinator
 {
@@ -14,15 +15,40 @@ namespace Mazeinator
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        private void NorthNodeSelect(object sender, RoutedEventArgs e)
         {
-            selector = 0;
+            selector = Node.North;
+            this.DialogResult = true;
+        } 
+        
+        private void EastNodeSelect(object sender, RoutedEventArgs e)
+        {
+            selector = Node.East;
+            this.DialogResult = true;
+        }
+        
+        private void SouthNodeSelect(object sender, RoutedEventArgs e)
+        {
+            selector = Node.South;
+            this.DialogResult = true;
+        }
+        
+        private void WestNodeSelect(object sender, RoutedEventArgs e)
+        {
+            selector = Node.West;
             this.DialogResult = true;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void StartNodeSelect(object sender, RoutedEventArgs e)
         {
-            selector = 1;
+            selector = 10;
+            this.DialogResult = true;
+        }
+
+        private void EndNodeSelect(object sender, RoutedEventArgs e)
+        {
+            selector = 11;
             this.DialogResult = true;
         }
     }

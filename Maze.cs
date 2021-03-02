@@ -104,7 +104,8 @@ namespace Mazeinator
                             Visited[currentNode.X, currentNode.Y - 1] = true;                             //set the northern one to be also visited
 
                             currentNode.Neighbours[Node.North].Neighbours[Node.South] = currentNode;            //set the northern one's neighbour to be this node
-                            currentNode.Neighbours[Node.North].Root = currentNode;
+                            currentNode.Neighbours[Node.North].Root = currentNode.Neighbours[Node.North];
+                            //currentNode.Neighbours[Node.North].Root = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.North]);       //move to the northern node by pushing it onto the stack
                             break;
@@ -114,7 +115,8 @@ namespace Mazeinator
                             Visited[currentNode.X + 1, currentNode.Y] = true;
 
                             currentNode.Neighbours[Node.East].Neighbours[Node.West] = currentNode;
-                            currentNode.Neighbours[Node.East].Root = currentNode;
+                            currentNode.Neighbours[Node.East].Root = currentNode.Neighbours[Node.East];
+                            //currentNode.Neighbours[Node.East].Root = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.East]);
                             break;
@@ -124,7 +126,8 @@ namespace Mazeinator
                             Visited[currentNode.X, currentNode.Y + 1] = true;
 
                             currentNode.Neighbours[Node.South].Neighbours[Node.North] = currentNode;
-                            currentNode.Neighbours[Node.South].Root = currentNode;
+                            currentNode.Neighbours[Node.South].Root = currentNode.Neighbours[Node.South];
+                            //currentNode.Neighbours[Node.South].Root = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.South]);
                             break;
@@ -134,7 +137,8 @@ namespace Mazeinator
                             Visited[currentNode.X - 1, currentNode.Y] = true;
 
                             currentNode.Neighbours[Node.West].Neighbours[Node.East] = currentNode;
-                            currentNode.Neighbours[Node.West].Root = currentNode;
+                            currentNode.Neighbours[Node.West].Root = currentNode.Neighbours[Node.West];
+                            //currentNode.Neighbours[Node.West].Root = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.West]);
                             break;
@@ -193,6 +197,84 @@ namespace Mazeinator
                 node.Root = node;
 
             return true;
+        }
+
+        /// <summary>
+        /// Toggles node's neighbouring nodes
+        /// </summary>
+        /// <param name="node">The node to be edited</param>
+        /// <param name="direction">the Node.direction of the neighbour to toggle</param>
+        public void ToggleNeighbour(Node node, int direction)
+        {
+            switch (direction)
+            {
+                case Node.North:
+                    if (node.Y > 0)
+                    {
+                        if (node.Neighbours[Node.North] == null)
+                        {
+                            node.Neighbours[Node.North] = nodes[node.X, node.Y - 1];
+                            node.Neighbours[Node.North].Neighbours[Node.South] = node;
+                        }
+                        else
+                        {
+                            node.Neighbours[Node.North].Neighbours[Node.South] = null;
+                            node.Neighbours[Node.North] = null;
+                        }
+                    }
+                    break;
+
+                case Node.East:
+                    if (node.X < nodes.GetLength(0) - 1)
+                    {
+                        if (node.Neighbours[Node.East] == null)
+                        {
+                            node.Neighbours[Node.East] = nodes[node.X + 1, node.Y];
+                            node.Neighbours[Node.East].Neighbours[Node.West] = node;
+                        }
+                        else
+                        {
+                            node.Neighbours[Node.East].Neighbours[Node.West] = null;
+                            node.Neighbours[Node.East] = null;
+                        }
+                    }
+                    break;
+
+                case Node.South:
+                    if (node.Y < nodes.GetLength(1) - 1)
+                    {
+                        if (node.Neighbours[Node.South] == null)
+                        {
+                            node.Neighbours[Node.South] = nodes[node.X, node.Y + 1];
+                            node.Neighbours[Node.South].Neighbours[Node.North] = node;
+                        }
+                        else
+                        {
+                            node.Neighbours[Node.South].Neighbours[Node.North] = null;
+                            node.Neighbours[Node.South] = null;
+                        }
+                    }
+                    break;
+
+                case Node.West:
+                    if (node.X > 0)
+                    {
+                        if (node.Neighbours[Node.West] == null)
+                        {
+                            node.Neighbours[Node.West] = nodes[node.X - 1, node.Y];
+                            node.Neighbours[Node.West].Neighbours[Node.East] = node;
+                        }
+                        else
+                        {
+                            node.Neighbours[Node.West].Neighbours[Node.East] = null;
+                            node.Neighbours[Node.West] = null;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -277,14 +359,14 @@ namespace Mazeinator
                 if (style.RenderNode == true && cellSize > 3)
                     foreach (Node node in nodes) { node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2); }
 
-                if (style.RenderRoot == true && cellSize > 7)
-                    foreach (Node node in nodes) { node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width); }
+                //if (style.RenderRoot == true && cellSize > 7)
+                //    foreach (Node node in nodes) { node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width); }
 
                 if (style.RenderPoint == true && cellSize > 3)
                     foreach (Node node in nodes) { node.DrawCentre(gr, _pointPen); }
 
-                if (style.RenderRootRootNode == true && cellSize > 7)
-                    foreach (Node node in nodes) { node.DrawRootRootNode(gr, _startNodePen); }
+                //if (style.RenderRootRootNode == true && cellSize > 7)
+                //    foreach (Node node in nodes) { node.DrawRootRootNode(gr, _startNodePen); }
 
                 if (style.RenderWall == true)
                 {
@@ -366,16 +448,57 @@ namespace Mazeinator
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
                     gr.CompositingQuality = CompositingQuality.HighSpeed;
 
-                    //int cellSize = (node.Bounds.Width < node.Bounds.Height) ? node.Bounds.Width : node.Bounds.Height;
+                    //draw over current walls with background color; then switch it back
+                    _wallsPen.Color = Utilities.ConvertColor(style.BackgroundColor);
+                    node.DrawWalls(gr, _wallsPen);
+                    _wallsPen.Color = Utilities.ConvertColor(style.WallColor);
 
-                    //if (style.RenderNode == true && cellSize > 3)
-                    //    node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2);
+                    //redraw the adjecent cell's walls (the ones that have a wall)
+                    for (int i = 0; i < node.Neighbours.Length; i++)
+                    {
+                        switch (i)
+                        {
+                            case Node.North:
+                                if (node.Y > 0)
+                                {
+                                    nodes[node.X, node.Y - 1].DrawWall(gr, _wallsPen);
+                                }
+                                break;
 
-                    //if (style.RenderRoot == true && cellSize > 7)
-                    //    node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width);
+                            case Node.East:
+                                if (node.X < nodes.GetLength(0) - 1)
+                                {
+                                    nodes[node.X + 1, node.Y].DrawWall(gr, _wallsPen);
+                                }
+                                break;
 
-                    //if (style.RenderPoint == true && cellSize > 3)
-                    //    node.DrawCentre(gr, _pointPen);
+                            case Node.South:
+                                if (node.Y < nodes.GetLength(1) - 1)
+                                {
+                                    nodes[node.X, node.Y + 1].DrawWall(gr, _wallsPen);
+                                }
+                                break;
+
+                            case Node.West:
+                                if (node.X > 0)
+                                {
+                                    nodes[node.X - 1, node.Y].DrawWall(gr, _wallsPen);
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+
+                    //redraw the selected node's properties
+                    int cellSize = (node.Bounds.Width < node.Bounds.Height) ? node.Bounds.Width : node.Bounds.Height;
+
+                    if (style.RenderNode == true && cellSize > 3)
+                        node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2);
+
+                    if (style.RenderPoint == true && cellSize > 3)
+                        node.DrawCentre(gr, _pointPen);
 
                     if (style.RenderWall == true)
                     {
@@ -392,9 +515,6 @@ namespace Mazeinator
         public bool Dijkstra()
         {
             //4TESTING↓
-            //startNode = nodes[_nodeCountX / 2, _nodeCountY / 2];
-            if (endNode == null)
-                endNode = nodes[_nodeCountX - 1, 0];
 
             if (startNode == null || endNode == null || nodes == null)
                 return false;
@@ -402,6 +522,7 @@ namespace Mazeinator
             int edgeLength = 1;
             List<Tuple<int, Node>> frontier = new List<Tuple<int, Node>>();
 
+            bool pathFindError = false;
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
 
@@ -416,7 +537,7 @@ namespace Mazeinator
                 node.Root = null;
 
             //try to find distance from the startnode for all reachable nodes
-            while (frontier[0].Item2 != endNode)   /*(frontier.Count > 0)*/
+            while (frontier[0].Item2 != endNode)
             {
                 int currentNodeDistance = frontier[0].Item1;
                 Node currentNode = frontier[0].Item2;
@@ -437,6 +558,12 @@ namespace Mazeinator
                     }
                 }
 
+                if (frontier.Count == 0)
+                {
+                    pathFindError = true;
+                    return false;
+                    break;
+                }
                 frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; unnecessary for this square maze
 
                 //4TESTING↓
@@ -449,16 +576,18 @@ namespace Mazeinator
 
             _rootPenHolder = new Tuple<Color, Color, float>(Color.Red, Color.Black, 8);
 
-            //clear and write the backtracked shortest path
-            path.Clear();
-            path.Add(endNode);
-            Node backTrackNode = endNode;
-            while (backTrackNode != startNode && backTrackNode != null)
+            if (pathFindError == false)
             {
-                path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
-                backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                //clear and write the backtracked shortest path
+                path.Clear();
+                path.Add(endNode);
+                Node backTrackNode = endNode;
+                while (backTrackNode != startNode && backTrackNode != null)
+                {
+                    path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                }
             }
-
             return true;
         }
 
@@ -473,8 +602,12 @@ namespace Mazeinator
 
                     if (path.Count > 0)
                     {
+                        Pen pen = new Pen(Utilities.ConvertColor(style.RootColorBegin), _pointPen.Width / 2 - 1);
+                        pen.StartCap = style.PathEndCap;
+                        pen.EndCap = style.PathEndCap;
+
                         foreach (Node node in path)
-                            node.DrawRootNode(gr, new Pen(Color.Blue, _rootPen.Width * 2));
+                            node.DrawRootNode(gr, pen);
 
                         Console.WriteLine("PATH" + path.Count);
                         //4TESTING↓
