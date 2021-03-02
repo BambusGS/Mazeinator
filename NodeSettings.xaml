@@ -25,19 +25,19 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Button Click="StartNodeSelect" Grid.Column="0" Grid.Row="0" Background="LightGreen" Style="{StaticResource ButtonStyle}">START</Button>
-        <Button Click="EndNodeSelect" Grid.Column="2" Grid.Row="0" Background="OrangeRed" Style="{StaticResource ButtonStyle}">END</Button>
+        <Button Click="ButtonClick" Tag="StartNodeSelect"  Grid.Column="0" Grid.Row="0" Background="LightGreen" Style="{StaticResource ButtonStyle}">START</Button>
+        <Button Click="ButtonClick" Tag="EndNodeSelect" Grid.Column="2" Grid.Row="0" Background="OrangeRed" Style="{StaticResource ButtonStyle}">END</Button>
 
-        <Line Grid.Row="1" Grid.Column="1" X1="0" Y1="0" X2="10" Y2="10" Stroke="Red" StrokeThickness="2" />
-        <Line Grid.Row="1" Grid.Column="1" X1="30" Y1="10" X2="40" Y2="0" Stroke="Red" StrokeThickness="2" />
-        <Line Grid.Row="1" Grid.Column="1" X1="40" Y1="40" X2="30" Y2="30" Stroke="Red" StrokeThickness="2" />
-        <Line Grid.Row="1" Grid.Column="1" X1="0" Y1="40" X2="10" Y2="30" Stroke="Red" StrokeThickness="2" />
-        <Ellipse Grid.Column="1" Grid.Row="1" Width="10" Height="10" Stroke="Red" StrokeThickness="1" />
+        <Line x:Name="lineTL" Grid.Row="1" Grid.Column="1" X1="0" Y1="0" X2="10" Y2="10" Stroke="Red" StrokeThickness="2" />
+        <Line x:Name="lineTR" Grid.Row="1" Grid.Column="1" X1="40" Y1="0" X2="30" Y2="10" Stroke="Red" StrokeThickness="2" />
+        <Line x:Name="lineBL" Grid.Row="1" Grid.Column="1" X1="0" Y1="40" X2="10" Y2="30" Stroke="Red" StrokeThickness="2" />
+        <Line x:Name="lineBR" Grid.Row="1" Grid.Column="1" X1="40" Y1="40" X2="30" Y2="30" Stroke="Red" StrokeThickness="2" />
+        <!--<Ellipse x:Name="Ellipse" Grid.Column="1" Grid.Row="1" Width="10" Height="10" Stroke="Red" StrokeThickness="1" />-->
 
-        <Button Click="NorthNodeSelect" Grid.Column="1" Grid.Row="0" Style="{StaticResource ButtonStyle}">NORTH</Button>
-        <Button Click="EastNodeSelect" Grid.Column="2" Grid.Row="1" Style="{StaticResource ButtonStyle}">EAST</Button>
-        <Button Click="SouthNodeSelect" Grid.Column="1" Grid.Row="2" Style="{StaticResource ButtonStyle}">SOUTH</Button>
-        <Button Click="WestNodeSelect" Grid.Column="0" Grid.Row="1" Style="{StaticResource ButtonStyle}">WEST</Button>
+        <Button Click="ButtonClick" Tag="NorthNodeSelect" Grid.Column="1" Grid.Row="0" Style="{StaticResource ButtonStyle}">NORTH</Button>
+        <Button Click="ButtonClick" Tag="EastNodeSelect" Grid.Column="2" Grid.Row="1" Style="{StaticResource ButtonStyle}">EAST</Button>
+        <Button Click="ButtonClick" Tag="SouthNodeSelect"  Grid.Column="1" Grid.Row="2" Style="{StaticResource ButtonStyle}">SOUTH</Button>
+        <Button Click="ButtonClick" Tag="WestNodeSelect" Grid.Column="0" Grid.Row="1" Style="{StaticResource ButtonStyle}">WEST</Button>
 
         <Button IsCancel="True" Grid.Column="2" Grid.Row="2" Background="DarkGray" Style="{StaticResource ButtonStyle}">EXIT</Button>
     </Grid>

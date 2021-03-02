@@ -69,6 +69,7 @@ namespace Mazeinator
             int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
 
             MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
+            GC.Collect();
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
