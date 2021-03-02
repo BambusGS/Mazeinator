@@ -84,6 +84,32 @@ namespace Mazeinator
             }
         }
 
+        //fill the four walls
+        public void DrawWalls(Graphics gr, Pen pen)
+        {
+            for (int direction = 0; direction < Neighbours.Length; direction++)
+            {
+                switch (direction)
+                {
+                    case North:
+                        gr.DrawLine(pen, Bounds.Left, Bounds.Top, Bounds.Right, Bounds.Top);
+                        break;
+
+                    case East:
+                        gr.DrawLine(pen, Bounds.Right, Bounds.Top, Bounds.Right, Bounds.Bottom);
+                        break;
+
+                    case South:
+                        gr.DrawLine(pen, Bounds.Left, Bounds.Bottom, Bounds.Right, Bounds.Bottom);
+                        break;
+
+                    case West:
+                        gr.DrawLine(pen, Bounds.Left, Bounds.Top, Bounds.Left, Bounds.Bottom);
+                        break;
+                }
+            }
+        }
+
         public void DrawBox(Graphics gr, Pen pen, int inset = 0)
         {
             float offset = (float)(pen.Width / 2.0) + inset;

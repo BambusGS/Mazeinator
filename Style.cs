@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;   //Color
 using System.Drawing.Drawing2D; //LineCap
+using System.Windows.Media;   //Color
 
 namespace Mazeinator
 {
@@ -14,8 +10,10 @@ namespace Mazeinator
     public class Style : ICloneable
     {
         #region Variables
-        private LineCap[] LineCapOptions = { LineCap.Square, LineCap.Triangle, LineCap.Round, LineCap.SquareAnchor, LineCap.DiamondAnchor, LineCap.RoundAnchor };
-        public LineCap WallEndCap { get; set; } = LineCap.Triangle;
+
+        public LineCap[] LineCapOptions = { LineCap.Square, LineCap.Triangle, LineCap.Round, LineCap.SquareAnchor, LineCap.DiamondAnchor, LineCap.RoundAnchor };
+        public LineCap WallEndCap { get; set; } = LineCap.Round;
+        public LineCap PathEndCap { get; set; } = LineCap.Round;
 
         //public Color WallColor { get; set; } = Color.Black;
         public Color WallColor { get; set; } = Colors.Black;
@@ -24,7 +22,7 @@ namespace Mazeinator
         public Color PointColor { get; set; } = Colors.Yellow;
         public Color RootColorBegin { get; set; } = Colors.Blue;
         public Color RootColorEnd { get; set; } = Colors.Black;
-        public Color StartPointColor { get; set; } = Colors.LawnGreen;
+        public Color StartPointColor { get; set; } = Colors.Lime;
         public Color EndPointColor { get; set; } = Colors.Red;
         public Color BackgroundColor { get; set; } = Colors.SteelBlue;
 
@@ -38,7 +36,8 @@ namespace Mazeinator
         public bool RenderPoint { get; set; } = true;
         public bool RenderRoot { get; set; } = true;
         public bool RenderRootRootNode { get; set; } = true;
-        #endregion
+
+        #endregion Variables
 
         //https://stackoverflow.com/questions/6569486/creating-a-copy-of-an-object-in-c-sharp
         public object Clone()

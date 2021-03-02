@@ -1,29 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Mazeinator
 {
     //https://www.wpf-tutorial.com/dialogs/creating-a-custom-input-dialog/
     //https://www.hanselman.com/blog/learning-wpf-with-babysmash-configuration-with-databinding
-    
+
     /// <summary>
     /// Interaction logic for StyleSettings.xaml
     /// </summary>
     public partial class StyleSettings : Window
     {
         public Style SettingsStyle = null;
-        private Maze _maze = new Maze(2, 2);        
+        private Maze _maze = new Maze(3, 3);
         private double DPI;
 
         public StyleSettings(Style style, double DPI)
@@ -31,42 +21,63 @@ namespace Mazeinator
             InitializeComponent();
 
             SettingsStyle = style;
+            this.DataContext = SettingsStyle;
             this.DPI = DPI;
 
             //preview maze setup
             _maze.GenerateMazeBlank();
             _maze.startNode = _maze.nodes[0, 0];
-            _maze.endNode= _maze.nodes[1, 1];
+            _maze.endNode = _maze.nodes[1, 1];
+            _maze.ToggleNeighbour(_maze.nodes[0, 0], Node.South);
             _maze.Dijkstra();
 
-            RedrawPreview();
+            cmbLineCap.ItemsSource = SettingsStyle.LineCapOptions;
+            cmbLineCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.WallEndCap);
+            cmbPathCap.ItemsSource = SettingsStyle.LineCapOptions;
+            cmbPathCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.PathEndCap);
 
-            this.DataContext = SettingsStyle;
+            RedrawPreview();
         }
 
         private void btnDialogOK_Click(object sender, RoutedEventArgs e)
-        {                        
-            this.DialogResult = true;            
+        {
+            this.DialogResult = true;
         }
 
         private void DefaultValues(object sender, RoutedEventArgs e)
         {
             SettingsStyle = new Style();
+            this.DataContext = SettingsStyle;
+
+            cmbLineCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.WallEndCap);
+            cmbPathCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.PathEndCap);
+
             RedrawPreview();
         }
 
         private void RedrawPreview()
         {
             //get canvas size & work out the rectangular cell size from the current window size
-            int canvasSizeX = (int)Math.Round((MainCanvas.Width * DPI));
-            int canvasSizeY = (int)Math.Round((MainCanvas.Height * DPI));
+            int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
+            int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
 
             MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
-
         }
 
         private void SelectedColorChangedEvent(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
+            RedrawPreview();
+        }
+
+        private void cmbLineCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            SettingsStyle.WallEndCap = SettingsStyle.LineCapOptions[cmbLineCap.SelectedIndex];
+            RedrawPreview();
+        }
+
+        private void cmbPathCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            SettingsStyle.PathEndCap = SettingsStyle.LineCapOptions[cmbPathCap.SelectedIndex];
             RedrawPreview();
         }
     }
