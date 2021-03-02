@@ -199,7 +199,8 @@ namespace Mazeinator
                 double gridSnapX = (selectX * cellWidth + cellXStart + (double)cellWidth / 2) - (imageXinPX) + 0.5;
                 double gridSnapY = (selectY * cellHeight + cellYStart + (double)cellHeight / 2) - (imageYinPX) + 0.5;
 
-                NodeSettings NodeSelector = new NodeSettings();
+                int cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+                NodeSettings NodeSelector = new NodeSettings(cellSize / 6);
                 //centers the window on the current cell - where user clicked + grid_snap_offset + half_the_window_width
                 //divided by the current monitor_scaling_DPI -> get back to WPF units
                 NodeSelector.Left = (monitorClick.X + gridSnapX / transfrom.X) / DPI - NodeSelector.Width / 2;
@@ -245,6 +246,10 @@ namespace Mazeinator
                             if (targetNode == MainMaze.startNode)
                                 MainMaze.startNode = null;
                             MainMaze.endNode = targetNode;
+                            break;
+
+                        case 20:
+                            //find path yellow-ish button
                             break;
 
                         default:
