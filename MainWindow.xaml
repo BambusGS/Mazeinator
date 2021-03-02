@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="Mazeinator" Height="720" Width="1280" MinHeight="360" MinWidth="640"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
@@ -72,13 +73,17 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <TextBox Name="WidthBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="12"></TextBox>
+                <xctk:IntegerUpDown Name="WidthBox" Width="50" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Value="12" Minimum="1" />
+
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <TextBox Name="HeightBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="6"></TextBox>
+                <xctk:IntegerUpDown Name="HeightBox" Width="50" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Value="6" Minimum="1" />
+
                 <Button Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">Generate</Button>
+
                 <TextBlock Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                     <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                 </TextBlock>
+
                 <Button Click="RedrawMaze" Height="auto" Padding="3,0" Margin="3,0,0,0">Redraw</Button>
             </StackPanel>
 
@@ -91,7 +96,8 @@
                         <MenuItem Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
-                <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+
+                <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
             </Canvas>
 
             <StatusBar Grid.Row="2">
@@ -105,25 +111,31 @@
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="300" />
                     </Grid.ColumnDefinitions>
+
                     <TextBlock Grid.Column="0" Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="1" Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastGenTime, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="2" Text="Render time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastRenderTime, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="3" Text="Render size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=RenderSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=RenderSizeY, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="4" Text="Canvas size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=CanvasSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=CanvasSizeY, Mode=OneWay}" />
                     </TextBlock>
+
                     <ProgressBar Grid.Column="5" Width="250" Height="auto" Padding="3,0" Margin="3,0" Value="0" />
                     <TextBlock Grid.Column="6" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
                 </Grid>

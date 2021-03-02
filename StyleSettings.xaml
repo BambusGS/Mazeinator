@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Visual Settings" Height="400" Width="600" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        Title="Maze Visual Settings" Height="500" Width="700" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="ColorPickerStyle" TargetType="xctk:ColorPicker">
@@ -22,19 +22,24 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="3*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
         <Canvas x:Name="MainCanvas" Grid.Column="0" Grid.Row="0"  Background="Transparent" Width="auto" Height="auto" Margin="10,10,10,10">
-            <Image x:Name="MazePreview" Stretch="None"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+            <Image x:Name="MazePreview" Stretch="None" Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
         </Canvas>
+
+        <StackPanel Grid.Column="0" Grid.Row="1" Margin="10,10,10,10" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <CheckBox IsChecked="{Binding Path=RenderNode, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" >Render node</CheckBox>
+            <CheckBox IsChecked="{Binding Path=RenderPoint, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked">Render center point</CheckBox>
+        </StackPanel>
 
         <!--https://github.com/xceedsoftware/wpftoolkit/wiki/ColorPicker-->
         <!--ZOOMBOX could be useful with transitions (aka rendering in higher resolutions)-->
@@ -64,10 +69,10 @@
             <xctk:ColorPicker Grid.Column="1" Grid.Row="1" SelectedColor="{Binding Path=WallColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
 
             <TextBlock Grid.Column="0" Grid.Row="2" Text="Node boundary color:" VerticalAlignment="Center" />
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="2" SelectedColor="{Binding Path=NodeColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="2" IsEnabled="{Binding Path=RenderNode, Mode=OneWay}" SelectedColor="{Binding Path=NodeColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
 
             <TextBlock Grid.Column="0" Grid.Row="3" Text="Node centerpoint color:" VerticalAlignment="Center" />
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="3" SelectedColor="{Binding Path=PointColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="3" IsEnabled="{Binding Path=RenderPoint, Mode=OneWay}" SelectedColor="{Binding Path=PointColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
 
             <Separator Grid.ColumnSpan="2" Grid.Row="4" Height="5" />
 

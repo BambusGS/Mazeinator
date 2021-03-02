@@ -12,10 +12,9 @@ namespace Mazeinator
         #region Variables
 
         public LineCap[] LineCapOptions = { LineCap.Square, LineCap.Triangle, LineCap.Round, LineCap.SquareAnchor, LineCap.DiamondAnchor, LineCap.RoundAnchor };
-        public LineCap WallEndCap { get; set; } = LineCap.Round;
+        public LineCap WallEndCap { get; set; } = LineCap.Triangle;
         public LineCap PathEndCap { get; set; } = LineCap.Round;
 
-        //public Color WallColor { get; set; } = Color.Black;
         public Color WallColor { get; set; } = Colors.Black;
 
         public Color NodeColor { get; set; } = Colors.LightGray;
@@ -31,8 +30,7 @@ namespace Mazeinator
         public int PointThickness { get; set; } = 0;
         public int RootThickness { get; set; } = 0;
 
-        public bool RenderWall { get; set; } = true;
-        public bool RenderNode { get; set; } = true;
+        public bool RenderNode { get; set; } = false;
         public bool RenderPoint { get; set; } = true;
         public bool RenderRoot { get; set; } = true;
         public bool RenderRootRootNode { get; set; } = true;

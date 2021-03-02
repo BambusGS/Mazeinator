@@ -357,7 +357,7 @@ namespace Mazeinator
 
                 //this for loop draws the single nodes onto the image (with automatic disabling of features when cells get too small)
                 if (style.RenderNode == true && cellSize > 3)
-                    foreach (Node node in nodes) { node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2); }
+                    foreach (Node node in nodes) { node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2 + 1); }
 
                 //if (style.RenderRoot == true && cellSize > 7)
                 //    foreach (Node node in nodes) { node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width); }
@@ -368,61 +368,44 @@ namespace Mazeinator
                 //if (style.RenderRootRootNode == true && cellSize > 7)
                 //    foreach (Node node in nodes) { node.DrawRootRootNode(gr, _startNodePen); }
 
-                if (style.RenderWall == true)
+                //fill corners
                 {
-                    //fill corners
-                    {
-                        gr.FillRectangle(_wallsPen.Brush, 0, 0, cellWallWidth, cellWallWidth);  //top-left
-                        gr.FillRectangle(_wallsPen.Brush, 0, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);    //top-right
-                        gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, 0, cellWallWidth, cellWallWidth);    //bottom-left
-                        gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);  //bottom-right
-                    }
-
-                    //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
-                    //  ☒☒☒☒☒☒☒☒☒
-                    //  ☒☐☒☐☒☐☒☐☒
-                    //  ☒☒☐☒☐☒☐☒☒
-                    //  ☒☐☒☐☒☐☒☐☒
-                    //  ☒☒☐☒☐☒☐☒☒
-                    //  ☒☐☒☐☒☐☒☐☒
-
-                    if (_nodeCountX > 2 || _nodeCountY > 2)
-                    {
-                        for (int column = 1; column < _nodeCountX; column++)
-                        {
-                            for (int row = 1; row < _nodeCountY; row += 2)
-                            {
-                                nodes[column, (column % 2 == 0) ? row - 1 : row].DrawWall(gr, _wallsPen);
-                            }
-                        }
-                    }
-                    //fill the horizontal edges
-                    for (int column = 0; column < _nodeCountX; column++)
-                    {
-                        nodes[column, 0].DrawWall(gr, _wallsPen);
-                        nodes[column, _nodeCountY - 1].DrawWall(gr, _wallsPen);
-                    }
-                    //fill the vertical edges
-                    for (int row = 0; row < _nodeCountY; row++)
-                    {
-                        nodes[0, row].DrawWall(gr, _wallsPen);
-                        nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
-                    }
+                    gr.FillRectangle(_wallsPen.Brush, 0, 0, cellWallWidth, cellWallWidth);  //top-left
+                    gr.FillRectangle(_wallsPen.Brush, 0, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);    //top-right
+                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, 0, cellWallWidth, cellWallWidth);    //bottom-left
+                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);  //bottom-right
                 }
 
-                //if (startNode != null)
-                //{
-                //    Pen startNodePen = new Pen(Utilities.ConvertColor(style.StartPointColor), _boxPen.Width * 3);
-                //    //startNode.DrawBox(gr, startNodePen, (int)_wallsPen.Width / 2 + 1);
-                //    startNode.DrawCentre(gr, startNodePen);
-                //}
+                //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
+                //  ☒☒☒☒☒☒☒☒☒
+                //  ☒☐☒☐☒☐☒☐☒
+                //  ☒☒☐☒☐☒☐☒☒
+                //  ☒☐☒☐☒☐☒☐☒
+                //  ☒☒☐☒☐☒☐☒☒
+                //  ☒☐☒☐☒☐☒☐☒
 
-                //if (endNode != null)
-                //{
-                //    Pen endNodePen = new Pen(Utilities.ConvertColor(style.EndPointColor), _boxPen.Width * 3);
-                //    //endNode.DrawBox(gr, endNodePen, (int)_wallsPen.Width / 2 + 1);
-                //    endNode.DrawCentre(gr, endNodePen);
-                //}
+                if (_nodeCountX > 2 || _nodeCountY > 2)
+                {
+                    for (int column = 1; column < _nodeCountX; column++)
+                    {
+                        for (int row = 1; row < _nodeCountY; row += 2)
+                        {
+                            nodes[column, (column % 2 == 0) ? row - 1 : row].DrawWall(gr, _wallsPen);
+                        }
+                    }
+                }
+                //fill the horizontal edges
+                for (int column = 0; column < _nodeCountX; column++)
+                {
+                    nodes[column, 0].DrawWall(gr, _wallsPen);
+                    nodes[column, _nodeCountY - 1].DrawWall(gr, _wallsPen);
+                }
+                //fill the vertical edges
+                for (int row = 0; row < _nodeCountY; row++)
+                {
+                    nodes[0, row].DrawWall(gr, _wallsPen);
+                    nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
+                }
             }
 
             if (fill == true)
@@ -448,10 +431,14 @@ namespace Mazeinator
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
                     gr.CompositingQuality = CompositingQuality.HighSpeed;
 
+                    int thickness = nodes[0, 0].Bounds.X + 1;
                     //draw over current walls with background color; then switch it back
-                    _wallsPen.Color = Utilities.ConvertColor(style.BackgroundColor);
-                    node.DrawWalls(gr, _wallsPen);
-                    _wallsPen.Color = Utilities.ConvertColor(style.WallColor);
+                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2*thickness, node.Bounds.Width + 2*thickness);
+
+
+                    //_wallsPen.Color = Utilities.ConvertColor(style.BackgroundColor);
+                    //node.DrawWalls(gr, _wallsPen);
+                    //_wallsPen.Color = Utilities.ConvertColor(style.WallColor);                   
 
                     //redraw the adjecent cell's walls (the ones that have a wall)
                     for (int i = 0; i < node.Neighbours.Length; i++)
@@ -495,15 +482,12 @@ namespace Mazeinator
                     int cellSize = (node.Bounds.Width < node.Bounds.Height) ? node.Bounds.Width : node.Bounds.Height;
 
                     if (style.RenderNode == true && cellSize > 3)
-                        node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2);
+                        node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2 + 1);
 
                     if (style.RenderPoint == true && cellSize > 3)
                         node.DrawCentre(gr, _pointPen);
 
-                    if (style.RenderWall == true)
-                    {
-                        node.DrawWall(gr, _wallsPen);
-                    }
+                    node.DrawWall(gr, _wallsPen);
                 }
             }
 
