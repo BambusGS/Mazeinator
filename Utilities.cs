@@ -60,7 +60,7 @@ namespace Mazeinator
             }
             catch (Exception)
             {
-                throw new Exception();
+                throw new FileFormatException();
             }
             isWorking = false;
             return true;
@@ -80,7 +80,7 @@ namespace Mazeinator
             }
             catch (Exception)
             {
-                throw new Exception();
+                throw new FileFormatException();
             }
 
             isWorking = false;

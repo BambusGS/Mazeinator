@@ -54,6 +54,7 @@ namespace Mazeinator
 
         private void SetVisualIndicator(int nodeSize)
         {
+            //works in WPF units
             const int gridWidth = 40;
 
             lineTL.X2 = gridWidth / 2 - nodeSize;

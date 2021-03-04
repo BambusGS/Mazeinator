@@ -4,12 +4,12 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  app ICON
- *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%
- *  Check if canvas size has changed and only then update
- *  add blank maze option
  *  Export window - resolution, (colors and fileformat)
+ *      only the maze & maze+path
+ *  app ICON
  *  Either create new file or load another one
+ *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%
+ *  add blank maze option
  *  Async save/loading/export
  *  progress bar is nonexistent as hell
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
@@ -36,6 +36,10 @@ namespace Mazeinator
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _controller.DPI = GetScaling();
+
+            //preset these values for a possible MazeGeneration shortcut command
+            _controller.CanvasSizeX = GetCanvasSizePixels().Item1;
+            _controller.CanvasSizeY = GetCanvasSizePixels().Item2;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -63,6 +67,11 @@ namespace Mazeinator
                     _autoRenderTimer.Stop();
                     _autoRenderTimer.Start();
                 }
+            }
+            else
+            {
+                _controller.CanvasSizeX = GetCanvasSizePixels().Item1;
+                _controller.CanvasSizeY = GetCanvasSizePixels().Item2;
             }
         }
 
@@ -111,17 +120,7 @@ namespace Mazeinator
 
         private void MazeGeneration(object sender, RoutedEventArgs e)
         {
-            // parse user specified maze parameters into intigers
-            int.TryParse(WidthBox.Text, out int NodeCountX);
-            int.TryParse(HeightBox.Text, out int NodeCountY);
-
-            if (!(NodeCountX > 0 && NodeCountY > 0))
-            {
-                MessageBox.Show("Maze size error – must be a positive integer", "Maze size error", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
-                return;
-            }
-
-            _controller.MazeGeneration(NodeCountX, NodeCountY, GetCanvasSizePixels());
+            _controller.MazeGeneration(GetCanvasSizePixels());
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -167,7 +166,7 @@ namespace Mazeinator
 
             //check if X and Y scaling are the same - if not (this should never happen) throw an error
             if (m.M11 / m.M22 != 1)
-                throw new ApplicationException("Display scaling is not square?!");
+                throw new ApplicationException("Display scaling is not square?! HOW!");
 
             return scaling;
         }

@@ -54,6 +54,8 @@ namespace Mazeinator
         private bool _isSquare = true; public bool IsSquare { get => _isSquare; set { _isSquare = value; OnPropertyChanged(nameof(IsSquare)); } }
 
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
+        private int _nodeCountX = 20; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
+        private int _nodeCountY = 10; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
         private long _lastRenderTime = 0; public long LastRenderTime { get => _lastRenderTime; set { _lastRenderTime = value; OnPropertyChanged(nameof(LastRenderTime)); } }
         private int _renderSizeX = 0; public int RenderSizeX { get => _renderSizeX; set { _renderSizeX = value; OnPropertyChanged(nameof(RenderSizeX)); } }
@@ -89,12 +91,16 @@ namespace Mazeinator
 
         private ICommand _newFileCMD; public ICommand NewFileCMD { get { return _newFileCMD ?? (_newFileCMD = new ActionCommand(() => { NewMaze(); })); } }
         private ICommand _saveFileCMD; public ICommand SaveFileCMD { get { return _saveFileCMD ?? (_saveFileCMD = new ActionCommand(() => { SaveMaze(); })); } }
+        private ICommand _loadFileCMD; public ICommand LoadFileCMD { get { return _loadFileCMD ?? (_loadFileCMD = new ActionCommand(() => { LoadMaze(); })); } }
+        private ICommand _generateCMD; public ICommand GenerateCMD { get { return _generateCMD ?? (_generateCMD = new ActionCommand(() => { MazeGeneration(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
+        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(new Tuple<int, int>(CanvasSizeX, CanvasSizeX)); })); } }
+        private ICommand _quitCMD; public ICommand QuitCMD { get { return _quitCMD ?? (_quitCMD = new ActionCommand(() => { Application.Current.MainWindow.Close(); })); } }
 
         #endregion Global_shortcuts
 
         #region Maze_functions
 
-        public void MazeGeneration(int NodeCountX, int NodeCountY, Tuple<int, int> CanvasSize)
+        public void MazeGeneration(Tuple<int, int> CanvasSize)
         {
             _currentFilePath = null; //reset the "save without asking" path
 
@@ -114,8 +120,6 @@ namespace Mazeinator
             Render(CanvasSize);
 
             //new Task(() => { MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, _isSquare, false); }).Start();
-            //Bitmap Maze = MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, _isSquare, false);
-            //pictureBox.Source = Utilities.BitmapToImageSource(Maze);
         }
 
         public void Render(Tuple<int, int> CanvasSize)
@@ -138,6 +142,7 @@ namespace Mazeinator
                 RenderSizeY = MainMaze.renderSizeY;
                 CanvasSizeX = CanvasSize.Item1;
                 CanvasSizeY = CanvasSize.Item2;
+                GC.Collect();
             }
         }
 
@@ -200,7 +205,7 @@ namespace Mazeinator
                 double gridSnapY = (selectY * cellHeight + cellYStart + (double)cellHeight / 2) - (imageYinPX) + 0.5;
 
                 int cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-                NodeSettings NodeSelector = new NodeSettings((int)(cellSize  / DPI / 5));
+                NodeSettings NodeSelector = new NodeSettings((int)(cellSize / DPI / 5));
                 //centers the window on the current cell - where user clicked + grid_snap_offset + half_the_window_width
                 //divided by the current monitor_scaling_DPI -> get back to WPF units
                 NodeSelector.Left = (monitorClick.X + gridSnapX / transfrom.X) / DPI - NodeSelector.Width / 2;
@@ -317,7 +322,7 @@ namespace Mazeinator
             }
             catch (Exception exc)
             {
-                MessageBox.Show("An unhandled exception just occured: " + exc.Message, "Unhandled exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("An unhandled saving exception just occured: " + exc.Message, "Unhandled saving exception", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -346,7 +351,7 @@ namespace Mazeinator
             }
             catch (Exception exc)
             {
-                MessageBox.Show("An unhandled exception just occured: " + exc.Message, "Unhandled exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("An unhandled loading exception just occured: " + exc.Message, "Unhandled loading exception", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -378,7 +383,7 @@ namespace Mazeinator
             }
             catch (Exception exc)
             {
-                MessageBox.Show("An unhandled exception just occured: " + exc.Message, "Unhandled exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
