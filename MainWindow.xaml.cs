@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  Make every PEN/drawing ifs into correct order
- *  check style.RenderWall booleans
  *  app ICON
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%
  *  Check if canvas size has changed and only then update
@@ -25,6 +24,7 @@ namespace Mazeinator
     public partial class MainWindow : Window
     {
         private Omnipresent _controller = new Omnipresent();
+        private DispatcherTimer _autoRenderTimer = new DispatcherTimer();
 
         public MainWindow()
         {
@@ -38,18 +38,44 @@ namespace Mazeinator
             _controller.DPI = GetScaling();
         }
 
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //if(_controller.MainMaze != null)
-            //    _controller.Render(GetCanvasSizePixels());
-
-            //big button with [redraw]
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             CloseApp(null, null);
         }
+
+        #region AutoRe-Render
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_controller.MainMaze != null)
+            {
+                //triggers the timer
+                if (_autoRenderTimer.IsEnabled == false)
+                {
+                    _autoRenderTimer.Tick += new EventHandler(autoRender);
+                    _autoRenderTimer.Interval = new TimeSpan(0, 0, 1);
+                    _autoRenderTimer.Start();
+                }
+
+                //restart the timer - window has just been resized
+                if (_autoRenderTimer.IsEnabled == true)
+                {
+                    _autoRenderTimer.Stop();
+                    _autoRenderTimer.Start();
+                }
+            }
+        }
+
+        private void autoRender(object sender, EventArgs e)
+        {
+            _autoRenderTimer.Stop();
+            _autoRenderTimer.Tick -= autoRender;
+            _controller.Render(GetCanvasSizePixels());
+        }
+
+        #endregion AutoRe-Render
+
+        #region Menu
 
         private void NewMaze(object sender, RoutedEventArgs e)
         {
@@ -79,6 +105,10 @@ namespace Mazeinator
             else { Application.Current.Shutdown(); }
         }
 
+        #endregion Menu
+
+        #region MazeFunctions
+
         private void MazeGeneration(object sender, RoutedEventArgs e)
         {
             // parse user specified maze parameters into intigers
@@ -92,11 +122,6 @@ namespace Mazeinator
             }
 
             _controller.MazeGeneration(NodeCountX, NodeCountY, GetCanvasSizePixels());
-        }
-
-        private void RedrawMaze(object sender, RoutedEventArgs e)
-        {
-            _controller.Render(GetCanvasSizePixels());
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -126,6 +151,8 @@ namespace Mazeinator
         {
             _controller.SettingOpen();
         }
+
+        #endregion MazeFunctions
 
         #region CustomFunctions
 

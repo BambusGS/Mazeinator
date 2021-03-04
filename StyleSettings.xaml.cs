@@ -62,16 +62,6 @@ namespace Mazeinator
             RedrawPreview();
         }
 
-        private void RedrawPreview()
-        {
-            //get canvas size & work out the rectangular cell size from the current window size
-            int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
-            int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
-
-            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
-            GC.Collect();
-        }
-
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             RedrawPreview();
@@ -94,6 +84,14 @@ namespace Mazeinator
             RedrawPreview();
         }
 
-        
+        private void RedrawPreview()
+        {
+            //get canvas size & work out the rectangular cell size from the current window size
+            int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
+            int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
+
+            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
+            GC.Collect();
+        }
     }
 }

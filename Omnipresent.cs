@@ -200,14 +200,13 @@ namespace Mazeinator
                 double gridSnapY = (selectY * cellHeight + cellYStart + (double)cellHeight / 2) - (imageYinPX) + 0.5;
 
                 int cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-                NodeSettings NodeSelector = new NodeSettings(cellSize / 6);
+                NodeSettings NodeSelector = new NodeSettings((int)(cellSize  / DPI / 5));
                 //centers the window on the current cell - where user clicked + grid_snap_offset + half_the_window_width
                 //divided by the current monitor_scaling_DPI -> get back to WPF units
                 NodeSelector.Left = (monitorClick.X + gridSnapX / transfrom.X) / DPI - NodeSelector.Width / 2;
                 NodeSelector.Top = (monitorClick.Y + gridSnapY / transfrom.Y) / DPI - NodeSelector.Height / 2;
 
                 int selector = -1;
-
                 if (NodeSelector.ShowDialog() == true)
                 {
                     selector = NodeSelector.selector;
@@ -249,13 +248,13 @@ namespace Mazeinator
                             break;
 
                         case 20:
-                            //find path yellow-ish button
+                            //auxilary button
+                            MainMaze.Dijkstra();
                             break;
 
                         default:
                             break;
                     }
-
                     RenderPath();
                     //GC.Collect();
                 }
@@ -373,7 +372,7 @@ namespace Mazeinator
                 if (dialog.ShowDialog() == true)
                 {
                     //draws the path(generates bitmap) and save it to file
-                    MainMaze.RenderPath(MainMaze.RenderMaze(CanvasSize.Item1 * 2, CanvasSize.Item2 * 2, MazeStyle, false), MazeStyle).Save(dialog.FileName);
+                    MainMaze.RenderPath(MainMaze.RenderMaze(CanvasSize.Item1 * 2, CanvasSize.Item2 * 2, MazeStyle, true), MazeStyle).Save(dialog.FileName);
                     Status = "Export done";
                 }
             }

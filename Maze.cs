@@ -368,12 +368,12 @@ namespace Mazeinator
                 //if (style.RenderRootRootNode == true && cellSize > 7)
                 //    foreach (Node node in nodes) { node.DrawRootRootNode(gr, _startNodePen); }
 
-                //fill corners
+                //fill corners with 1px offset from the centre in both X and Y
                 {
-                    gr.FillRectangle(_wallsPen.Brush, 0, 0, cellWallWidth, cellWallWidth);  //top-left
-                    gr.FillRectangle(_wallsPen.Brush, 0, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);    //top-right
-                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, 0, cellWallWidth, cellWallWidth);    //bottom-left
-                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth, renderSizeY - cellWallWidth, cellWallWidth, cellWallWidth);  //bottom-right
+                    gr.FillRectangle(_wallsPen.Brush, -1, -1, cellWallWidth, cellWallWidth);  //top-left
+                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth + 1, -1, cellWallWidth, cellWallWidth);    //top-right
+                    gr.FillRectangle(_wallsPen.Brush, -1, renderSizeY - cellWallWidth + 1, cellWallWidth, cellWallWidth);    //bottom-left
+                    gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth + 1, renderSizeY - cellWallWidth + 1, cellWallWidth, cellWallWidth);  //bottom-right
                 }
 
                 //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
@@ -433,12 +433,11 @@ namespace Mazeinator
 
                     int thickness = nodes[0, 0].Bounds.X + 1;
                     //draw over current walls with background color; then switch it back
-                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2*thickness, node.Bounds.Width + 2*thickness);
-
+                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2 * thickness, node.Bounds.Width + 2 * thickness);
 
                     //_wallsPen.Color = Utilities.ConvertColor(style.BackgroundColor);
                     //node.DrawWalls(gr, _wallsPen);
-                    //_wallsPen.Color = Utilities.ConvertColor(style.WallColor);                   
+                    //_wallsPen.Color = Utilities.ConvertColor(style.WallColor);
 
                     //redraw the adjecent cell's walls (the ones that have a wall)
                     for (int i = 0; i < node.Neighbours.Length; i++)

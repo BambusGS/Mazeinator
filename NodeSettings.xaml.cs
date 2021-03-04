@@ -43,7 +43,12 @@ namespace Mazeinator
                 case "EndNodeSelect":
                     selector = 11;
                     break;
+
+                case "AUX":
+                    selector = 20;
+                    break;
             }
+
             this.DialogResult = true;
         }
 

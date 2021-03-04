@@ -31,6 +31,7 @@ namespace Mazeinator
 
         public static System.Drawing.Color ConvertColor(System.Windows.Media.Color WMColor) => System.Drawing.Color.FromArgb(WMColor.R, WMColor.G, WMColor.B);
 
+        //clamp function - useful, but is not built in as far as I know
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0)
@@ -40,6 +41,8 @@ namespace Mazeinator
             else
                 return val;
         }
+
+        #region DataManipulation
 
         public static bool isWorking = false;
 
@@ -84,4 +87,6 @@ namespace Mazeinator
             return thing;
         }
     }
+
+    #endregion DataManipulation
 }
