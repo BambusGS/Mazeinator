@@ -20,6 +20,7 @@
 
     <Window.Resources>
         <Style x:Key="StatusBarTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Padding" Value="3,0" />
             <Setter Property="Margin" Value="1,0" />
         </Style>
@@ -83,8 +84,6 @@
                 <TextBlock Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                     <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                 </TextBlock>
-
-                <Button Click="RedrawMaze" Height="auto" Padding="3,0" Margin="3,0,0,0">Redraw</Button>
             </StackPanel>
 
             <!--Canvas for maze drawing-->
@@ -137,6 +136,7 @@
                     </TextBlock>
 
                     <ProgressBar Grid.Column="5" Width="250" Height="auto" Padding="3,0" Margin="3,0" Value="0" />
+
                     <TextBlock Grid.Column="6" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
                 </Grid>
             </StatusBar>
