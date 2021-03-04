@@ -433,7 +433,7 @@ namespace Mazeinator
 
                     int thickness = nodes[0, 0].Bounds.X + 1;
                     //draw over current walls with background color; then switch it back
-                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2 * thickness, node.Bounds.Width + 2 * thickness);
+                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2 * thickness , node.Bounds.Height + 2 * thickness);
 
                     //_wallsPen.Color = Utilities.ConvertColor(style.BackgroundColor);
                     //node.DrawWalls(gr, _wallsPen);
