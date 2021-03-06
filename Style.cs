@@ -11,6 +11,8 @@ namespace Mazeinator
     {
         #region Variables
 
+        public bool IsSquare { get; set; } = true;
+
         public LineCap[] LineCapOptions = { LineCap.Square, LineCap.Triangle, LineCap.Round, LineCap.SquareAnchor, LineCap.DiamondAnchor, LineCap.RoundAnchor };
         public LineCap WallEndCap { get; set; } = LineCap.Triangle;
         public LineCap PathEndCap { get; set; } = LineCap.Round;
