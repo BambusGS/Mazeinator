@@ -6,8 +6,8 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Export Settings" Height="400" Width="400" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
-        WindowStartupLocation="CenterScreen">
+        Title="Maze Export Settings" Height="200" Width="400" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        WindowStartupLocation="CenterScreen"> 
     <!--xmlns:local="clr-namespace:Mazeinator"-->
     
     <Grid>
@@ -18,13 +18,15 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <xctk:IntegerUpDown />
+        
+        <xctk:IntegerUpDown Minimum="1" Maximum="15360" />
+        <xctk:IntegerUpDown Minimum="1" Maximum="15360" />
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button  MinWidth="60" Margin="0,7,5,7" Padding="15,0,15,2" >_Style settings</Button>
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button IsDefault="True" Click="Export" MinWidth="60" Margin="5,7,5,7"  Padding="20,0,20,2">_Export</Button>
             <Button IsCancel="True" MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
         </StackPanel>
