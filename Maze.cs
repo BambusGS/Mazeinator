@@ -585,21 +585,27 @@ namespace Mazeinator
 
                     if (path.Count > 0)
                     {
-                        Pen pen = new Pen(Utilities.ConvertColor(style.RootColorBegin), _pointPen.Width / 2 - 1);
-                        pen.StartCap = style.PathEndCap;
-                        pen.EndCap = style.PathEndCap;
+                        //path has set rootnodes from END to START; path=4 -> we need 3 intervals
+                        double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(path.Count - 1);
+                        double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(path.Count - 1);
+                        double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(path.Count - 1);
 
-                        foreach (Node node in path)
-                            node.DrawRootNode(gr, pen);
-
-                        Console.WriteLine("PATH" + path.Count);
-                        //4TESTING↓
-                        for (int i = 0; i < path.Count; i++)        //real length is Count-1
+                        //because root nodes are drawn - there is no need to draw the first root node
+                        for (int i = 0; i < path.Count - 1; i++)
                         {
-                            if (path[i] != null)
-                                Console.Write(path[i].ToString() + " \t");
+                            var startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
+                            var endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+                            //reverse the drawing order -> we draw from the start
+                            path[path.Count - i - 2].DrawRootNode(gr, startColor, endColor, _pointPen.Width / 2 - 1, style.PathEndCap, style.PathEndCap);
                         }
-                        Console.WriteLine();
+
+                        //Console.WriteLine("PATH" + path.Count);
+                        //for (int i = 0; i < path.Count; i++)        //real length is Count-1
+                        //{
+                        //    if (path[i] != null)
+                        //        Console.Write(path[i].ToString() + " \t");
+                        //}
+                        //Console.WriteLine();
                     }
 
                     if (startNode != null)

@@ -67,8 +67,8 @@ namespace Mazeinator
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
 
-        private int _nodeCountX = 20; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
-        private int _nodeCountY = 10; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
+        private int _nodeCountX = 3; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
+        private int _nodeCountY = 2; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
         private long _lastRenderTime = 0; public long LastRenderTime { get => _lastRenderTime; set { _lastRenderTime = value; OnPropertyChanged(nameof(LastRenderTime)); } }
         private int _renderSizeX = 0; public int RenderSizeX { get => _renderSizeX; set { _renderSizeX = value; OnPropertyChanged(nameof(RenderSizeX)); } }
@@ -240,20 +240,27 @@ namespace Mazeinator
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
                             break;
 
-                        case 10:
+                        case 10: //startNode
                             if (targetNode == MainMaze.endNode)
                                 MainMaze.endNode = null;
-                            MainMaze.startNode = targetNode;
-                            break;
 
-                        case 11:
                             if (targetNode == MainMaze.startNode)
                                 MainMaze.startNode = null;
-                            MainMaze.endNode = targetNode;
+                            else
+                                MainMaze.startNode = targetNode;
                             break;
 
-                        case 20:
-                            //auxilary button
+                        case 11: //endNode
+                            if (targetNode == MainMaze.startNode)
+                                MainMaze.startNode = null;
+
+                            if (targetNode == MainMaze.endNode)
+                                MainMaze.endNode = null;
+                            else
+                                MainMaze.endNode = targetNode;
+                            break;
+
+                        case 20: //auxilary button
                             MainMaze.Dijkstra();
                             break;
 

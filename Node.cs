@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D; //LineCap
 
 namespace Mazeinator
 {
@@ -141,12 +142,22 @@ namespace Mazeinator
         }
 
         //Method overload for a gradient drawing
-        public void DrawRootNode(Graphics gr, Color startColor, Color endColor, float width)
+        public void DrawRootNode(Graphics gr, Color startColor, Color endColor, float width, LineCap startLineCap = LineCap.Flat, LineCap endLineCap = LineCap.Flat)
         {
             if (Root != null && Root != this)
             {
-                Pen pen = new Pen(new System.Drawing.Drawing2D.LinearGradientBrush(Root.Center, Center, startColor, endColor), width);
+                LinearGradientBrush brush = new LinearGradientBrush(Root.Center, Center, startColor, endColor);
+                Pen pen = new Pen(brush, width);
                 gr.DrawLine(pen, Center, Root.Center);
+
+                //workaround for the lineEndCaps to be the proper color (they would not follow the gradient)
+                //line startCap
+                Pen aux = new Pen(startColor, width) { StartCap = endLineCap };
+                gr.DrawLine(aux, Root.Center.X, Root.Center.Y, Root.Center.X + (this.X - Root.X), Root.Center.Y + (this.Y - Root.Y));
+
+                ////line endCap
+                //aux = new Pen(endColor, width) { StartCap = startLineCap };
+                //gr.DrawLine(aux, Center.X, Center.Y, Center.X + (Root.X - this.X), Center.Y + (Root.Y - this.Y));
             }
         }
 
