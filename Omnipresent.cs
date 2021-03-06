@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;    //INotifyPropertyChanged
 using System.Diagnostics;   //Stopwatch
+using System.Drawing.Imaging; //ImageFormat (export operation)
 using System.Threading.Tasks;   //Tasks so as not to freeze the UI  //https://stackoverflow.com/questions/27089263/how-to-run-and-interact-with-an-async-task-from-a-wpf-gui
 using System.Windows;   //MessageBox
 using System.Windows.Input; //ICommands
@@ -39,6 +40,19 @@ namespace Mazeinator
     /// </summary>
     internal class Omnipresent : INotifyPropertyChanged
     {
+        #region INotify_Binding
+
+        // Create the OnPropertyChanged method to raise the event
+        // The calling member's name will be used as the parameter.
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));  //= if(PropertyChanged != null) {}
+        }
+
+        #endregion INotify_Binding
+
         #region Variables
 
         //define the powerful Maze class
@@ -51,9 +65,8 @@ namespace Mazeinator
         public double DPI = 1;
 
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
-        private bool _isSquare = true; public bool IsSquare { get => _isSquare; set { _isSquare = value; OnPropertyChanged(nameof(IsSquare)); } }
-
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
+
         private int _nodeCountX = 20; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
         private int _nodeCountY = 10; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
@@ -74,26 +87,13 @@ namespace Mazeinator
 
         #endregion Variables
 
-        #region INotify_Binding
-
-        // Create the OnPropertyChanged method to raise the event
-        // The calling member's name will be used as the parameter.
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));  //= if(PropertyChanged != null) {}
-        }
-
-        #endregion INotify_Binding
-
         #region Global_shortcuts
 
         private ICommand _newFileCMD; public ICommand NewFileCMD { get { return _newFileCMD ?? (_newFileCMD = new ActionCommand(() => { NewMaze(); })); } }
         private ICommand _saveFileCMD; public ICommand SaveFileCMD { get { return _saveFileCMD ?? (_saveFileCMD = new ActionCommand(() => { SaveMaze(); })); } }
         private ICommand _loadFileCMD; public ICommand LoadFileCMD { get { return _loadFileCMD ?? (_loadFileCMD = new ActionCommand(() => { LoadMaze(); })); } }
         private ICommand _generateCMD; public ICommand GenerateCMD { get { return _generateCMD ?? (_generateCMD = new ActionCommand(() => { MazeGeneration(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
-        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(new Tuple<int, int>(CanvasSizeX, CanvasSizeX)); })); } }
+        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); })); } }
         private ICommand _quitCMD; public ICommand QuitCMD { get { return _quitCMD ?? (_quitCMD = new ActionCommand(() => { Application.Current.MainWindow.Close(); })); } }
 
         #endregion Global_shortcuts
@@ -129,7 +129,7 @@ namespace Mazeinator
                 Stopwatch RenderTime = new Stopwatch();
                 RenderTime.Start();
 
-                _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle, IsSquare);
+                _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
 
                 Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
                 //new Task(() => { test = MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, IsSquare); }).Start();
@@ -303,6 +303,7 @@ namespace Mazeinator
                 Title = "Save Maze As",
                 Filter = "Maze files (*.maze)|*.maze|All files (*.*)|*.*",
                 FilterIndex = 1,
+                AddExtension = true,
                 //dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 RestoreDirectory = true
             };
@@ -333,6 +334,7 @@ namespace Mazeinator
                 Title = "Load Maze",
                 Filter = "Maze files (*.maze)|*.maze|All files (*.*)|*.*",
                 FilterIndex = 1,
+                AddExtension = true,
                 //dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 RestoreDirectory = true
             };
@@ -359,31 +361,36 @@ namespace Mazeinator
         {
             if (MainMaze == null)   //only save maze if there is one
             {
-                MessageBox.Show("Cannot export an empty maze", "Export failed", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
+                MessageBox.Show("Cannot export an empty maze", "Export failed", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
+            ImageFormat[] ImageFormats = { ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Gif, ImageFormat.Tiff, ImageFormat.Png, ImageFormat.Icon };
+            ExportSettings exportWindow = new ExportSettings();
             SaveFileDialog dialog = new SaveFileDialog
             {
-                Title = "Export file",
-                Filter = "BMP files (*.bmp)|*.bmp|All files (*.*)|*.*",
-                FilterIndex = 1,
+                Title = "Export image",
+                //filter order is the same as in the ImageFormats array
+                Filter = "BMP files (*.bmp)|*.bmp|JPG files (*.jpg)|*.jpg|GIF files (*.gif)|*.gif|TIFF files (*.tiff)|*.tiff|PNG files (*.png)|*.png|ICON files (*.ico)|*.ico",
+                FilterIndex = 5,
+                AddExtension = true,
                 //dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 RestoreDirectory = true
             };
 
-            try
+            if (dialog.ShowDialog() == true && exportWindow.ShowDialog() == true)
             {
-                if (dialog.ShowDialog() == true)
+                try
                 {
                     //draws the path(generates bitmap) and save it to file
-                    MainMaze.RenderPath(MainMaze.RenderMaze(CanvasSize.Item1 * 2, CanvasSize.Item2 * 2, MazeStyle, true), MazeStyle).Save(dialog.FileName);
+                    MainMaze.RenderPath(MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                     Status = "Export done";
                 }
-            }
-            catch (Exception exc)
-            {
-                MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                catch (Exception exc)
+                {
+                    MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

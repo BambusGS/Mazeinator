@@ -282,10 +282,10 @@ namespace Mazeinator
         /// </summary>
         /// <param name="canvasWidth">Deised image width in px</param>
         /// <param name="canvasHeight">Desired image height in px</param>
-        /// <param name="square">Whether cells should be square</param>
-        /// <param name="fill">Specifies whether to fill background with solid color up to specified parameters </param>
+        ///<param name="style">Maze style class definition</param>
+        /// /// <param name="fill">Specifies whether to fill background with solid color up to specified parameters </param>
         /// <returns>Bitmap rendered maze of the specified size</returns>
-        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool square = true, bool fill = false)
+        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool fill = false)
         {
             //this pen's width is needed for tight cellSize calculation; therefore, I cannot use cellSize for it's width
             int cellWallWidthX = (int)((canvasWidth) / ((_nodeCountX + 4) * (5 + style.WallThickness)));
@@ -312,7 +312,7 @@ namespace Mazeinator
 
             //finds out the smaller cell size in order for the cell to be square
             int cellSize = (cellSizeX < cellSizeY) ? cellSizeX : cellSizeY;
-            if (square == true)
+            if (style.IsSquare == true)
             {
                 cellSizeX = cellSize;
                 cellSizeY = cellSize;
@@ -433,7 +433,7 @@ namespace Mazeinator
 
                     int thickness = nodes[0, 0].Bounds.X + 1;
                     //draw over current walls with background color; then switch it back
-                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2 * thickness , node.Bounds.Height + 2 * thickness);
+                    gr.FillRectangle(new Pen(Utilities.ConvertColor(style.BackgroundColor)).Brush, node.Bounds.Left - thickness, node.Bounds.Top - thickness, node.Bounds.Width + 2 * thickness, node.Bounds.Height + 2 * thickness);
 
                     //_wallsPen.Color = Utilities.ConvertColor(style.BackgroundColor);
                     //node.DrawWalls(gr, _wallsPen);

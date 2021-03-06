@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="NodeSettings" Height="120" Width="120" WindowStartupLocation="Manual"
-        FontSize="9" UseLayoutRounding="True"
+        FontSize="9"
+        UseLayoutRounding="True" ShowInTaskbar="False" ResizeMode="NoResize"
         WindowStyle="None" Background="Transparent" AllowsTransparency="True">
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button">

@@ -60,6 +60,7 @@
             <MenuItem Header="_Options">
                 <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
                 <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
+                <!--TESTING -> REMOVE -->
                 <MenuItem x:Name="DisplayMenuBool" Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
             </MenuItem>
 
