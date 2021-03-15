@@ -155,9 +155,9 @@ namespace Mazeinator
                 Pen aux = new Pen(startColor, width) { StartCap = endLineCap };
                 gr.DrawLine(aux, Root.Center.X, Root.Center.Y, Root.Center.X + (this.X - Root.X), Root.Center.Y + (this.Y - Root.Y));
 
-                ////line endCap
-                //aux = new Pen(endColor, width) { StartCap = startLineCap };
-                //gr.DrawLine(aux, Center.X, Center.Y, Center.X + (Root.X - this.X), Center.Y + (Root.Y - this.Y));
+                //line endCap
+                aux = new Pen(endColor, width) { StartCap = startLineCap };
+                gr.DrawLine(aux, Center.X, Center.Y, Center.X + (Root.X - this.X), Center.Y + (Root.Y - this.Y));
             }
         }
 

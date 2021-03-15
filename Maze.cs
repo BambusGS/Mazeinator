@@ -288,8 +288,8 @@ namespace Mazeinator
         public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool fill = false)
         {
             //this pen's width is needed for tight cellSize calculation; therefore, I cannot use cellSize for it's width
-            int cellWallWidthX = (int)((canvasWidth) / ((_nodeCountX + 4) * (5 + style.WallThickness)));
-            int cellWallWidthY = (int)((canvasHeight) / ((_nodeCountY + 4) * (5 + style.WallThickness)));
+            int cellWallWidthX = (int)((canvasWidth / (5 * (_nodeCountX + 4))) * style.WallThickness / 100.0);
+            int cellWallWidthY = (int)((canvasHeight / (5 * (_nodeCountY + 4))) * style.WallThickness / 100.0);
 
             //prevent the cell from dissapearing
             if (cellWallWidthX <= 1) cellWallWidthX = 1;
@@ -319,7 +319,7 @@ namespace Mazeinator
             }
 
             //properly resize all the nodes; works with INT so as to not render blurry cells
-            int wallOffset = (int)(_wallsPen.Width / 2.0);
+            int wallOffset = (int)(_wallsPen.Width / 2);
             for (int column = 0; column < _nodeCountX; column++)
             {
                 for (int row = 0; row < _nodeCountY; row++)
@@ -329,10 +329,10 @@ namespace Mazeinator
             }
 
             //initialize all the pens that can be changed by serialization or by user
-            Pen _nodePen = new Pen(Utilities.ConvertColor(style.NodeColor), cellSize / (16 + style.NodeThickness));
-            Pen _pointPen = new Pen(Utilities.ConvertColor(style.PointColor), cellSize / (4 + style.PointThickness));
+            Pen _nodePen = new Pen(Utilities.ConvertColor(style.NodeColor), cellSize / 16 * style.NodeThickness / 100);
+            Pen _pointPen = new Pen(Utilities.ConvertColor(style.PointColor), cellSize / 4 * style.PointThickness / 100);
             Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
-            Pen _rootPen = new Pen(Utilities.ConvertColor(style.RootColorBegin), cellSize / (16 + style.RootThickness));
+            Pen _rootPen = new Pen(Utilities.ConvertColor(style.RootColorBegin), cellSize / 16 * style.RootThickness / 100);
             Pen _backgroundPen = new Pen(Utilities.ConvertColor(style.BackgroundColor));
 
             //set the pen instances fot this entire class (are held until the next render)
@@ -545,7 +545,6 @@ namespace Mazeinator
                 {
                     pathFindError = true;
                     return false;
-                    break;
                 }
                 frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; unnecessary for this square maze
 
@@ -593,8 +592,8 @@ namespace Mazeinator
                         //because root nodes are drawn - there is no need to draw the first root node
                         for (int i = 0; i < path.Count - 1; i++)
                         {
-                            var startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
-                            var endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+                            Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
+                            Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
                             //reverse the drawing order -> we draw from the start
                             path[path.Count - i - 2].DrawRootNode(gr, startColor, endColor, _pointPen.Width / 2 - 1, style.PathEndCap, style.PathEndCap);
                         }

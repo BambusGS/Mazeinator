@@ -72,6 +72,11 @@ namespace Mazeinator
             RedrawPreview();
         }
 
+        private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            RedrawPreview();
+        }
+
         private void cmbLineCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SettingsStyle.WallEndCap = SettingsStyle.LineCapOptions[cmbLineCap.SelectedIndex];

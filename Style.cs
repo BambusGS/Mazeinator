@@ -27,10 +27,10 @@ namespace Mazeinator
         public Color EndPointColor { get; set; } = Colors.Red;
         public Color BackgroundColor { get; set; } = Colors.SteelBlue;
 
-        public int WallThickness { get; set; } = 0;
-        public int NodeThickness { get; set; } = 0;
-        public int PointThickness { get; set; } = 0;
-        public int RootThickness { get; set; } = 0;
+        public int WallThickness { get; set; } = 100;
+        public int NodeThickness { get; set; } = 100;
+        public int PointThickness { get; set; } = 100;
+        public int RootThickness { get; set; } = 100;
 
         public bool RenderNode { get; set; } = false;
         public bool RenderPoint { get; set; } = true;

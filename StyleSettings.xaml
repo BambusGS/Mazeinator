@@ -18,6 +18,13 @@
             <Setter Property="AvailableColorsSortingMode" Value="HueSaturationBrightness" />
             <Setter Property="Margin" Value="2,2,2,2" />
         </Style>
+
+        <Style x:Key="MultiplierStyle" TargetType="xctk:IntegerUpDown">
+            <EventSetter Event="ValueChanged" Handler="IntegerUpDown_ValueChanged" />
+            <Setter Property="Minimum" Value="20" />
+            <Setter Property="Maximum" Value="500" />
+            <Setter Property="MinWidth" Value="80" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -36,10 +43,32 @@
             <Image x:Name="MazePreview" Stretch="None" Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
         </Canvas>
 
-        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Square nodes: " />
-            <CheckBox VerticalAlignment="Center"  IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
-        </StackPanel>
+        <Grid Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Margin="10,0,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Square nodes: " />
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
+            </StackPanel>
+
+            <TextBlock Grid.Column="1" Grid.Row="0" Text="Wall width % " HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="0" Value="{Binding Path=WallThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="Boundary width % " HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="1" Value="{Binding Path=NodeThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="Centerpoint size % " HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="2" Value="{Binding Path=PointThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+        </Grid>
 
         <!--https://github.com/xceedsoftware/wpftoolkit/wiki/ColorPicker-->
         <!--ZOOMBOX could be useful with transitions (aka rendering in higher resolutions)-->
