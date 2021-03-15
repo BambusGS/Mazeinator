@@ -28,6 +28,8 @@ namespace Mazeinator
 
         #endregion Variables
 
+        #region MazeGeneration
+
         /// <summary>
         /// Maze Node constructor
         /// </summary>
@@ -46,6 +48,7 @@ namespace Mazeinator
                     nodes[column, row] = new Node(column, row);
                 }
             }
+            ; ; ; //three lonely semicolons; they do absolutely nothing, just convey the emotions of a programmer
         }
 
         /// <summary>
@@ -192,7 +195,6 @@ namespace Mazeinator
                     nodes[column, row].Neighbours[Node.West] = nodes[column - 1, row];
                 }
             }
-
             foreach (Node node in nodes)
                 node.Root = node;
 
@@ -277,15 +279,20 @@ namespace Mazeinator
             }
         }
 
+        #endregion MazeGeneration
+
+        #region Rendering
+
         /// <summary>
         /// Maze rendering function; works in real pixels
         /// </summary>
         /// <param name="canvasWidth">Deised image width in px</param>
         /// <param name="canvasHeight">Desired image height in px</param>
         ///<param name="style">Maze style class definition</param>
+        ///<param name="isRendering">Stops time-saving measures in order to render more perfectly</param>
         /// /// <param name="fill">Specifies whether to fill background with solid color up to specified parameters </param>
         /// <returns>Bitmap rendered maze of the specified size</returns>
-        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool fill = false)
+        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool isRendering = false, bool fill = false)
         {
             //this pen's width is needed for tight cellSize calculation; therefore, I cannot use cellSize for it's width
             int cellWallWidthX = (int)((canvasWidth / (5 * (_nodeCountX + 4))) * style.WallThickness / 100.0);
@@ -351,7 +358,10 @@ namespace Mazeinator
             {
                 //sets up graphics for smooth circles and fills the background with solid color
                 gr.SmoothingMode = SmoothingMode.AntiAlias;
-                gr.CompositingQuality = CompositingQuality.HighSpeed;
+                if (isRendering == true)
+                    gr.CompositingQuality = CompositingQuality.HighQuality;
+                else
+                    gr.CompositingQuality = CompositingQuality.HighSpeed;
 
                 gr.FillRectangle(_backgroundPen.Brush, 0, 0, renderSizeX, renderSizeY);
 
@@ -376,35 +386,48 @@ namespace Mazeinator
                     gr.FillRectangle(_wallsPen.Brush, renderSizeX - cellWallWidth + 1, renderSizeY - cellWallWidth + 1, cellWallWidth, cellWallWidth);  //bottom-right
                 }
 
-                //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
-                //  ☒☒☒☒☒☒☒☒☒
-                //  ☒☐☒☐☒☐☒☐☒
-                //  ☒☒☐☒☐☒☐☒☒
-                //  ☒☐☒☐☒☐☒☐☒
-                //  ☒☒☐☒☐☒☐☒☒
-                //  ☒☐☒☐☒☐☒☐☒
-
-                if (_nodeCountX > 2 || _nodeCountY > 2)
+                if (isRendering == true)   //slower render, but render every cell (thus eliminating AntiAliasing glitches
                 {
-                    for (int column = 1; column < _nodeCountX; column++)
+                    for (int column = 0; column < _nodeCountX; column++)
                     {
-                        for (int row = 1; row < _nodeCountY; row += 2)
+                        for (int row = 0; row < _nodeCountY; row++ )
                         {
-                            nodes[column, (column % 2 == 0) ? row - 1 : row].DrawWall(gr, _wallsPen);
+                            nodes[column, row].DrawWall(gr, _wallsPen);
                         }
                     }
                 }
-                //fill the horizontal edges
-                for (int column = 0; column < _nodeCountX; column++)
+                else
                 {
-                    nodes[column, 0].DrawWall(gr, _wallsPen);
-                    nodes[column, _nodeCountY - 1].DrawWall(gr, _wallsPen);
-                }
-                //fill the vertical edges
-                for (int row = 0; row < _nodeCountY; row++)
-                {
-                    nodes[0, row].DrawWall(gr, _wallsPen);
-                    nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
+                    //I draw every second wall (testing proved it to be 2× faster) and then fill the edges
+                    //  ☒☒☒☒☒☒☒☒☒
+                    //  ☒☐☒☐☒☐☒☐☒
+                    //  ☒☒☐☒☐☒☐☒☒
+                    //  ☒☐☒☐☒☐☒☐☒
+                    //  ☒☒☐☒☐☒☐☒☒
+                    //  ☒☐☒☐☒☐☒☐☒
+
+                    if (_nodeCountX > 2 || _nodeCountY > 2)
+                    {
+                        for (int column = 1; column < _nodeCountX; column++)
+                        {
+                            for (int row = 1; row < _nodeCountY; row += 2)
+                            {
+                                nodes[column, (column % 2 == 0) ? row - 1 : row].DrawWall(gr, _wallsPen);
+                            }
+                        }
+                    }
+                    //fill the horizontal edges
+                    for (int column = 0; column < _nodeCountX; column++)
+                    {
+                        nodes[column, 0].DrawWall(gr, _wallsPen);
+                        nodes[column, _nodeCountY - 1].DrawWall(gr, _wallsPen);
+                    }
+                    //fill the vertical edges
+                    for (int row = 0; row < _nodeCountY; row++)
+                    {
+                        nodes[0, row].DrawWall(gr, _wallsPen);
+                        nodes[_nodeCountX - 1, row].DrawWall(gr, _wallsPen);
+                    }
                 }
             }
 
@@ -493,12 +516,12 @@ namespace Mazeinator
             return originalBMP;
         }
 
+        #endregion Rendering
+
         #region PathPlanning
 
         public bool Dijkstra()
         {
-            //4TESTING↓
-
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 

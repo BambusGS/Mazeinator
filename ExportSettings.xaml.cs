@@ -32,67 +32,48 @@ namespace Mazeinator
             this.DialogResult = true;
         }
 
-        private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            if (MaintainAspectRatio == true)
-            {
-                switch ((sender as Xceed.Wpf.Toolkit.IntegerUpDown).Name)
-                {
-                    case "XIUD":
-                        YIUD.Value = (int)(ExportSizeX * _aspectRatio);
-                        //ExportSizeY = (int)(ExportSizeX * _aspectRatio);
-                        Console.WriteLine("XV" + XIUD.Value);
-                        Console.WriteLine("X" + ExportSizeX);
-                        Console.WriteLine(_aspectRatio);
-                        break;
-
-                    case "YIUD":
-                        XIUD.Value = (int)(ExportSizeY * _aspectRatio);
-
-                        Console.WriteLine("XV" + XIUD.Value);
-                        Console.WriteLine("X" + ExportSizeX);
-                        Console.WriteLine(_aspectRatio);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
+        #region MaintainAspectRation
 
         private void AspectRatio(object sender, RoutedEventArgs e)
         {
             _aspectRatio = (double)ExportSizeX / (double)ExportSizeY;
         }
 
+        //stop recursion from occuring by checking if the value change actually occurred
+        private bool _isChangingX = false;
+
+        private bool _isChangingY = false;
+
         private void XIUD_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (MaintainAspectRatio == true && XIUD.Value != null && YIUD.Value != null)
             {
-                Console.WriteLine("XIUD");
-                Console.WriteLine("YIUD:" + YIUD.Value);
-                Console.WriteLine("XIUD_calc:" + (XIUD.Value / _aspectRatio));
-                Console.WriteLine("DIFF: " + (XIUD.Value / _aspectRatio - YIUD.Value));
-                Console.WriteLine("aspectRatio: " + (1 / _aspectRatio) + "\n");
+                _isChangingX = true;
 
-                if (Math.Abs((double)(XIUD.Value / _aspectRatio - YIUD.Value)) >= (1 / _aspectRatio))
-                    YIUD.Value = (int)(XIUD.Value / _aspectRatio);
+                //stop recursion from occuring by checking if the value change actually occurred
+                if (_isChangingY == false)
+                {
+                    YIUD.Value = (int)Math.Round((double)XIUD.Value / _aspectRatio);
+                }
             }
+            _isChangingX = false;
         }
 
         private void YIUD_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             if (MaintainAspectRatio == true && XIUD.Value != null && YIUD.Value != null)
             {
-                Console.WriteLine("YIUD");
-                Console.WriteLine("XIUD:" + XIUD.Value);
-                Console.WriteLine("YIUD_calc:" + (YIUD.Value * _aspectRatio));
-                Console.WriteLine("DIFF: " + (YIUD.Value * _aspectRatio - XIUD.Value));
-                Console.WriteLine("aspectRatio: " + (_aspectRatio) + "\n");
+                _isChangingY = true;
 
-                if (Math.Abs((double)(YIUD.Value * _aspectRatio - XIUD.Value)) >= (_aspectRatio))
-                    XIUD.Value = (int)(YIUD.Value * _aspectRatio);
+                //stop recursion from occuring by checking if the value change actually occurred
+                if (_isChangingX == false)
+                {
+                    XIUD.Value = (int)Math.Round((double)YIUD.Value * _aspectRatio);
+                }
             }
+            _isChangingY = false;
         }
+
+        #endregion MaintainAspectRation
     }
 }

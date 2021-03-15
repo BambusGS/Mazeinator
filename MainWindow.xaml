@@ -40,7 +40,7 @@
                 <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W">
                     <MenuItem.ToolTip>
                         <StackPanel>
-                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Open file</TextBlock>
+                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Load file</TextBlock>
                             <TextBlock>
                                     Search your computer or local network
                                     <LineBreak />
