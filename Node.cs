@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D; //LineCap
 
 namespace Mazeinator
 {
@@ -24,13 +25,13 @@ namespace Mazeinator
         public Rectangle Bounds;
 
         //Node's center
-        public Point Center
+        public PointF Center
         {
             get
             {
-                int x = Bounds.X + Bounds.Width / 2;
-                int y = Bounds.Y + Bounds.Height / 2;
-                return new Point(x, y);
+                float x = Bounds.X + (float)Bounds.Width / 2;
+                float y = Bounds.Y + (float)Bounds.Height / 2;
+                return new PointF(x, y);
             }
         }
 
@@ -55,9 +56,8 @@ namespace Mazeinator
             Bounds = new Rectangle(xPixel, yPixel, width, height);
         }
 
-        public void DrawWall(Graphics gr, Pen pen, bool smooth = true)
+        public void DrawWall(Graphics gr, Pen pen)
         {
-            float size = pen.Width;
             for (int direction = 0; direction < Neighbours.Length; direction++)
             {
                 //draws the walls
@@ -81,62 +81,89 @@ namespace Mazeinator
                             gr.DrawLine(pen, Bounds.Left, Bounds.Top, Bounds.Left, Bounds.Bottom);
                             break;
                     }
+                }
+            }
+        }
 
-                    //draws circles in the corners of the walls IF the line is thick enough
-                    if (smooth && size > 2)
-                    {
-                        switch (direction)
-                        {
-                            case North:
-                                gr.FillEllipse(pen.Brush, Bounds.Right - size / 2, Bounds.Top - size / 2, size, size);
-                                break;
+        //fill the four walls
+        public void DrawWalls(Graphics gr, Pen pen)
+        {
+            for (int direction = 0; direction < Neighbours.Length; direction++)
+            {
+                switch (direction)
+                {
+                    case North:
+                        gr.DrawLine(pen, Bounds.Left, Bounds.Top, Bounds.Right, Bounds.Top);
+                        break;
 
-                            case East:
-                                gr.FillEllipse(pen.Brush, Bounds.Right - size / 2, Bounds.Bottom - size / 2, size, size);
-                                break;
+                    case East:
+                        gr.DrawLine(pen, Bounds.Right, Bounds.Top, Bounds.Right, Bounds.Bottom);
+                        break;
 
-                            case South:
-                                gr.FillEllipse(pen.Brush, Bounds.Left - size / 2, Bounds.Bottom - size / 2, size, size);
-                                break;
+                    case South:
+                        gr.DrawLine(pen, Bounds.Left, Bounds.Bottom, Bounds.Right, Bounds.Bottom);
+                        break;
 
-                            case West:
-                                gr.FillEllipse(pen.Brush, Bounds.Left - size / 2, Bounds.Top - size / 2, size, size);
-                                break;
-                        }
-                    }
+                    case West:
+                        gr.DrawLine(pen, Bounds.Left, Bounds.Top, Bounds.Left, Bounds.Bottom);
+                        break;
                 }
             }
         }
 
         public void DrawBox(Graphics gr, Pen pen, int inset = 0)
         {
-            int offset = (int)(pen.Width / 2.0) + inset;
+            float offset = (float)(pen.Width / 2.0) + inset;
             gr.DrawRectangle(pen, Bounds.X + offset, Bounds.Y + offset, Bounds.Width - 2 * offset, Bounds.Height - 2 * offset);
         }
 
         //Method for visualizing the node's centre
         public void DrawCentre(Graphics gr, Pen pen)
         {
-            int size = (int)pen.Width;
+            float size = pen.Width;
             gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
         }
 
-        //Method for drawing node's root via a gradient
+        //Highlight the start node
+        public void DrawRootRootNode(Graphics gr, Pen pen)
+        {
+            float size = pen.Width;
+            if (Root == this)
+                gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
+        }
+
+        //Method for drawing node's root via a normal pen
         public void DrawRootNode(Graphics gr, Pen pen)
         {
             if (Root != null && Root != this)
             {
-                Pen pen2 = new Pen(new System.Drawing.Drawing2D.LinearGradientBrush(Center, Root.Center, Color.Black, Color.Blue), pen.Width);
-                gr.DrawLine(pen2, Center, Root.Center);
+                gr.DrawLine(pen, Center, Root.Center);
             }
         }
 
-        //Highlight the start node
-        public void DrawStartNode(Graphics gr, Pen pen)
+        //Method overload for a gradient drawing
+        public void DrawRootNode(Graphics gr, Color startColor, Color endColor, float width, LineCap startLineCap = LineCap.Flat, LineCap endLineCap = LineCap.Flat)
         {
-            int size = (int)pen.Width;
-            if (Root == this)
-                gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
+            if (Root != null && Root != this)
+            {
+                LinearGradientBrush brush = new LinearGradientBrush(Root.Center, Center, startColor, endColor);
+                Pen pen = new Pen(brush, width);
+                gr.DrawLine(pen, Center, Root.Center);
+
+                //workaround for the lineEndCaps to be the proper color (they would not follow the gradient)
+                //line startCap
+                Pen aux = new Pen(startColor, width) { StartCap = endLineCap };
+                gr.DrawLine(aux, Root.Center.X, Root.Center.Y, Root.Center.X + (this.X - Root.X), Root.Center.Y + (this.Y - Root.Y));
+
+                //line endCap
+                aux = new Pen(endColor, width) { StartCap = startLineCap };
+                gr.DrawLine(aux, Center.X, Center.Y, Center.X + (Root.X - this.X), Center.Y + (Root.Y - this.Y));
+            }
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + ",X:" + X + ",Y:" + Y;
         }
     }
 }

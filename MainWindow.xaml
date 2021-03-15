@@ -3,21 +3,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="Mazeinator" Height="720" Width="1280" MinHeight="360" MinWidth="640"
-        UseLayoutRounding="True"
+        UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
         SizeChanged="Window_SizeChanged"
         Closing="Window_Closing"
+        Loaded="Window_Loaded"
         ResizeMode="CanResizeWithGrip"
         Background="Ivory">
 
     <Window.InputBindings>
-        <KeyBinding Command="{Binding NewFileCMD}" Gesture="" Modifiers="Ctrl" Key="N" />
+        <KeyBinding Command="{Binding NewFileCMD}" Modifiers="Ctrl" Key="N" />
         <KeyBinding Command="{Binding SaveFileCMD}" Modifiers="Ctrl" Key="S" />
+        <KeyBinding Command="{Binding LoadFileCMD}" Modifiers="Ctrl" Key="W" />
+        <KeyBinding Command="{Binding GenerateCMD}" Modifiers="Ctrl" Key="D" />
+        <KeyBinding Command="{Binding ExportCMD}" Modifiers="Ctrl" Key="E" />
+        <KeyBinding Command="{Binding QuitCMD}" Modifiers="Ctrl" Key="Q" />
     </Window.InputBindings>
 
     <Window.Resources>
         <Style x:Key="StatusBarTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Padding" Value="3,0" />
             <Setter Property="Margin" Value="1,0" />
         </Style>
@@ -30,7 +37,7 @@
                 <MenuItem Header="_New" Click="NewMaze" InputGestureText="Ctrl+N" />
                 <MenuItem Header="_Generate" Click="MazeGeneration" InputGestureText="Ctrl+D" />
                 <MenuItem Header="_Save" Click="SaveMaze" InputGestureText="Ctrl+S" />
-                <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+L">
+                <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W">
                     <MenuItem.ToolTip>
                         <StackPanel>
                             <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Open file</TextBlock>
@@ -51,8 +58,10 @@
             </MenuItem>
 
             <MenuItem Header="_Options">
-                <MenuItem Header="_Properties" Padding="3,0" Margin="1,0" />
-                <MenuItem x:Name="DisplayMenuBool" Header="_Display" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
+                <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
+                <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
+                <!--TESTING -> REMOVE -->
+                <MenuItem x:Name="DisplayMenuBool" Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
             </MenuItem>
 
             <MenuItem Header="About" />
@@ -70,12 +79,13 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <TextBox Name="WidthBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="32"></TextBox>
+                <xctk:IntegerUpDown Value="{Binding Path=NodeCountX, Mode=TwoWay}" Name="WidthBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="4096" />
+
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <TextBox Name="HeightBox" Width="40" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Text="18"></TextBox>
-                <Button Name="MazeGenBTN" Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">
-                    <TextBlock>Generate</TextBlock>
-                </Button>
+                <xctk:IntegerUpDown Value="{Binding Path=NodeCountY, Mode=TwoWay}" Name="HeightBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="4096" />
+
+                <Button Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">Generate</Button>
+
                 <TextBlock Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                     <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                 </TextBlock>
@@ -85,11 +95,13 @@
             <Canvas Grid.Row="1" x:Name="MainCanvas" Grid.Column="0" Background="Transparent">
                 <Canvas.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="_Properties" Padding="3,0" Margin="1,0" />
-                        <MenuItem Header="_Display" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
+                        <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
+                        <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
+                        <MenuItem Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
-                <Image x:Name="pictureBox" Stretch="None" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+
+                <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
             </Canvas>
 
             <StatusBar Grid.Row="2">
@@ -103,26 +115,33 @@
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="300" />
                     </Grid.ColumnDefinitions>
+
                     <TextBlock Grid.Column="0" Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                     </TextBlock>
-                    <TextBlock Grid.Column="1" Text="Generation time: " Style="{StaticResource StatusBarTextStyle}">
+
+                    <TextBlock Grid.Column="1" Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastGenTime, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="2" Text="Render time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastRenderTime, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="3" Text="Render size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=RenderSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=RenderSizeY, Mode=OneWay}" />
                     </TextBlock>
+
                     <TextBlock Grid.Column="4" Text="Canvas size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=CanvasSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=CanvasSizeY, Mode=OneWay}" />
                     </TextBlock>
+
                     <ProgressBar Grid.Column="5" Width="250" Height="auto" Padding="3,0" Margin="3,0" Value="0" />
+
                     <TextBlock Grid.Column="6" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
                 </Grid>
             </StatusBar>
