@@ -93,7 +93,7 @@ namespace Mazeinator
         private ICommand _saveFileCMD; public ICommand SaveFileCMD { get { return _saveFileCMD ?? (_saveFileCMD = new ActionCommand(() => { SaveMaze(); })); } }
         private ICommand _loadFileCMD; public ICommand LoadFileCMD { get { return _loadFileCMD ?? (_loadFileCMD = new ActionCommand(() => { LoadMaze(); })); } }
         private ICommand _generateCMD; public ICommand GenerateCMD { get { return _generateCMD ?? (_generateCMD = new ActionCommand(() => { MazeGeneration(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
-        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); })); } }
+        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(); })); } }
         private ICommand _quitCMD; public ICommand QuitCMD { get { return _quitCMD ?? (_quitCMD = new ActionCommand(() => { Application.Current.MainWindow.Close(); })); } }
 
         #endregion Global_shortcuts
@@ -378,7 +378,7 @@ namespace Mazeinator
             }
         }
 
-        public void Export(Tuple<int, int> CanvasSize)
+        public void Export()
         {
             if (MainMaze == null)   //only save maze if there is one
             {
@@ -387,7 +387,7 @@ namespace Mazeinator
             }
 
             ImageFormat[] ImageFormats = { ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Gif, ImageFormat.Tiff, ImageFormat.Png, ImageFormat.Icon };
-            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY);
+            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY, MainMaze.nodes[0,0].Bounds.Width, MainMaze.nodes[0, 0].Bounds.Height);
             SaveFileDialog dialog = new SaveFileDialog
             {
                 Title = "Export image",
@@ -404,8 +404,8 @@ namespace Mazeinator
             {
                 try
                 {
-                    //draws the path(generates bitmap) and save it to file
-                    MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    //draws the path(generates bitmap) and save it to file of a specified format
+                    MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
                     MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                     Status = "Export done";
                 }
