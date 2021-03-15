@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Runtime;
 using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
@@ -12,6 +13,7 @@ using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/e
  *  add blank maze option
  *  Async save/loading/export
  *  progress bar is nonexistent as hell
+ *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
  *  http://www.astrolog.org/labyrnth/algrithm.htm
  */
@@ -133,9 +135,15 @@ namespace Mazeinator
             //https://stackoverflow.com/questions/741956/pan-zoom-image
             if (pictureBox.Source != null)
             {
+                //TESTING
+                //Console.WriteLine("SystemParameters.PrimaryScreenWidth:" + SystemParameters.PrimaryScreenWidth);
+                //Console.WriteLine("SystemParameters.FullPrimaryScreenWidth:" + SystemParameters.FullPrimaryScreenWidth);
+                //Console.WriteLine("SystemParameters.VirtualScreenWidth:" + SystemParameters.VirtualScreenWidth);
+                //Console.WriteLine("SystemParameters.VirtualScreenLeft:" + SystemParameters.VirtualScreenLeft);
+                //Console.WriteLine("e.GetPosition(this):" + e.GetPosition(this));
+
                 Point pointPicture = e.GetPosition(pictureBox);
                 Point monitorPoint = PointToScreen(e.GetPosition(this));
-
                 //(real_Width / WPF_Width) -> image scaling
                 double x = pictureBox.Source.Width / pictureBox.ActualWidth;
                 double y = pictureBox.Source.Height / pictureBox.ActualHeight;

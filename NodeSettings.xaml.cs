@@ -69,5 +69,49 @@ namespace Mazeinator
             lineBR.X2 = gridWidth / 2 + nodeSize;
             lineBR.Y2 = gridWidth / 2 + nodeSize;
         }
+
+        public void TargetSwap(int swapDirection = -1)
+        {
+            switch (swapDirection)
+            {
+                case Node.North:
+                    this.Top += this.Height / 3;
+
+                    NorthBtn.SetValue(Grid.RowProperty, 1);
+                    TargetGrid.SetValue(Grid.RowProperty, 0);
+                    break;
+
+                case Node.East:
+                    this.Left -= this.Width / 3;
+
+                    EastBtn.SetValue(Grid.ColumnProperty, 1);
+                    TargetGrid.SetValue(Grid.ColumnProperty, 2);
+                    break;
+
+                case Node.South:
+                    this.Top -= this.Height / 3;
+
+                    SouthBtn.SetValue(Grid.RowProperty, 1);
+                    TargetGrid.SetValue(Grid.RowProperty, 2);
+                    break;
+
+                case Node.West:
+                    this.Left += this.Width / 3;
+
+                    WestBtn.SetValue(Grid.ColumnProperty, 1);
+                    TargetGrid.SetValue(Grid.ColumnProperty, 0);
+                    break;
+
+                default:    //reset it
+                    NorthBtn.SetValue(Grid.RowProperty, 0);
+                    EastBtn.SetValue(Grid.ColumnProperty, 2);
+                    SouthBtn.SetValue(Grid.RowProperty, 2);
+                    WestBtn.SetValue(Grid.ColumnProperty, 0);
+
+                    TargetGrid.SetValue(Grid.ColumnProperty, 1);
+                    TargetGrid.SetValue(Grid.RowProperty, 1);
+                    break;
+            }
+        }
     }
 }

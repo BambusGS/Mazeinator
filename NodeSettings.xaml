@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="NodeSettings" Height="120" Width="120" WindowStartupLocation="Manual"
         FontSize="9"
-        UseLayoutRounding="True" ShowInTaskbar="False" ResizeMode="NoResize"
+        UseLayoutRounding="True" ShowInTaskbar="False" ResizeMode="CanMinimize"
         WindowStyle="None" Background="Transparent" AllowsTransparency="True">
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button">
@@ -15,8 +15,6 @@
         </Style>
 
         <Style x:Key="TargetStyle" TargetType="Line">
-            <Setter Property="Grid.Column" Value="1" />
-            <Setter Property="Grid.Row" Value="1" />
             <Setter Property="StrokeThickness" Value="2" />
             <Setter Property="StrokeStartLineCap" Value="Triangle" />
             <Setter Property="StrokeEndLineCap" Value="Triangle" />
@@ -38,16 +36,18 @@
         <Button Click="ButtonClick" Tag="StartNodeSelect"  Grid.Column="0" Grid.Row="0" Background="LightGreen" Style="{StaticResource ButtonStyle}">START</Button>
         <Button Click="ButtonClick" Tag="EndNodeSelect" Grid.Column="2" Grid.Row="0" Background="OrangeRed" Style="{StaticResource ButtonStyle}">END</Button>
 
-        <Line x:Name="lineTL" X1="0" Y1="0" X2="10" Y2="10" Stroke="Red" Style="{StaticResource TargetStyle}" />
-        <Line x:Name="lineTR" X1="40" Y1="0" X2="30" Y2="10" Stroke="Red" Style="{StaticResource TargetStyle}" />
-        <Line x:Name="lineBL" X1="0" Y1="40" X2="10" Y2="30" Stroke="Red" Style="{StaticResource TargetStyle}" />
-        <Line x:Name="lineBR" X1="40" Y1="40" X2="30" Y2="30" Stroke="Red" Style="{StaticResource TargetStyle}" />
-        <!--<Ellipse x:Name="Ellipse" Grid.Column="1" Grid.Row="1" Width="10" Height="10" Stroke="Red" StrokeThickness="1" />-->
+        <Grid x:Name="TargetGrid" Grid.Column="1" Grid.Row="1">
+            <Line x:Name="lineTL" X1="0" Y1="0" X2="10" Y2="10" Stroke="Red" Style="{StaticResource TargetStyle}" />
+            <Line x:Name="lineTR" X1="40" Y1="0" X2="30" Y2="10" Stroke="Red" Style="{StaticResource TargetStyle}" />
+            <Line x:Name="lineBL" X1="0" Y1="40" X2="10" Y2="30" Stroke="Red" Style="{StaticResource TargetStyle}" />
+            <Line x:Name="lineBR" X1="40" Y1="40" X2="30" Y2="30" Stroke="Red" Style="{StaticResource TargetStyle}" />
+            <!--<Ellipse x:Name="Ellipse" Width="10" Height="10" Stroke="Red" StrokeThickness="1" />-->
+        </Grid>
 
-        <Button Click="ButtonClick" Tag="NorthNodeSelect" Grid.Column="1" Grid.Row="0" Style="{StaticResource ButtonStyle}">NORTH</Button>
-        <Button Click="ButtonClick" Tag="EastNodeSelect" Grid.Column="2" Grid.Row="1" Style="{StaticResource ButtonStyle}">EAST</Button>
-        <Button Click="ButtonClick" Tag="SouthNodeSelect"  Grid.Column="1" Grid.Row="2" Style="{StaticResource ButtonStyle}">SOUTH</Button>
-        <Button Click="ButtonClick" Tag="WestNodeSelect" Grid.Column="0" Grid.Row="1" Style="{StaticResource ButtonStyle}">WEST</Button>
+        <Button x:Name="NorthBtn" Click="ButtonClick" Tag="NorthNodeSelect" Grid.Column="1" Grid.Row="0" Style="{StaticResource ButtonStyle}">NORTH</Button>
+        <Button x:Name="EastBtn" Click="ButtonClick" Tag="EastNodeSelect" Grid.Column="2" Grid.Row="1" Style="{StaticResource ButtonStyle}">EAST</Button>
+        <Button x:Name="SouthBtn" Click="ButtonClick" Tag="SouthNodeSelect"  Grid.Column="1" Grid.Row="2" Style="{StaticResource ButtonStyle}">SOUTH</Button>
+        <Button x:Name="WestBtn" Click="ButtonClick" Tag="WestNodeSelect" Grid.Column="0" Grid.Row="1" Style="{StaticResource ButtonStyle}">WEST</Button>
 
         <Button Click="ButtonClick" Tag="AUX" Grid.Column="0" Grid.Row="2" Background="LemonChiffon" Style="{StaticResource ButtonStyle}">AUX</Button>
         <Button IsCancel="True" Grid.Column="2" Grid.Row="2" Background="DarkGray" Style="{StaticResource ButtonStyle}">EXIT</Button>

@@ -118,8 +118,6 @@ namespace Mazeinator
             NodeCount = MainMaze.nodes.Length;
 
             Render(CanvasSize);
-
-            //new Task(() => { MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, _isSquare, false); }).Start();
         }
 
         public void Render(Tuple<int, int> CanvasSize)
@@ -200,7 +198,7 @@ namespace Mazeinator
                 //text = (coordX).ToString() + " | " + (coordY).ToString();
                 //Console.WriteLine(text);
 
-                //grid snap functionality - calculates offset (where_is_the_center - where_user_clicked)
+                //node snap_to_grid functionality - calculates offset (where_is_the_center - where_user_clicked)
                 double gridSnapX = (selectX * cellWidth + cellXStart + (double)cellWidth / 2) - (imageXinPX) + 0.5;
                 double gridSnapY = (selectY * cellHeight + cellYStart + (double)cellHeight / 2) - (imageYinPX) + 0.5;
 
@@ -208,8 +206,24 @@ namespace Mazeinator
                 NodeSettings NodeSelector = new NodeSettings((int)(cellSize / DPI / 5));
                 //centers the window on the current cell - where user clicked + grid_snap_offset + half_the_window_width
                 //divided by the current monitor_scaling_DPI -> get back to WPF units
-                NodeSelector.Left = (monitorClick.X + gridSnapX / transfrom.X) / DPI - NodeSelector.Width / 2;
-                NodeSelector.Top = (monitorClick.Y + gridSnapY / transfrom.Y) / DPI - NodeSelector.Height / 2;
+                NodeSelector.Left = ((monitorClick.X + gridSnapX / transfrom.X) / DPI - NodeSelector.Width / 2);
+                NodeSelector.Top = ((monitorClick.Y + gridSnapY / transfrom.Y) / DPI - NodeSelector.Height / 2);
+
+                //window rendering near the edges screen fix
+                //gets the active screen's X, Y, Width, Height properties in pixels
+                System.Windows.Interop.WindowInteropHelper windowInteropHelper = new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow);
+                System.Windows.Forms.Screen Screen = System.Windows.Forms.Screen.FromHandle(windowInteropHelper.Handle);
+                Console.WriteLine(Screen.Bounds);
+
+                //a little conversion from (pixels)Screen to (WPF unites)NodeSelector by dividing pixels/DPI
+                if (NodeSelector.Left < Screen.Bounds.Left / DPI)
+                    NodeSelector.TargetSwap(Node.West);
+                else if (NodeSelector.Left + NodeSelector.Width > Screen.Bounds.Right / DPI)
+                    NodeSelector.TargetSwap(Node.East);
+                else if (NodeSelector.Top + NodeSelector.Height > Screen.Bounds.Bottom / DPI)
+                    NodeSelector.TargetSwap(Node.South);
+                else if (NodeSelector.Top < Screen.Bounds.Top / DPI)
+                    NodeSelector.TargetSwap(Node.North);
 
                 int selector = -1;
                 if (NodeSelector.ShowDialog() == true)
@@ -373,10 +387,11 @@ namespace Mazeinator
             }
 
             ImageFormat[] ImageFormats = { ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Gif, ImageFormat.Tiff, ImageFormat.Png, ImageFormat.Icon };
-            ExportSettings exportWindow = new ExportSettings();
+            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY);
             SaveFileDialog dialog = new SaveFileDialog
             {
                 Title = "Export image",
+                FileName = "Labyrinth",
                 //filter order is the same as in the ImageFormats array
                 Filter = "BMP files (*.bmp)|*.bmp|JPG files (*.jpg)|*.jpg|GIF files (*.gif)|*.gif|TIFF files (*.tiff)|*.tiff|PNG files (*.png)|*.png|ICON files (*.ico)|*.ico",
                 FilterIndex = 5,
@@ -390,7 +405,7 @@ namespace Mazeinator
                 try
                 {
                     //draws the path(generates bitmap) and save it to file
-                    MainMaze.RenderPath(MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
                     MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                     Status = "Export done";
                 }
