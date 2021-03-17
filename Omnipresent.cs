@@ -213,7 +213,7 @@ namespace Mazeinator
                 //gets the active screen's X, Y, Width, Height properties in pixels
                 System.Windows.Interop.WindowInteropHelper windowInteropHelper = new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow);
                 System.Windows.Forms.Screen Screen = System.Windows.Forms.Screen.FromHandle(windowInteropHelper.Handle);
-                Console.WriteLine(Screen.Bounds);
+                //Console.WriteLine(Screen.Bounds);
 
                 //a little conversion from (pixels)Screen to (WPF unites)NodeSelector by dividing pixels/DPI
                 if (NodeSelector.Left < Screen.Bounds.Left / DPI)
@@ -387,7 +387,7 @@ namespace Mazeinator
             }
 
             ImageFormat[] ImageFormats = { ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Gif, ImageFormat.Tiff, ImageFormat.Png, ImageFormat.Icon };
-            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY, MainMaze.nodes[0,0].Bounds.Width, MainMaze.nodes[0, 0].Bounds.Height);
+            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY, MainMaze.nodes[0, 0].Bounds.Width, MainMaze.nodes[0, 0].Bounds.Height);
             SaveFileDialog dialog = new SaveFileDialog
             {
                 Title = "Export image",
@@ -404,14 +404,25 @@ namespace Mazeinator
             {
                 try
                 {
-                    //draws the path(generates bitmap) and save it to file of a specified format
-                    MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    //draws the path(generates bitmap)
+                    System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
+                    if (exportWindow.PixelPerfectRender == true)
+                    {
+                        //resize the rendered bitmap
+                        new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    }
+                    else
+                    {
+                        //just saves the render to a file of a specified format
+                        mazeRender.Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    }
                     MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                     Status = "Export done";
                 }
                 catch (Exception exc)
                 {
                     MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Status = "Export failed";
                 }
             }
         }

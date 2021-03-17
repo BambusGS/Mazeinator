@@ -30,6 +30,7 @@ namespace Mazeinator
         public int WallThickness { get; set; } = 100;
         public int NodeThickness { get; set; } = 100;
         public int PointThickness { get; set; } = 100;
+        public int PathThickness { get; set; } = 100;
         public int RootThickness { get; set; } = 100;
 
         public bool RenderNode { get; set; } = false;

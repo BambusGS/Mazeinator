@@ -6,8 +6,9 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Visual Settings" Height="400" Width="700" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        Title="Maze Visual Settings" Height="450" Width="700" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen">
+
     <Window.Resources>
         <Style x:Key="ColorPickerStyle" TargetType="xctk:ColorPicker">
             <EventSetter Event="SelectedColorChanged" Handler="SelectedColorChangedEvent" />
@@ -34,7 +35,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="7*" />
+            <RowDefinition Height="6*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -53,6 +54,7 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -63,11 +65,14 @@
             <TextBlock Grid.Column="1" Grid.Row="0" Text="Wall width % " HorizontalAlignment="Right" />
             <xctk:IntegerUpDown Grid.Column="2" Grid.Row="0" Value="{Binding Path=WallThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
 
-            <TextBlock Grid.Column="1" Grid.Row="1" Text="Boundary width % " HorizontalAlignment="Right" />
-            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="1" Value="{Binding Path=NodeThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="1" Text="Path size % " HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="1" Value="{Binding Path=PathThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
 
-            <TextBlock Grid.Column="1" Grid.Row="2" Text="Centerpoint size % " HorizontalAlignment="Right" />
-            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="2" Value="{Binding Path=PointThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="Boundary width % " HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="2" IsEnabled="{Binding Path=RenderNode, Mode=OneWay}" Value="{Binding Path=NodeThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+
+            <TextBlock Grid.Column="1" Grid.Row="3" Text="Centerpoint size % " HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="3" IsEnabled="{Binding Path=RenderPoint, Mode=OneWay}" Value="{Binding Path=PointThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
         </Grid>
 
         <!--https://github.com/xceedsoftware/wpftoolkit/wiki/ColorPicker-->
