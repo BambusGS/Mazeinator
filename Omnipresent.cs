@@ -67,14 +67,16 @@ namespace Mazeinator
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
 
-        private int _nodeCountX = 3; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
-        private int _nodeCountY = 2; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
+        private int _nodeCountX = 16; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
+        private int _nodeCountY = 9; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
         private long _lastRenderTime = 0; public long LastRenderTime { get => _lastRenderTime; set { _lastRenderTime = value; OnPropertyChanged(nameof(LastRenderTime)); } }
         private int _renderSizeX = 0; public int RenderSizeX { get => _renderSizeX; set { _renderSizeX = value; OnPropertyChanged(nameof(RenderSizeX)); } }
         private int _renderSizeY = 0; public int RenderSizeY { get => _renderSizeY; set { _renderSizeY = value; OnPropertyChanged(nameof(RenderSizeY)); } }
         private int _canvasSizeX = 0; public int CanvasSizeX { get => _canvasSizeX; set { _canvasSizeX = value; OnPropertyChanged(nameof(CanvasSizeX)); } }
         private int _canvasSizeY = 0; public int CanvasSizeY { get => _canvasSizeY; set { _canvasSizeY = value; OnPropertyChanged(nameof(CanvasSizeY)); } }
+
+        //TESTING↓
         private int _percent = 20; public int Percent { get => _percent; set { _percent = value; OnPropertyChanged(nameof(Percent)); } }
 
         private string _status = "Ready"; public string Status { get => _status; set { _status = value; OnPropertyChanged(nameof(Status)); } }
@@ -387,7 +389,7 @@ namespace Mazeinator
             }
 
             ImageFormat[] ImageFormats = { ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Gif, ImageFormat.Tiff, ImageFormat.Png, ImageFormat.Icon };
-            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY, MainMaze.nodes[0, 0].Bounds.Width, MainMaze.nodes[0, 0].Bounds.Height);
+            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY, NodeCountX, NodeCountY, MazeStyle.WallThickness, MazeStyle.IsSquare);
             SaveFileDialog dialog = new SaveFileDialog
             {
                 Title = "Export image",
@@ -404,18 +406,13 @@ namespace Mazeinator
             {
                 try
                 {
+                    MazeStyle.IsSquare = exportWindow.IsSquare;
                     //draws the path(generates bitmap)
                     System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
-                    if (exportWindow.PixelPerfectRender == true)
-                    {
-                        //resize the rendered bitmap
-                        new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
-                    }
-                    else
-                    {
-                        //just saves the render to a file of a specified format
-                        mazeRender.Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
-                    }
+
+                    //resize the rendered bitmap (only does it, if it's needed)
+                    new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+
                     MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                     Status = "Export done";
                 }
