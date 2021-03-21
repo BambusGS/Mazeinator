@@ -290,7 +290,7 @@ namespace Mazeinator
         /// <param name="canvasHeight">Desired image height in px</param>
         ///<param name="style">Maze style class definition</param>
         ///<param name="isRendering">Enables measures in order to render more perfectly</param>
-        /// /// <param name="fill">Specifies whether to fill background with solid color up to the specified size </param>
+        /// <param name="fill">Specifies whether to fill background with solid color up to the specified size </param>
         /// <returns>Bitmap rendered maze of the specified size</returns>
         public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Style style, bool isRendering = false, bool fill = false)
         {

@@ -95,8 +95,8 @@ namespace Mazeinator
             if (XIUD.Value != null && YIUD.Value != null)
             {
                 _isChangingX = true;
-
                 CalculatePerfectRenderSize();
+
                 if (MaintainAspectRatio == true)
                 {
                     //stop recursion from occuring by checking if the value change actually occurred
@@ -114,6 +114,7 @@ namespace Mazeinator
                 _isChangingY = true;
 
                 CalculatePerfectRenderSize();
+
                 if (MaintainAspectRatio == true)
                 {
                     //stop recursion from occuring by checking if the value change actually occurred
@@ -126,7 +127,7 @@ namespace Mazeinator
             #endregion MaintainAspectRation
         }
 
-        //function for cellSize calculation; exactly the same as in Maze:RenderMaze()
+        //function for cellSize calculation; exactly the same as in Maze.RenderMaze()
         private void CalculatePerfectRenderSize()
         {
             
