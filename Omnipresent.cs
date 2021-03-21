@@ -166,7 +166,7 @@ namespace Mazeinator
         public void RenderPath()
         {
             //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, MainMaze.DijkstraPath));
 
             GC.Collect();   //collect the leftovers
         }
@@ -231,7 +231,8 @@ namespace Mazeinator
                 if (NodeSelector.ShowDialog() == true)
                 {
                     selector = NodeSelector.selector;
-                    MainMaze.path.Clear();
+                    MainMaze.lastPath.Clear();
+
                     Node targetNode = MainMaze.nodes[selectX, selectY];
 
                     switch (selector)
@@ -277,7 +278,7 @@ namespace Mazeinator
                             break;
 
                         case 20: //auxilary button
-                            MainMaze.Dijkstra();
+                            PathDijkstra();
                             break;
 
                         default:

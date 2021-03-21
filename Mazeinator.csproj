@@ -97,6 +97,7 @@
       <DependentUpon>NodeSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Omnipresent.cs" />
+    <Compile Include="Path.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="StyleSettings.xaml.cs">
       <DependentUpon>StyleSettings.xaml</DependentUpon>

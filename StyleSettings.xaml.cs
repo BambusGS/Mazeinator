@@ -114,7 +114,7 @@ namespace Mazeinator
             int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
             int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
 
-            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
+            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle, _maze.DijkstraPath));
             GC.Collect();
         }
     }
