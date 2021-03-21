@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
         Title="Maze Export Settings" Height="250" Width="300" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+
         WindowStartupLocation="CenterScreen">
     <!--xmlns:local="clr-namespace:Mazeinator"-->
 
@@ -14,16 +15,20 @@
         <Style x:Key="TextStyle" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
+
             <Setter Property="Margin" Value="6,2,6,2" />
+
         </Style>
     </Window.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
+
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="auto" />
+
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -33,9 +38,11 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -81,6 +88,7 @@
         <StackPanel Grid.Row="20" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Click="AutoSize" MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_AUTO</Button>
             <Button IsDefault="True" Click="Export" MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_Export</Button>
+
             <Button IsCancel="True" MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
         </StackPanel>
     </Grid>

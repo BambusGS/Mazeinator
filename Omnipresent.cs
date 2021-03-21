@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;  //FileDialogs
+using Microsoft.Win32;  //FileDialogs
 using System;
 using System.ComponentModel;    //INotifyPropertyChanged
 using System.Diagnostics;   //Stopwatch

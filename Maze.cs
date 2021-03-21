@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;   //List<T>
 using System.Drawing;   //Bitmap and Graphics
 using System.Drawing.Drawing2D;
