@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -49,6 +49,25 @@ namespace Mazeinator
         private void btnDialogOK_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
+        }
+
+        private void PlainStyle(object sender, RoutedEventArgs e)
+        {
+            SettingsStyle = new Style()
+            {
+                BackgroundColor = Colors.White,
+                RootColorBegin = Colors.Yellow,
+                RootColorEnd = Colors.Orange,
+
+                RenderNode = false,
+                RenderPoint = false,
+            };
+            this.DataContext = SettingsStyle;
+
+            cmbLineCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.WallEndCap);
+            cmbPathCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.PathEndCap);
+
+            RedrawPreview();
         }
 
         private void DefaultValues(object sender, RoutedEventArgs e)

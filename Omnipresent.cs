@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;  //FileDialogs
+using Microsoft.Win32;  //FileDialogs
 using System;
 using System.ComponentModel;    //INotifyPropertyChanged
 using System.Diagnostics;   //Stopwatch
@@ -67,14 +67,16 @@ namespace Mazeinator
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
 
-        private int _nodeCountX = 3; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
-        private int _nodeCountY = 2; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
+        private int _nodeCountX = 16; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
+        private int _nodeCountY = 9; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
         private long _lastRenderTime = 0; public long LastRenderTime { get => _lastRenderTime; set { _lastRenderTime = value; OnPropertyChanged(nameof(LastRenderTime)); } }
         private int _renderSizeX = 0; public int RenderSizeX { get => _renderSizeX; set { _renderSizeX = value; OnPropertyChanged(nameof(RenderSizeX)); } }
         private int _renderSizeY = 0; public int RenderSizeY { get => _renderSizeY; set { _renderSizeY = value; OnPropertyChanged(nameof(RenderSizeY)); } }
         private int _canvasSizeX = 0; public int CanvasSizeX { get => _canvasSizeX; set { _canvasSizeX = value; OnPropertyChanged(nameof(CanvasSizeX)); } }
         private int _canvasSizeY = 0; public int CanvasSizeY { get => _canvasSizeY; set { _canvasSizeY = value; OnPropertyChanged(nameof(CanvasSizeY)); } }
+
+        //TESTING↓
         private int _percent = 20; public int Percent { get => _percent; set { _percent = value; OnPropertyChanged(nameof(Percent)); } }
 
         private string _status = "Ready"; public string Status { get => _status; set { _status = value; OnPropertyChanged(nameof(Status)); } }
@@ -93,7 +95,7 @@ namespace Mazeinator
         private ICommand _saveFileCMD; public ICommand SaveFileCMD { get { return _saveFileCMD ?? (_saveFileCMD = new ActionCommand(() => { SaveMaze(); })); } }
         private ICommand _loadFileCMD; public ICommand LoadFileCMD { get { return _loadFileCMD ?? (_loadFileCMD = new ActionCommand(() => { LoadMaze(); })); } }
         private ICommand _generateCMD; public ICommand GenerateCMD { get { return _generateCMD ?? (_generateCMD = new ActionCommand(() => { MazeGeneration(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
-        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); })); } }
+        private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(); })); } }
         private ICommand _quitCMD; public ICommand QuitCMD { get { return _quitCMD ?? (_quitCMD = new ActionCommand(() => { Application.Current.MainWindow.Close(); })); } }
 
         #endregion Global_shortcuts
@@ -213,7 +215,7 @@ namespace Mazeinator
                 //gets the active screen's X, Y, Width, Height properties in pixels
                 System.Windows.Interop.WindowInteropHelper windowInteropHelper = new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow);
                 System.Windows.Forms.Screen Screen = System.Windows.Forms.Screen.FromHandle(windowInteropHelper.Handle);
-                Console.WriteLine(Screen.Bounds);
+                //Console.WriteLine(Screen.Bounds);
 
                 //a little conversion from (pixels)Screen to (WPF unites)NodeSelector by dividing pixels/DPI
                 if (NodeSelector.Left < Screen.Bounds.Left / DPI)
@@ -378,7 +380,7 @@ namespace Mazeinator
             }
         }
 
-        public void Export(Tuple<int, int> CanvasSize)
+        public void Export()
         {
             if (MainMaze == null)   //only save maze if there is one
             {
@@ -387,7 +389,7 @@ namespace Mazeinator
             }
 
             ImageFormat[] ImageFormats = { ImageFormat.Bmp, ImageFormat.Jpeg, ImageFormat.Gif, ImageFormat.Tiff, ImageFormat.Png, ImageFormat.Icon };
-            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY);
+            ExportSettings exportWindow = new ExportSettings(RenderSizeX, RenderSizeY, NodeCountX, NodeCountY, MazeStyle.WallThickness, MazeStyle.IsSquare);
             SaveFileDialog dialog = new SaveFileDialog
             {
                 Title = "Export image",
@@ -404,14 +406,20 @@ namespace Mazeinator
             {
                 try
                 {
-                    //draws the path(generates bitmap) and save it to file
-                    MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle), MazeStyle).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                    MazeStyle.IsSquare = exportWindow.IsSquare;
+                    //draws the path(generates bitmap)
+                    System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
+
+                    //resize the rendered bitmap (only does it, if it's needed)
+                    new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+
                     MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                     Status = "Export done";
                 }
                 catch (Exception exc)
                 {
                     MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Status = "Export failed";
                 }
             }
         }

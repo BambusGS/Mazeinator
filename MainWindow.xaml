@@ -1,4 +1,4 @@
-﻿<Window x:Class="Mazeinator.MainWindow"
+<Window x:Class="Mazeinator.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -28,19 +28,24 @@
             <Setter Property="Padding" Value="3,0" />
             <Setter Property="Margin" Value="1,0" />
         </Style>
+
+        <Style x:Key="MenuItemStyle" TargetType="MenuItem">
+            <Setter Property="Padding" Value="3,0" />
+            <Setter Property="Margin" Value="1,0" />
+        </Style>
     </Window.Resources>
 
     <DockPanel>
         <!--Top menu panel-->
         <Menu DockPanel.Dock="Top" Padding="3,3">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" Click="NewMaze" InputGestureText="Ctrl+N" />
-                <MenuItem Header="_Generate" Click="MazeGeneration" InputGestureText="Ctrl+D" />
-                <MenuItem Header="_Save" Click="SaveMaze" InputGestureText="Ctrl+S" />
-                <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W">
+                <MenuItem Header="_New" Click="NewMaze" InputGestureText="Ctrl+N"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Generate" Click="MazeGeneration" InputGestureText="Ctrl+D"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Save" Click="SaveMaze" InputGestureText="Ctrl+S"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W"  Style="{StaticResource MenuItemStyle}">
                     <MenuItem.ToolTip>
                         <StackPanel>
-                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Open file</TextBlock>
+                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Load file</TextBlock>
                             <TextBlock>
                                     Search your computer or local network
                                     <LineBreak />
@@ -53,18 +58,16 @@
                         </StackPanel>
                     </MenuItem.ToolTip>
                 </MenuItem>
-                <MenuItem Header="_Export" Click="ExportMaze" InputGestureText="Ctrl+E" />
-                <MenuItem Header="_Close" Click="CloseApp" InputGestureText="Ctrl+Q" />
+                <MenuItem Header="_Export" Click="ExportMaze" InputGestureText="Ctrl+E"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Close" Click="CloseApp" InputGestureText="Ctrl+Q"  Style="{StaticResource MenuItemStyle}" />
             </MenuItem>
 
             <MenuItem Header="_Options">
-                <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
-                <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
-                <!--TESTING -> REMOVE -->
-                <MenuItem x:Name="DisplayMenuBool" Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
+                <MenuItem Header="Visual _Settings" Click="SettingOpen" Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Style="{StaticResource MenuItemStyle}" />
             </MenuItem>
 
-            <MenuItem Header="About" />
+            <MenuItem Header="About"  Style="{StaticResource MenuItemStyle}" />
         </Menu>
 
         <Grid x:Name="MainGrid">
@@ -95,9 +98,8 @@
             <Canvas Grid.Row="1" x:Name="MainCanvas" Grid.Column="0" Background="Transparent">
                 <Canvas.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Visual _Settings" Click="SettingOpen" Padding="3,0" Margin="1,0" />
-                        <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Padding="3,0" Margin="1,0" />
-                        <MenuItem Header="S_quare" Padding="3,0" Margin="1,0" IsCheckable="True" IsChecked="{Binding IsSquare}" />
+                        <MenuItem Header="Visual _Settings" Click="SettingOpen"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_Dijkstra" Click="MenuItem_Click"  Style="{StaticResource MenuItemStyle}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
 

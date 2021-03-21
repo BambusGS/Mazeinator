@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Runtime;
 using System.Windows.Media;
@@ -106,7 +106,7 @@ namespace Mazeinator
 
         private void ExportMaze(object sender, RoutedEventArgs e)
         {
-            _controller.Export(GetCanvasSizePixels());
+            _controller.Export();
         }
 
         private void CloseApp(object sender, RoutedEventArgs e)
