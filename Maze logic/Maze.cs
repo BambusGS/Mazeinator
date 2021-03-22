@@ -350,7 +350,6 @@ namespace Mazeinator
             //initialize all the pens that can be changed by serialization or by user
             Pen _nodePen = new Pen(Utilities.ConvertColor(style.NodeColor), cellSize / 16 * style.NodeThickness / 100);
             Pen _pointPen = new Pen(Utilities.ConvertColor(style.PointColor), cellSize / 4 * style.PointThickness / 100);
-            Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
             Pen _rootPen = new Pen(Utilities.ConvertColor(style.RootColorBegin), cellSize / 16 * style.RootThickness / 100);
             Pen _backgroundPen = new Pen(Utilities.ConvertColor(style.BackgroundColor));
 

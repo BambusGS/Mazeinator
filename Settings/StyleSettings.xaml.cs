@@ -46,7 +46,7 @@ namespace Mazeinator
             RedrawPreview();
         }
 
-        private void btnDialogOK_Click(object sender, RoutedEventArgs e)
+        private void BtnDialogOK_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
         }
@@ -97,13 +97,13 @@ namespace Mazeinator
             RedrawPreview();
         }
 
-        private void cmbLineCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CmbLineCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SettingsStyle.WallEndCap = SettingsStyle.LineCapOptions[cmbLineCap.SelectedIndex];
             RedrawPreview();
         }
 
-        private void cmbPathCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CmbPathCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SettingsStyle.PathEndCap = SettingsStyle.LineCapOptions[cmbPathCap.SelectedIndex];
             RedrawPreview();

@@ -237,10 +237,9 @@ namespace Mazeinator
                 else if (NodeSelector.Top < Screen.Bounds.Top / DPI)
                     NodeSelector.TargetSwap(Node.North);
 
-                int selector = -1;
                 if (NodeSelector.ShowDialog() == true)
                 {
-                    selector = NodeSelector.selector;
+                    int selector = NodeSelector.selector;
                     MainMaze.lastPath.Clear();
 
                     Node targetNode = MainMaze.nodes[selectX, selectY];

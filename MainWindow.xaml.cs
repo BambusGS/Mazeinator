@@ -5,12 +5,12 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
+ *  implement A*; pathfinding show visited node count & final path length
  *  right-click menus
  *  Either create new file or load another one
- *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  add blank maze option
- *  Async save/loading/export
  *  progress bar is nonexistent as hell
+ *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
  *  http://www.astrolog.org/labyrnth/algrithm.htm
@@ -56,7 +56,7 @@ namespace Mazeinator
                 //triggers the timer
                 if (_autoRenderTimer.IsEnabled == false)
                 {
-                    _autoRenderTimer.Tick += new EventHandler(autoRender);
+                    _autoRenderTimer.Tick += new EventHandler(AutoRender);
                     _autoRenderTimer.Interval = new TimeSpan(0, 0, 1);
                     _autoRenderTimer.Start();
                 }
@@ -75,10 +75,10 @@ namespace Mazeinator
             }
         }
 
-        private void autoRender(object sender, EventArgs e)
+        private void AutoRender(object sender, EventArgs e)
         {
             _autoRenderTimer.Stop();
-            _autoRenderTimer.Tick -= autoRender;
+            _autoRenderTimer.Tick -= AutoRender;
             _controller.Render(GetCanvasSizePixels());
         }
 
