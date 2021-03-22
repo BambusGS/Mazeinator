@@ -122,6 +122,11 @@ namespace Mazeinator
             Render(CanvasSize);
         }
 
+        public void Render()
+        {
+            Render(new Tuple<int, int>(CanvasSizeX, CanvasSizeY));
+        }
+
         public void Render(Tuple<int, int> CanvasSize)
         {
             if (MainMaze != null)
@@ -132,7 +137,11 @@ namespace Mazeinator
                 _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
 
                 Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
-                //new Task(() => { test = MainMaze.DisplayMaze(CanvasSize.Item1, CanvasSize.Item2, IsSquare); }).Start();
+                //new Task(() =>
+                //{
+                //    _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
+                //    Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+                //}).Start();
 
                 RenderTime.Stop();
                 LastRenderTime = RenderTime.ElapsedMilliseconds;
@@ -156,11 +165,12 @@ namespace Mazeinator
             else
             {
                 Status = "Dijkstra done";
-                RenderPath();
-            }
+                LastGenTime = ProcessTime.ElapsedMilliseconds;
 
-            ProcessTime.Stop();
-            LastGenTime = ProcessTime.ElapsedMilliseconds;
+                RenderPath();
+                ProcessTime.Stop();
+                LastRenderTime = ProcessTime.ElapsedMilliseconds;
+            }
         }
 
         public void RenderPath()
@@ -285,7 +295,6 @@ namespace Mazeinator
                             break;
                     }
                     RenderPath();
-                    //GC.Collect();
                 }
             }
         }
@@ -298,7 +307,7 @@ namespace Mazeinator
             if (settings.ShowDialog() == true)
             {
                 MazeStyle = settings.SettingsStyle;
-                Render(new Tuple<int, int>(CanvasSizeX, CanvasSizeY));
+                Render();
                 Status = "Setting applied";
             }
         }
@@ -325,6 +334,7 @@ namespace Mazeinator
             SaveFileDialog dialog = new SaveFileDialog
             {
                 Title = "Save Maze As",
+                FileName = "Maze",
                 Filter = "Maze files (*.maze)|*.maze|All files (*.*)|*.*",
                 FilterIndex = 1,
                 AddExtension = true,
@@ -332,22 +342,34 @@ namespace Mazeinator
                 RestoreDirectory = true
             };
 
-            try
+            if (_currentFilePath == null)
             {
-                if (_currentFilePath == null)
-                {
-                    if (dialog.ShowDialog() == true)
-                        _currentFilePath = dialog.FileName;
-                }
-
-                if (_currentFilePath != null)
-                    new Task(() => { Utilities.SaveBySerializing<Maze>(MainMaze, _currentFilePath); }).Start();
-
-                Status = "Saving done";
+                if (dialog.ShowDialog() == true)
+                    _currentFilePath = dialog.FileName;
             }
-            catch (Exception exc)
+
+            if (_currentFilePath != null)
             {
-                MessageBox.Show("An unhandled saving exception just occured: " + exc.Message, "Unhandled saving exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                Status = "Saving...";
+                new Task(() =>
+                {
+                    try
+                    {
+                        Stopwatch ProcessTime = new Stopwatch();
+                        ProcessTime.Start();
+
+                        Utilities.SaveBySerializing<Maze>(MainMaze, _currentFilePath);
+
+                        ProcessTime.Stop();
+                        LastGenTime = ProcessTime.ElapsedMilliseconds;
+                        Status = "Saving done";
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("An unhandled saving exception just occured: " + exc.Message, "Unhandled saving exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Status = "Saving failed";
+                    }
+                }).Start();
             }
         }
 
@@ -356,28 +378,43 @@ namespace Mazeinator
             OpenFileDialog dialog = new OpenFileDialog
             {
                 Title = "Load Maze",
+                FileName = "Maze",
                 Filter = "Maze files (*.maze)|*.maze|All files (*.*)|*.*",
                 FilterIndex = 1,
                 AddExtension = true,
                 //dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                 RestoreDirectory = true
             };
-            try
-            {
-                _currentFilePath = null;
-                if (dialog.ShowDialog() == true)
-                    _currentFilePath = dialog.FileName;
 
-                if (_currentFilePath != null)
-                {
-                    MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
-                    Status = "Loading done";
-                    NodeCount = MainMaze.nodes.Length;
-                }
-            }
-            catch (Exception exc)
+            _currentFilePath = null;
+            if (dialog.ShowDialog() == true)
+                _currentFilePath = dialog.FileName;
+
+            //asynhronously load the maze, in a try/catch
+            if (_currentFilePath != null)
             {
-                MessageBox.Show("An unhandled loading exception just occured: " + exc.Message, "Unhandled loading exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                Status = "Commencing loading operation...";
+
+                new Task(() =>
+                {
+                    try
+                    {
+                        Stopwatch ProcessTime = new Stopwatch();
+                        ProcessTime.Start();
+
+                        MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
+
+                        ProcessTime.Stop();
+                        LastGenTime = ProcessTime.ElapsedMilliseconds;
+                        Status = "Loading done";
+                        NodeCount = MainMaze.nodes.Length;
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("An unhandled loading exception just occured: " + exc.Message, "Unhandled loading exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Status = "Loading failed";
+                    }
+                }).Start();
             }
         }
 
@@ -405,23 +442,33 @@ namespace Mazeinator
 
             if (dialog.ShowDialog() == true && exportWindow.ShowDialog() == true)
             {
-                try
+                Status = "Commencing export";
+                new Task(() =>
                 {
-                    MazeStyle.IsSquare = exportWindow.IsSquare;
-                    //draws the path(generates bitmap)
-                    System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
+                    try
+                    {
+                        Stopwatch ProcessTime = new Stopwatch();
+                        ProcessTime.Start();
 
-                    //resize the rendered bitmap (only does it, if it's needed)
-                    new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                        MazeStyle.IsSquare = exportWindow.IsSquare;
+                        //draws the path(generates bitmap)
+                        System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
 
-                    MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
-                    Status = "Export done";
-                }
-                catch (Exception exc)
-                {
-                    MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Status = "Export failed";
-                }
+                        //resize the rendered bitmap (only does it, if it's needed)
+                        new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+
+                        ProcessTime.Stop();
+                        LastRenderTime = ProcessTime.ElapsedMilliseconds;
+
+                        MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
+                        Status = "Export done";
+                    }
+                    catch (Exception exc)
+                    {
+                        MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Status = "Export failed";
+                    }
+                }).Start();
             }
         }
 

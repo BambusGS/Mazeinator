@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Visual Settings" Height="450" Width="700" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        Title="Maze Visual Settings" Height="450" Width="750" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -95,6 +95,8 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Column="0" Grid.Row="0" Text="Maze background color:" VerticalAlignment="Center" />
@@ -127,13 +129,18 @@
                 <xctk:ColorPicker SelectedColor="{Binding Path=RootColorEnd, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
             </StackPanel>
 
-            <Separator Grid.ColumnSpan="2" Grid.Row="8" Height="5" />
+            <StackPanel Grid.Column="0" Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="Show explored nodes: " />
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=RenderRoot, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
+            </StackPanel>
 
-            <TextBlock Grid.Column="0" Grid.Row="9" Text="Wall line end shape:" VerticalAlignment="Center" />
-            <ComboBox Name="cmbLineCap" Grid.Column="1" Grid.Row="9" SelectionChanged="cmbLineCap_SelectionChanged" Margin="2,2,2,2" />
+            <Separator Grid.ColumnSpan="2" Grid.Row="9" Height="5" />
 
-            <TextBlock Grid.Column="0" Grid.Row="10" Text="Path line end shape:" VerticalAlignment="Center" />
-            <ComboBox Name="cmbPathCap" Grid.Column="1" Grid.Row="10" SelectionChanged="cmbPathCap_SelectionChanged" Margin="2,2,2,2" />
+            <TextBlock Grid.Column="0" Grid.Row="10" Text="Wall line end shape:" VerticalAlignment="Center" />
+            <ComboBox Name="cmbLineCap" Grid.Column="1" Grid.Row="10" SelectionChanged="cmbLineCap_SelectionChanged" Margin="2,2,2,2" />
+
+            <TextBlock Grid.Column="0" Grid.Row="11" Text="Path line end shape:" VerticalAlignment="Center" />
+            <ComboBox Name="cmbPathCap" Grid.Column="1" Grid.Row="11" SelectionChanged="cmbPathCap_SelectionChanged" Margin="2,2,2,2" />
         </Grid>
 
         <StackPanel Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">

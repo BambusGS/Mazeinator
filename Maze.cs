@@ -27,8 +27,6 @@ namespace Mazeinator
         //TESTING OLD
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
 
-        private Tuple<Color, Color, float> _rootPenHolder = new Tuple<Color, Color, float>(Color.Blue, Color.Black, 5);
-
         #endregion Variables
 
         #region MazeGeneration
@@ -576,7 +574,7 @@ namespace Mazeinator
                     pathFindErrored = true;
                     return false;
                 }
-                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; unnecessary for this square maze
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; almost unnecessary for this square maze
 
                 //4TESTING↓
                 //for (int i = 0; i < frontier.Count; i++)
@@ -585,8 +583,6 @@ namespace Mazeinator
                 //}
                 //Console.WriteLine();
             }
-
-            _rootPenHolder = new Tuple<Color, Color, float>(Color.Red, Color.Black, 8);
 
             if (pathFindErrored == false)
             {
@@ -626,14 +622,16 @@ namespace Mazeinator
                     gr.CompositingQuality = CompositingQuality.HighSpeed;
 
                     //draw explored nodes (while checking if they are large enough)
-                    if (style.RenderRoot == true && currentPath.exploredNodes != null)
+                    if (currentPath.exploredNodes != null)
                     {
                         for (int column = 0; column < _nodeCountX; column++)
                         {
                             for (int row = 0; row < _nodeCountY; row++)
                             {
+                                //assign the nodes's roots to the current path diagram
                                 nodes[column, row].Root = currentPath.exploredNodes[column, row];
-                                if (nodes[0, 0].Bounds.Width > 16)
+
+                                if (style.RenderRoot == true && nodes[0, 0].Bounds.Width > 9)
                                     nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 2, style.PathEndCap, style.PathEndCap);
                             }
                         }

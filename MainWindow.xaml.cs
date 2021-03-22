@@ -5,10 +5,9 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  special class to save path & predecesors for each node
  *  right-click menus
  *  Either create new file or load another one
- *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%
+ *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  add blank maze option
  *  Async save/loading/export
  *  progress bar is nonexistent as hell

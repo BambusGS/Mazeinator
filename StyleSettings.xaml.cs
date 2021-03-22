@@ -56,11 +56,12 @@ namespace Mazeinator
             SettingsStyle = new Style()
             {
                 BackgroundColor = Colors.White,
-                RootColorBegin = Colors.Yellow,
-                RootColorEnd = Colors.Orange,
+                RootColorBegin = Colors.Blue,
+                RootColorEnd = Colors.MidnightBlue,
 
                 RenderNode = false,
                 RenderPoint = false,
+                RenderRoot = false
             };
             this.DataContext = SettingsStyle;
 
