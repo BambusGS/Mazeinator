@@ -31,12 +31,12 @@ namespace Mazeinator
         public int NodeThickness { get; set; } = 100;
         public int PointThickness { get; set; } = 100;
 
-        public int PathThickness { get; set; } = 150;
+        public int PathThickness { get; set; } = 200;
         public int RootThickness { get; set; } = 100;
 
-        public bool RenderNode { get; set; } = false;
+        public bool RenderNode { get; set; } = true;
         public bool RenderPoint { get; set; } = false;
-        public bool RenderRoot { get; set; } = false;
+        public bool RenderRoot { get; set; } = true;
         public bool RenderRootRootNode { get; set; } = true;
 
         #endregion Variables

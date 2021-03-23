@@ -67,8 +67,8 @@ namespace Mazeinator
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
 
-        private int _nodeCountX = 16; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
-        private int _nodeCountY = 9; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
+        private int _nodeCountX = 3; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
+        private int _nodeCountY = 3; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
         private long _lastRenderTime = 0; public long LastRenderTime { get => _lastRenderTime; set { _lastRenderTime = value; OnPropertyChanged(nameof(LastRenderTime)); } }
         private int _renderSizeX = 0; public int RenderSizeX { get => _renderSizeX; set { _renderSizeX = value; OnPropertyChanged(nameof(RenderSizeX)); } }
@@ -122,6 +122,26 @@ namespace Mazeinator
             Render(CanvasSize);
         }
 
+        public void MazeGenBlank(Tuple<int, int> CanvasSize)
+        {
+            _currentFilePath = null; //reset the "save without asking" path
+
+            //stopwatch to measure the generation time and make user predictions
+            Stopwatch GenTime = new Stopwatch();
+            GenTime.Start();
+
+            MainMaze = new Maze(NodeCountX, NodeCountY);
+            MainMaze.GenerateMazeBlank();
+
+            GenTime.Stop();
+            LastGenTime = GenTime.ElapsedMilliseconds;
+
+            Status = "Generating done";
+            NodeCount = MainMaze.nodes.Length;
+
+            Render(CanvasSize);
+        }
+
         public void Render()
         {
             Render(new Tuple<int, int>(CanvasSizeX, CanvasSizeY));
@@ -155,6 +175,25 @@ namespace Mazeinator
             }
         }
 
+        public void PathGreedy()
+        {
+            Stopwatch ProcessTime = new Stopwatch();
+            ProcessTime.Start();
+
+            if (MainMaze == null || !MainMaze.GreedyBFS())
+                Status = "Pathfinding failed";
+            else
+                Status = "Greedy best-first search done";
+
+            LastGenTime = ProcessTime.ElapsedMilliseconds;
+            ProcessTime.Restart();
+
+            RenderPath(MainMaze.GreedyPath);
+
+            ProcessTime.Stop();
+            LastRenderTime = ProcessTime.ElapsedMilliseconds;
+        }
+
         public void PathDijkstra()
         {
             Stopwatch ProcessTime = new Stopwatch();
@@ -163,20 +202,49 @@ namespace Mazeinator
             if (MainMaze == null || !MainMaze.Dijkstra())
                 Status = "Pathfinding failed";
             else
-            {
                 Status = "Dijkstra done";
-                LastGenTime = ProcessTime.ElapsedMilliseconds;
 
-                RenderPath();
-                ProcessTime.Stop();
-                LastRenderTime = ProcessTime.ElapsedMilliseconds;
-            }
+            LastGenTime = ProcessTime.ElapsedMilliseconds;
+            ProcessTime.Restart();
+
+            RenderPath(MainMaze.DijkstraPath);
+
+            ProcessTime.Stop();
+            LastRenderTime = ProcessTime.ElapsedMilliseconds;
+        }
+        
+        public void PathAStar()
+        {
+            Stopwatch ProcessTime = new Stopwatch();
+            ProcessTime.Start();
+
+            if (MainMaze == null || !MainMaze.AStar())
+                Status = "Pathfinding failed";
+            else
+                Status = "AStar done";
+
+            LastGenTime = ProcessTime.ElapsedMilliseconds;
+            ProcessTime.Restart();
+
+            RenderPath(MainMaze.AStarPath);
+
+            ProcessTime.Stop();
+            LastRenderTime = ProcessTime.ElapsedMilliseconds;
         }
 
         public void RenderPath()
         {
             //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, MainMaze.DijkstraPath));
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+
+            GC.Collect();   //collect the leftovers
+        }
+        
+        //overloaded method (similar to the one in Maze) to render specific paths
+        public void RenderPath(Path path)
+        {
+            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
 
             GC.Collect();   //collect the leftovers
         }
@@ -240,7 +308,7 @@ namespace Mazeinator
                 if (NodeSelector.ShowDialog() == true)
                 {
                     int selector = NodeSelector.selector;
-                    MainMaze.lastPath.Clear();
+                    MainMaze.pathToRender.Clear();
 
                     Node targetNode = MainMaze.nodes[selectX, selectY];
 
@@ -402,6 +470,11 @@ namespace Mazeinator
                         ProcessTime.Start();
 
                         MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
+
+                        //recalculate the paths
+                        MainMaze.GreedyBFS();
+                        MainMaze.Dijkstra();
+                        MainMaze.AStar();
 
                         ProcessTime.Stop();
                         LastGenTime = ProcessTime.ElapsedMilliseconds;

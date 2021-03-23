@@ -64,10 +64,13 @@
 
             <MenuItem Header="_Options">
                 <MenuItem Header="Visual _Settings" Click="SettingOpen" Style="{StaticResource MenuItemStyle}" />
-                <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
             </MenuItem>
 
-            <MenuItem Header="About"  Style="{StaticResource MenuItemStyle}" />
+            <MenuItem Header="About" Click="AboutClick" Style="{StaticResource MenuItemStyle}" />
         </Menu>
 
         <Grid x:Name="MainGrid">
@@ -99,7 +102,10 @@
                 <Canvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Visual _Settings" Click="SettingOpen"  Style="{StaticResource MenuItemStyle}" />
-                        <MenuItem Header="_Dijkstra" Click="MenuItem_Click"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
 

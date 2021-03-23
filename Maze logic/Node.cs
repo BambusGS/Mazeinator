@@ -150,7 +150,7 @@ namespace Mazeinator
                 Pen pen = new Pen(brush, width);
                 gr.DrawLine(pen, Center, Root.Center);
 
-                //workaround for the lineEndCaps to be the proper color (they would not follow the gradient)
+                //workaround for the lineEndCaps to be the proper color (they would not follow the gradient); this is not particularly efficient
                 //line startCap
                 Pen aux = new Pen(startColor, width) { StartCap = endLineCap };
                 gr.DrawLine(aux, Root.Center.X, Root.Center.Y, Root.Center.X + (this.X - Root.X), Root.Center.Y + (this.Y - Root.Y));

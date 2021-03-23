@@ -14,6 +14,7 @@ using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/e
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
  *  http://www.astrolog.org/labyrnth/algrithm.htm
+ *  https://www.redblobgames.com/pathfinding/a-star/introduction.html
  */
 
 namespace Mazeinator
@@ -114,6 +115,16 @@ namespace Mazeinator
             else { Application.Current.Shutdown(); }
         }
 
+        private void AboutClick(object sender, RoutedEventArgs e)
+        {
+            About about = new About();
+            About abouthidden = new About(true);
+            abouthidden.Show();
+            abouthidden.Hide();
+            about.ShowDialog();
+            abouthidden.Show();
+        }
+
         #endregion Menu
 
         #region MazeFunctions
@@ -123,9 +134,23 @@ namespace Mazeinator
             _controller.MazeGeneration(GetCanvasSizePixels());
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void NewBlank_click(object sender, RoutedEventArgs e)
+        {
+            _controller.MazeGenBlank(GetCanvasSizePixels());
+        }
+
+        private void Greedy_click(object sender, RoutedEventArgs e)
+        {
+            _controller.PathGreedy();
+        }
+        
+        private void Dijkstra_click(object sender, RoutedEventArgs e)
         {
             _controller.PathDijkstra();
+        }
+        private void AStar_click(object sender, RoutedEventArgs e)
+        {
+            _controller.PathAStar();
         }
 
         private void SelectNode(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -185,6 +210,10 @@ namespace Mazeinator
             return new Tuple<int, int>(canvasSizeX, canvasSizeY);
         }
 
+
+
         #endregion CustomFunctions
+
+
     }
 }

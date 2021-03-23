@@ -13,10 +13,15 @@ namespace Mazeinator
         public Node[,] nodes = null;
 
         public Node startNode, endNode;
-        public List<Node> paths = new List<Node>();
-        public Path lastPath;
-        public Path DFSTree = new Path();
-        public Path DijkstraPath = new Path();
+        public Path pathToRender;
+        public Path DFSTree;
+
+        [NonSerialized]
+        public Path GreedyPath;
+        [NonSerialized]
+        public Path DijkstraPath;
+        [NonSerialized]
+        public Path AStarPath;
 
         private int _nodeCountX, _nodeCountY;
         public int renderSizeX, renderSizeY;
@@ -64,7 +69,7 @@ namespace Mazeinator
             {
                 startNode = nodes[rnd.Next(nodes.GetLength(0)), rnd.Next(nodes.GetLength(1))];
             }
-
+            DFSTree = new Path();
             DFSTree.exploredNodes = new Node[_nodeCountX, _nodeCountY];
             DFSTree.exploredNodes[startNode.X, startNode.Y] = startNode;                //startNode.Root = startNode;
 
@@ -157,7 +162,7 @@ namespace Mazeinator
                 }
                 else { BackTheTrack.Pop(); }    //return one back, because there is nowhere to go
             }
-            lastPath = DFSTree;
+            pathToRender = DFSTree;
             return true;
         }
 
@@ -203,8 +208,9 @@ namespace Mazeinator
                     nodes[column, row].Neighbours[Node.West] = nodes[column - 1, row];
                 }
             }
-
+            DFSTree = new Path();
             DFSTree.exploredNodes = new Node[_nodeCountX, _nodeCountY];
+            pathToRender = DFSTree;
             //foreach (Node node in nodes)
             //    node.Root = node;
 
@@ -526,23 +532,103 @@ namespace Mazeinator
 
         #region PathPlanning
 
+        public bool GreedyBFS()
+        {
+            if (startNode == null || endNode == null || nodes == null)
+                return false;
+
+            int edgeLength = 1;
+            List<Tuple<double, int, Node>> frontier = new List<Tuple<double, int, Node>>();         //holds sorting value, distance from start, actual Node
+
+            bool pathFindErrored = false;
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            GreedyPath = new Path();
+            GreedyPath.startNode = startNode;
+            GreedyPath.endNode = endNode;
+
+            //add the starting node
+            frontier.Add(new Tuple<double, int, Node>(0, 0, startNode));
+
+            //try to find distance from the startnode for all reachable nodes
+            while (frontier[0].Item3 != endNode)
+            {
+                int currentNodeDistance = frontier[0].Item2;
+                Node currentNode = frontier[0].Item3;
+                frontier.RemoveAt(0);
+
+                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Node nodeToVisit = currentNode.Neighbours[i];
+                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    {
+                        int diffX = endNode.X - currentNode.X;
+                        int diffY = endNode.Y - currentNode.Y;
+
+                        double sortValue = Math.Sqrt(diffX * diffX + diffY * diffY);        //this line makes all the difference in algorithms
+
+                        frontier.Add(new Tuple<double, int, Node>(sortValue, currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
+                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+
+                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                    }
+                }
+
+                if (frontier.Count == 0)
+                {
+                    pathFindErrored = true;
+                    GreedyPath.exploredNodes = WhereDidIComeFrom;
+                    return false;
+                }
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first (calculation of A* takes into account node distance + it's distance from the finish node)
+
+                //4TESTING↓
+                //for (int i = 0; i < frontier.Count; i++)
+                //{
+                //    Console.Write(frontier[i].Item2.ToString() + "|sort:" + frontier[i].Item3 + "|d:" + frontier[i].Item1 + " \t");
+                //}
+                //Console.WriteLine();
+            }
+
+            if (pathFindErrored == false)
+            {
+                //clear and write the backtracked shortest path
+                GreedyPath.path = new List<Node>();
+
+                GreedyPath.path.Add(endNode);
+                Node backTrackNode = endNode;
+                while (backTrackNode != startNode && backTrackNode != null)
+                {
+                    GreedyPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                }
+
+                //add the spanning tree to the root visualized
+                GreedyPath.exploredNodes = WhereDidIComeFrom;
+            }
+            return true;
+        }
+
         public bool Dijkstra()
         {
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
             int edgeLength = 1;
-            List<Tuple<int, Node>> frontier = new List<Tuple<int, Node>>();
+            List<Tuple<int, Node>> frontier = new List<Tuple<int, Node>>();         //holds distance from start (in here used as the sorting value), actual Node
 
             bool pathFindErrored = false;
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
 
-            //4TESTING↓ ?
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            DijkstraPath = new Path();
             DijkstraPath.startNode = startNode;
             DijkstraPath.endNode = endNode;
-            DijkstraPath.exploredNodes = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node
             frontier.Add(new Tuple<int, Node>(0, startNode));
@@ -571,6 +657,7 @@ namespace Mazeinator
                 if (frontier.Count == 0)
                 {
                     pathFindErrored = true;
+                    DijkstraPath.exploredNodes = WhereDidIComeFrom;
                     return false;
                 }
                 frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; almost unnecessary for this square maze
@@ -586,10 +673,7 @@ namespace Mazeinator
             if (pathFindErrored == false)
             {
                 //clear and write the backtracked shortest path
-                if (DijkstraPath.path != null)
-                    DijkstraPath.path.Clear();
-                else
-                    DijkstraPath.path = new List<Node>();
+                DijkstraPath.path = new List<Node>();
 
                 DijkstraPath.path.Add(endNode);
                 Node backTrackNode = endNode;
@@ -605,14 +689,94 @@ namespace Mazeinator
             return true;
         }
 
+        public bool AStar()
+        {
+            if (startNode == null || endNode == null || nodes == null)
+                return false;
+
+            int edgeLength = 1;
+            List<Tuple<double, int, Node>> frontier = new List<Tuple<double, int, Node>>();         //holds sorting value, distance from start, actual Node
+
+            bool pathFindErrored = false;
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            AStarPath = new Path();
+            AStarPath.startNode = startNode;
+            AStarPath.endNode = endNode;
+
+            //add the starting node
+            frontier.Add(new Tuple<double, int, Node>(0, 0, startNode));
+
+            //try to find distance from the startnode for all reachable nodes
+            while (frontier[0].Item3 != endNode)
+            {
+                int currentNodeDistance = frontier[0].Item2;
+                Node currentNode = frontier[0].Item3;
+                frontier.RemoveAt(0);
+
+                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Node nodeToVisit = currentNode.Neighbours[i];
+                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    {
+                        int diffX = endNode.X - currentNode.X;
+                        int diffY = endNode.Y - currentNode.Y;
+                        double sortValue = currentNodeDistance + edgeLength + Math.Sqrt(diffX * diffX + diffY * diffY);     //this line makes all the difference in algorithms
+
+                        frontier.Add(new Tuple<double, int, Node>(sortValue, currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
+                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+
+                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                    }
+                }
+
+                if (frontier.Count == 0)
+                {
+                    pathFindErrored = true;
+                    AStarPath.exploredNodes = WhereDidIComeFrom;
+                    return false;
+                }
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first (calculation of A* takes into account node distance + it's distance from the finish node)
+
+                //4TESTING↓
+                //for (int i = 0; i < frontier.Count; i++)
+                //{
+                //    Console.Write(frontier[i].Item2.ToString() + "|sort:" + frontier[i].Item3 + "|d:" + frontier[i].Item1 + " \t");
+                //}
+                //Console.WriteLine();
+            }
+
+            if (pathFindErrored == false)
+            {
+                //clear and write the backtracked shortest path
+                AStarPath.path = new List<Node>();
+
+                AStarPath.path.Add(endNode);
+                Node backTrackNode = endNode;
+                while (backTrackNode != startNode && backTrackNode != null)
+                {
+                    AStarPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                }
+
+                //add the spanning tree to the root visualized
+                AStarPath.exploredNodes = WhereDidIComeFrom;
+            }
+            return true;
+        }
+
         public Bitmap RenderPath(Bitmap originalBMP, Style style)
         {
-            return RenderPath(originalBMP, style, lastPath);
+            return RenderPath(originalBMP, style, pathToRender);
         }
 
         public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
         {
-            lastPath = currentPath;
+            pathToRender = currentPath;
             if (_wallsPen != null && _nodePen != null && _pointPen != null || _rootPen != null && nodes != null)
             {
                 using (Graphics gr = Graphics.FromImage(originalBMP))
@@ -630,8 +794,8 @@ namespace Mazeinator
                                 //assign the nodes's roots to the current path diagram
                                 nodes[column, row].Root = currentPath.exploredNodes[column, row];
 
-                                if (style.RenderRoot == true && nodes[0, 0].Bounds.Width > 9)
-                                    nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 2, style.PathEndCap, style.PathEndCap);
+                                if (style.RenderRoot == true && (nodes[0, 0].Bounds.Width > 6 && nodes[0, 0].Bounds.Height > 6))
+                                    nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
                             }
                         }
                     }
@@ -649,8 +813,10 @@ namespace Mazeinator
                         {
                             Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
                             Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+
                             //reverse the drawing order -> we draw from the start
-                            currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness), style.PathEndCap, style.PathEndCap);
+                            float thickness = (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness);
+                            currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, thickness, style.PathEndCap, style.PathEndCap);
                         }
                     }
 

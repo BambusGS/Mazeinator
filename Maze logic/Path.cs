@@ -11,6 +11,9 @@ namespace Mazeinator
 
         public Node[,] exploredNodes;
 
+        public int PathLength { get { return (path != null) ? (path.Count - 1) : 0; } }
+        public int ExploredCount { get { return CountNonNullNodes(); } }
+
         public Path()
         {
             this.startNode = null;
@@ -39,10 +42,29 @@ namespace Mazeinator
         {
             startNode = null;
             endNode = null;
-            if(path != null)
+            if (path != null)
                 path.Clear();
             if (exploredNodes != null)
                 exploredNodes = new Node[exploredNodes.GetLength(0), exploredNodes.GetLength(1)];
+        }
+
+        private int CountNonNullNodes()
+        {
+            if (exploredNodes != null)
+            {
+                int count = 0;
+                for (int column = 0; column < exploredNodes.GetLength(0); column++)
+                {
+                    for (int row = 0; row < exploredNodes.GetLength(1); row++)
+                    {
+                        if (exploredNodes[column, row] != null)
+                            count++;
+                    }
+                }
+                return count;
+            }
+            else
+                return -+-+-+1; //this is funny, so it's going to stay here; functions the same way as "-1"
         }
     }
 }
