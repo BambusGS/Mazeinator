@@ -13,15 +13,19 @@ namespace Mazeinator
         public Node[,] nodes = null;
 
         public Node startNode, endNode;
-        public Path pathToRender;
         public Path DFSTree;
 
         [NonSerialized]
-        public Path GreedyPath;
+        public Path pathToRender;
+
         [NonSerialized]
-        public Path DijkstraPath;
+        public Path GreedyPath = new Path();    //has to be assigned, because if pathfinding fails, there would be no path to be rendered!
+
         [NonSerialized]
-        public Path AStarPath;
+        public Path DijkstraPath = new Path();
+
+        [NonSerialized]
+        public Path AStarPath = new Path();
 
         private int _nodeCountX, _nodeCountY;
         public int renderSizeX, renderSizeY;
@@ -162,7 +166,8 @@ namespace Mazeinator
                 }
                 else { BackTheTrack.Pop(); }    //return one back, because there is nowhere to go
             }
-            pathToRender = DFSTree;
+
+            pathToRender = (Path)DFSTree.Clone();
             return true;
         }
 
@@ -208,9 +213,8 @@ namespace Mazeinator
                     nodes[column, row].Neighbours[Node.West] = nodes[column - 1, row];
                 }
             }
-            DFSTree = new Path();
-            DFSTree.exploredNodes = new Node[_nodeCountX, _nodeCountY];
-            pathToRender = DFSTree;
+            DFSTree = new Path(new Node[_nodeCountX, _nodeCountY]);
+            pathToRender = (Path)DFSTree.Clone();
             //foreach (Node node in nodes)
             //    node.Root = node;
 
@@ -776,8 +780,9 @@ namespace Mazeinator
 
         public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
         {
+            Console.WriteLine("HERE" + currentPath);
             pathToRender = currentPath;
-            if (_wallsPen != null && _nodePen != null && _pointPen != null || _rootPen != null && nodes != null)
+            if (/*currentPath != null &&*/ nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
             {
                 using (Graphics gr = Graphics.FromImage(originalBMP))
                 {

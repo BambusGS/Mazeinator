@@ -187,7 +187,6 @@ namespace Mazeinator
 
             LastGenTime = ProcessTime.ElapsedMilliseconds;
             ProcessTime.Restart();
-
             RenderPath(MainMaze.GreedyPath);
 
             ProcessTime.Stop();
@@ -212,7 +211,7 @@ namespace Mazeinator
             ProcessTime.Stop();
             LastRenderTime = ProcessTime.ElapsedMilliseconds;
         }
-        
+
         public void PathAStar()
         {
             Stopwatch ProcessTime = new Stopwatch();
@@ -239,7 +238,7 @@ namespace Mazeinator
 
             GC.Collect();   //collect the leftovers
         }
-        
+
         //overloaded method (similar to the one in Maze) to render specific paths
         public void RenderPath(Path path)
         {
@@ -471,10 +470,20 @@ namespace Mazeinator
 
                         MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
 
-                        //recalculate the paths
-                        MainMaze.GreedyBFS();
-                        MainMaze.Dijkstra();
-                        MainMaze.AStar();
+                        //if there is no start/end-node selected, load the generating tree
+                        if (MainMaze.startNode == null && MainMaze.endNode == null)
+                        {
+                            MainMaze.pathToRender = (Path)MainMaze.DFSTree.Clone();
+                        }
+                        else    //calculate all the algorithms
+                        {
+                            //recalculate the paths
+                            MainMaze.GreedyBFS();
+                            MainMaze.Dijkstra();
+                            MainMaze.AStar();
+
+                            MainMaze.pathToRender = MainMaze.AStarPath;
+                        }
 
                         ProcessTime.Stop();
                         LastGenTime = ProcessTime.ElapsedMilliseconds;

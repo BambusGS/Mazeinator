@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Mazeinator
 {
     [Serializable]
-    internal class Path
+    internal class Path : ICloneable
     {
         public Node startNode, endNode;
         public List<Node> path;
@@ -12,7 +12,7 @@ namespace Mazeinator
         public Node[,] exploredNodes;
 
         public int PathLength { get { return (path != null) ? (path.Count - 1) : 0; } }
-        public int ExploredCount { get { return CountNonNullNodes(); } }
+        public int ExploredCount { get { return CountNodes(); } }
 
         public Path()
         {
@@ -48,7 +48,7 @@ namespace Mazeinator
                 exploredNodes = new Node[exploredNodes.GetLength(0), exploredNodes.GetLength(1)];
         }
 
-        private int CountNonNullNodes()
+        private int CountNodes()
         {
             if (exploredNodes != null)
             {
@@ -65,6 +65,11 @@ namespace Mazeinator
             }
             else
                 return -+-+-+1; //this is funny, so it's going to stay here; functions the same way as "-1"
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

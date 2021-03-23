@@ -5,7 +5,8 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  implement A*; pathfinding show visited node count & final path length
+ *  pathfinding show visited node count & final path length
+ *  maze after_load setup
  *  right-click menus
  *  Either create new file or load another one
  *  add blank maze option

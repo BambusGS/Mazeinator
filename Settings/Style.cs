@@ -34,8 +34,8 @@ namespace Mazeinator
         public int PathThickness { get; set; } = 200;
         public int RootThickness { get; set; } = 100;
 
-        public bool RenderNode { get; set; } = true;
-        public bool RenderPoint { get; set; } = false;
+        public bool RenderNode { get; set; } = false;
+        public bool RenderPoint { get; set; } = true;
         public bool RenderRoot { get; set; } = true;
         public bool RenderRootRootNode { get; set; } = true;
 
