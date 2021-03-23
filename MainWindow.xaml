@@ -64,10 +64,13 @@
 
             <MenuItem Header="_Options">
                 <MenuItem Header="Visual _Settings" Click="SettingOpen" Style="{StaticResource MenuItemStyle}" />
-                <MenuItem Header="_Dijkstra" Click="MenuItem_Click" Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
             </MenuItem>
 
-            <MenuItem Header="About"  Style="{StaticResource MenuItemStyle}" />
+            <MenuItem Header="About" Click="AboutClick" Style="{StaticResource MenuItemStyle}" />
         </Menu>
 
         <Grid x:Name="MainGrid">
@@ -82,10 +85,10 @@
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Value="{Binding Path=NodeCountX, Mode=TwoWay}" Name="WidthBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="4096" />
+                <xctk:IntegerUpDown Value="{Binding Path=NodeCountX, Mode=TwoWay}" Name="WidthBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="2048" />
 
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Value="{Binding Path=NodeCountY, Mode=TwoWay}" Name="HeightBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="4096" />
+                <xctk:IntegerUpDown Value="{Binding Path=NodeCountY, Mode=TwoWay}" Name="HeightBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="2048" />
 
                 <Button Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">Generate</Button>
 
@@ -99,7 +102,10 @@
                 <Canvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Visual _Settings" Click="SettingOpen"  Style="{StaticResource MenuItemStyle}" />
-                        <MenuItem Header="_Dijkstra" Click="MenuItem_Click"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
+                        <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
 

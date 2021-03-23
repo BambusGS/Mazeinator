@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Visual Settings" Height="450" Width="700" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        Title="Maze Visual Settings" Height="450" Width="750" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -58,7 +58,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Square nodes: " />
+                <TextBlock Text="Square nodes: " ToolTip="Make node width and height the same size" />
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
             </StackPanel>
 
@@ -83,6 +83,8 @@
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -127,19 +129,24 @@
                 <xctk:ColorPicker SelectedColor="{Binding Path=RootColorEnd, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
             </StackPanel>
 
-            <Separator Grid.ColumnSpan="2" Grid.Row="8" Height="5" />
+            <StackPanel Grid.Column="0" Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock Text="Show explored nodes: " />
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=RenderRoot, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
+            </StackPanel>
 
-            <TextBlock Grid.Column="0" Grid.Row="9" Text="Wall line end shape:" VerticalAlignment="Center" />
-            <ComboBox Name="cmbLineCap" Grid.Column="1" Grid.Row="9" SelectionChanged="cmbLineCap_SelectionChanged" Margin="2,2,2,2" />
+            <Separator Grid.ColumnSpan="2" Grid.Row="9" Height="5" />
 
-            <TextBlock Grid.Column="0" Grid.Row="10" Text="Path line end shape:" VerticalAlignment="Center" />
-            <ComboBox Name="cmbPathCap" Grid.Column="1" Grid.Row="10" SelectionChanged="cmbPathCap_SelectionChanged" Margin="2,2,2,2" />
+            <TextBlock Grid.Column="0" Grid.Row="10" Text="Wall line end shape:" VerticalAlignment="Center" />
+            <ComboBox Name="cmbLineCap" Grid.Column="1" Grid.Row="10" SelectionChanged="CmbLineCap_SelectionChanged" Margin="2,2,2,2" />
+
+            <TextBlock Grid.Column="0" Grid.Row="11" Text="Path line end shape:" VerticalAlignment="Center" />
+            <ComboBox Name="cmbPathCap" Grid.Column="1" Grid.Row="11" SelectionChanged="CmbPathCap_SelectionChanged" Margin="2,2,2,2" />
         </Grid>
 
         <StackPanel Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">
             <Button Click="PlainStyle" MinWidth="60" Margin="0,7,5,7"  Padding="15,0,15,2" >_Plain</Button>
             <Button Click="DefaultValues" MinWidth="60" Margin="5,7,5,7" Padding="12,0,12,2">_Default</Button>
-            <Button IsDefault="True" Click="btnDialogOK_Click" MinWidth="60" Margin="5,7,5,7"  Padding="20,0,20,2">_Ok</Button>
+            <Button IsDefault="True" Click="BtnDialogOK_Click" MinWidth="60" Margin="5,7,5,7"  Padding="20,0,20,2">_Ok</Button>
             <Button IsCancel="True" MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
         </StackPanel>
     </Grid>

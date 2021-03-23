@@ -46,7 +46,7 @@ namespace Mazeinator
             RedrawPreview();
         }
 
-        private void btnDialogOK_Click(object sender, RoutedEventArgs e)
+        private void BtnDialogOK_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = true;
         }
@@ -56,11 +56,12 @@ namespace Mazeinator
             SettingsStyle = new Style()
             {
                 BackgroundColor = Colors.White,
-                RootColorBegin = Colors.Yellow,
-                RootColorEnd = Colors.Orange,
+                RootColorBegin = Colors.Blue,
+                RootColorEnd = Colors.MidnightBlue,
 
                 RenderNode = false,
                 RenderPoint = false,
+                RenderRoot = false
             };
             this.DataContext = SettingsStyle;
 
@@ -96,13 +97,13 @@ namespace Mazeinator
             RedrawPreview();
         }
 
-        private void cmbLineCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CmbLineCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SettingsStyle.WallEndCap = SettingsStyle.LineCapOptions[cmbLineCap.SelectedIndex];
             RedrawPreview();
         }
 
-        private void cmbPathCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CmbPathCap_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             SettingsStyle.PathEndCap = SettingsStyle.LineCapOptions[cmbPathCap.SelectedIndex];
             RedrawPreview();
@@ -114,7 +115,7 @@ namespace Mazeinator
             int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
             int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
 
-            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle));
+            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle, _maze.DijkstraPath));
             GC.Collect();
         }
     }

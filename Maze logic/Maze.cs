@@ -13,7 +13,15 @@ namespace Mazeinator
         public Node[,] nodes = null;
 
         public Node startNode, endNode;
-        public List<Node> path = new List<Node>();
+        public Path pathToRender;
+        public Path DFSTree;
+
+        [NonSerialized]
+        public Path GreedyPath;
+        [NonSerialized]
+        public Path DijkstraPath;
+        [NonSerialized]
+        public Path AStarPath;
 
         private int _nodeCountX, _nodeCountY;
         public int renderSizeX, renderSizeY;
@@ -23,8 +31,6 @@ namespace Mazeinator
 
         //TESTING OLD
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
-
-        private Tuple<Color, Color, float> _rootPenHolder = new Tuple<Color, Color, float>(Color.Blue, Color.Black, 5);
 
         #endregion Variables
 
@@ -63,7 +69,9 @@ namespace Mazeinator
             {
                 startNode = nodes[rnd.Next(nodes.GetLength(0)), rnd.Next(nodes.GetLength(1))];
             }
-            startNode.Root = startNode;
+            DFSTree = new Path();
+            DFSTree.exploredNodes = new Node[_nodeCountX, _nodeCountY];
+            DFSTree.exploredNodes[startNode.X, startNode.Y] = startNode;                //startNode.Root = startNode;
 
             //create the Visited array and the backtracking stack
             bool[,] Visited = new bool[_nodeCountX, _nodeCountY];
@@ -107,8 +115,9 @@ namespace Mazeinator
                             Visited[currentNode.X, currentNode.Y - 1] = true;                             //set the northern one to be also visited
 
                             currentNode.Neighbours[Node.North].Neighbours[Node.South] = currentNode;            //set the northern one's neighbour to be this node
-                            currentNode.Neighbours[Node.North].Root = currentNode.Neighbours[Node.North];
+                            //currentNode.Neighbours[Node.North].Root = currentNode.Neighbours[Node.North];
                             //currentNode.Neighbours[Node.North].Root = currentNode;
+                            DFSTree.exploredNodes[currentNode.X, currentNode.Y - 1] = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.North]);       //move to the northern node by pushing it onto the stack
                             break;
@@ -118,8 +127,9 @@ namespace Mazeinator
                             Visited[currentNode.X + 1, currentNode.Y] = true;
 
                             currentNode.Neighbours[Node.East].Neighbours[Node.West] = currentNode;
-                            currentNode.Neighbours[Node.East].Root = currentNode.Neighbours[Node.East];
+                            //currentNode.Neighbours[Node.East].Root = currentNode.Neighbours[Node.East];
                             //currentNode.Neighbours[Node.East].Root = currentNode;
+                            DFSTree.exploredNodes[currentNode.X + 1, currentNode.Y] = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.East]);
                             break;
@@ -129,8 +139,9 @@ namespace Mazeinator
                             Visited[currentNode.X, currentNode.Y + 1] = true;
 
                             currentNode.Neighbours[Node.South].Neighbours[Node.North] = currentNode;
-                            currentNode.Neighbours[Node.South].Root = currentNode.Neighbours[Node.South];
+                            //currentNode.Neighbours[Node.South].Root = currentNode.Neighbours[Node.South];
                             //currentNode.Neighbours[Node.South].Root = currentNode;
+                            DFSTree.exploredNodes[currentNode.X, currentNode.Y + 1] = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.South]);
                             break;
@@ -140,8 +151,9 @@ namespace Mazeinator
                             Visited[currentNode.X - 1, currentNode.Y] = true;
 
                             currentNode.Neighbours[Node.West].Neighbours[Node.East] = currentNode;
-                            currentNode.Neighbours[Node.West].Root = currentNode.Neighbours[Node.West];
+                            //currentNode.Neighbours[Node.West].Root = currentNode.Neighbours[Node.West];
                             //currentNode.Neighbours[Node.West].Root = currentNode;
+                            DFSTree.exploredNodes[currentNode.X - 1, currentNode.Y] = currentNode;
 
                             BackTheTrack.Push(currentNode.Neighbours[Node.West]);
                             break;
@@ -150,6 +162,7 @@ namespace Mazeinator
                 }
                 else { BackTheTrack.Pop(); }    //return one back, because there is nowhere to go
             }
+            pathToRender = DFSTree;
             return true;
         }
 
@@ -195,8 +208,11 @@ namespace Mazeinator
                     nodes[column, row].Neighbours[Node.West] = nodes[column - 1, row];
                 }
             }
-            foreach (Node node in nodes)
-                node.Root = node;
+            DFSTree = new Path();
+            DFSTree.exploredNodes = new Node[_nodeCountX, _nodeCountY];
+            pathToRender = DFSTree;
+            //foreach (Node node in nodes)
+            //    node.Root = node;
 
             return true;
         }
@@ -340,7 +356,6 @@ namespace Mazeinator
             //initialize all the pens that can be changed by serialization or by user
             Pen _nodePen = new Pen(Utilities.ConvertColor(style.NodeColor), cellSize / 16 * style.NodeThickness / 100);
             Pen _pointPen = new Pen(Utilities.ConvertColor(style.PointColor), cellSize / 4 * style.PointThickness / 100);
-            Pen _startNodePen = new Pen(_rootRootNodePenHolder.Item1, cellSize / (4 + _rootRootNodePenHolder.Item2));
             Pen _rootPen = new Pen(Utilities.ConvertColor(style.RootColorBegin), cellSize / 16 * style.RootThickness / 100);
             Pen _backgroundPen = new Pen(Utilities.ConvertColor(style.BackgroundColor));
 
@@ -517,27 +532,106 @@ namespace Mazeinator
 
         #region PathPlanning
 
+        public bool GreedyBFS()
+        {
+            if (startNode == null || endNode == null || nodes == null)
+                return false;
+
+            int edgeLength = 1;
+            List<Tuple<double, int, Node>> frontier = new List<Tuple<double, int, Node>>();         //holds sorting value, distance from start, actual Node
+
+            bool pathFindErrored = false;
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            GreedyPath = new Path();
+            GreedyPath.startNode = startNode;
+            GreedyPath.endNode = endNode;
+
+            //add the starting node
+            frontier.Add(new Tuple<double, int, Node>(0, 0, startNode));
+
+            //try to find distance from the startnode for all reachable nodes
+            while (frontier[0].Item3 != endNode)
+            {
+                int currentNodeDistance = frontier[0].Item2;
+                Node currentNode = frontier[0].Item3;
+                frontier.RemoveAt(0);
+
+                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Node nodeToVisit = currentNode.Neighbours[i];
+                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    {
+                        int diffX = endNode.X - currentNode.X;
+                        int diffY = endNode.Y - currentNode.Y;
+
+                        double sortValue = Math.Sqrt(diffX * diffX + diffY * diffY);        //this line makes all the difference in algorithms
+
+                        frontier.Add(new Tuple<double, int, Node>(sortValue, currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
+                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+
+                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                    }
+                }
+
+                if (frontier.Count == 0)
+                {
+                    pathFindErrored = true;
+                    GreedyPath.exploredNodes = WhereDidIComeFrom;
+                    return false;
+                }
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first (calculation of A* takes into account node distance + it's distance from the finish node)
+
+                //4TESTING↓
+                //for (int i = 0; i < frontier.Count; i++)
+                //{
+                //    Console.Write(frontier[i].Item2.ToString() + "|sort:" + frontier[i].Item3 + "|d:" + frontier[i].Item1 + " \t");
+                //}
+                //Console.WriteLine();
+            }
+
+            if (pathFindErrored == false)
+            {
+                //clear and write the backtracked shortest path
+                GreedyPath.path = new List<Node>();
+
+                GreedyPath.path.Add(endNode);
+                Node backTrackNode = endNode;
+                while (backTrackNode != startNode && backTrackNode != null)
+                {
+                    GreedyPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                }
+
+                //add the spanning tree to the root visualized
+                GreedyPath.exploredNodes = WhereDidIComeFrom;
+            }
+            return true;
+        }
+
         public bool Dijkstra()
         {
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
             int edgeLength = 1;
-            List<Tuple<int, Node>> frontier = new List<Tuple<int, Node>>();
+            List<Tuple<int, Node>> frontier = new List<Tuple<int, Node>>();         //holds distance from start (in here used as the sorting value), actual Node
 
-            bool pathFindError = false;
+            bool pathFindErrored = false;
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
 
-            //4TESTING↓ ?
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            DijkstraPath = new Path();
+            DijkstraPath.startNode = startNode;
+            DijkstraPath.endNode = endNode;
 
             //add the starting node
             frontier.Add(new Tuple<int, Node>(0, startNode));
-
-            //4TESTING↓
-            foreach (Node node in nodes)
-                node.Root = null;
 
             //try to find distance from the startnode for all reachable nodes
             while (frontier[0].Item2 != endNode)
@@ -557,16 +651,16 @@ namespace Mazeinator
 
                         distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
                         WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
-                        nodeToVisit.Root = currentNode;
                     }
                 }
 
                 if (frontier.Count == 0)
                 {
-                    pathFindError = true;
+                    pathFindErrored = true;
+                    DijkstraPath.exploredNodes = WhereDidIComeFrom;
                     return false;
                 }
-                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; unnecessary for this square maze
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first; almost unnecessary for this square maze
 
                 //4TESTING↓
                 //for (int i = 0; i < frontier.Count; i++)
@@ -576,46 +670,153 @@ namespace Mazeinator
                 //Console.WriteLine();
             }
 
-            _rootPenHolder = new Tuple<Color, Color, float>(Color.Red, Color.Black, 8);
-
-            if (pathFindError == false)
+            if (pathFindErrored == false)
             {
                 //clear and write the backtracked shortest path
-                path.Clear();
-                path.Add(endNode);
+                DijkstraPath.path = new List<Node>();
+
+                DijkstraPath.path.Add(endNode);
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
-                    path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    DijkstraPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
                     backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
                 }
+
+                //add the spanning tree to the root visualized
+                DijkstraPath.exploredNodes = WhereDidIComeFrom;
+            }
+            return true;
+        }
+
+        public bool AStar()
+        {
+            if (startNode == null || endNode == null || nodes == null)
+                return false;
+
+            int edgeLength = 1;
+            List<Tuple<double, int, Node>> frontier = new List<Tuple<double, int, Node>>();         //holds sorting value, distance from start, actual Node
+
+            bool pathFindErrored = false;
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            AStarPath = new Path();
+            AStarPath.startNode = startNode;
+            AStarPath.endNode = endNode;
+
+            //add the starting node
+            frontier.Add(new Tuple<double, int, Node>(0, 0, startNode));
+
+            //try to find distance from the startnode for all reachable nodes
+            while (frontier[0].Item3 != endNode)
+            {
+                int currentNodeDistance = frontier[0].Item2;
+                Node currentNode = frontier[0].Item3;
+                frontier.RemoveAt(0);
+
+                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Node nodeToVisit = currentNode.Neighbours[i];
+                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    {
+                        int diffX = endNode.X - currentNode.X;
+                        int diffY = endNode.Y - currentNode.Y;
+                        double sortValue = currentNodeDistance + edgeLength + Math.Sqrt(diffX * diffX + diffY * diffY);     //this line makes all the difference in algorithms
+
+                        frontier.Add(new Tuple<double, int, Node>(sortValue, currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
+                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+
+                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                    }
+                }
+
+                if (frontier.Count == 0)
+                {
+                    pathFindErrored = true;
+                    AStarPath.exploredNodes = WhereDidIComeFrom;
+                    return false;
+                }
+                frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first (calculation of A* takes into account node distance + it's distance from the finish node)
+
+                //4TESTING↓
+                //for (int i = 0; i < frontier.Count; i++)
+                //{
+                //    Console.Write(frontier[i].Item2.ToString() + "|sort:" + frontier[i].Item3 + "|d:" + frontier[i].Item1 + " \t");
+                //}
+                //Console.WriteLine();
+            }
+
+            if (pathFindErrored == false)
+            {
+                //clear and write the backtracked shortest path
+                AStarPath.path = new List<Node>();
+
+                AStarPath.path.Add(endNode);
+                Node backTrackNode = endNode;
+                while (backTrackNode != startNode && backTrackNode != null)
+                {
+                    AStarPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                }
+
+                //add the spanning tree to the root visualized
+                AStarPath.exploredNodes = WhereDidIComeFrom;
             }
             return true;
         }
 
         public Bitmap RenderPath(Bitmap originalBMP, Style style)
         {
-            if (_wallsPen != null && _nodePen != null && _pointPen != null || _rootPen != null)
+            return RenderPath(originalBMP, style, pathToRender);
+        }
+
+        public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
+        {
+            pathToRender = currentPath;
+            if (_wallsPen != null && _nodePen != null && _pointPen != null || _rootPen != null && nodes != null)
             {
                 using (Graphics gr = Graphics.FromImage(originalBMP))
                 {
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
                     gr.CompositingQuality = CompositingQuality.HighSpeed;
 
-                    if (path.Count > 0)
+                    //draw explored nodes (while checking if they are large enough)
+                    if (currentPath.exploredNodes != null)
+                    {
+                        for (int column = 0; column < _nodeCountX; column++)
+                        {
+                            for (int row = 0; row < _nodeCountY; row++)
+                            {
+                                //assign the nodes's roots to the current path diagram
+                                nodes[column, row].Root = currentPath.exploredNodes[column, row];
+
+                                if (style.RenderRoot == true && (nodes[0, 0].Bounds.Width > 6 && nodes[0, 0].Bounds.Height > 6))
+                                    nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
+                            }
+                        }
+                    }
+
+                    //draw the shortest path
+                    if (currentPath.path != null && currentPath.path.Count > 0)
                     {
                         //path has set rootnodes from END to START; path=4 -> we need 3 intervals
-                        double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(path.Count - 1);
-                        double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(path.Count - 1);
-                        double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(path.Count - 1);
+                        double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(currentPath.path.Count - 1);
+                        double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(currentPath.path.Count - 1);
+                        double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(currentPath.path.Count - 1);
 
                         //because root nodes are drawn - there is no need to draw the first root node
-                        for (int i = 0; i < path.Count - 1; i++)
+                        for (int i = 0; i < currentPath.path.Count - 1; i++)
                         {
                             Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
                             Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+
                             //reverse the drawing order -> we draw from the start
-                            path[path.Count - i - 2].DrawRootNode(gr, startColor, endColor, (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness), style.PathEndCap, style.PathEndCap);
+                            float thickness = (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness);
+                            currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, thickness, style.PathEndCap, style.PathEndCap);
                         }
                     }
 

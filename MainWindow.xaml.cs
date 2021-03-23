@@ -5,17 +5,16 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  Export window - resolution
+ *  implement A*; pathfinding show visited node count & final path length
  *  right-click menus
- *  app ICON
  *  Either create new file or load another one
- *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%
  *  add blank maze option
- *  Async save/loading/export
  *  progress bar is nonexistent as hell
+ *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
  *  http://www.astrolog.org/labyrnth/algrithm.htm
+ *  https://www.redblobgames.com/pathfinding/a-star/introduction.html
  */
 
 namespace Mazeinator
@@ -58,7 +57,7 @@ namespace Mazeinator
                 //triggers the timer
                 if (_autoRenderTimer.IsEnabled == false)
                 {
-                    _autoRenderTimer.Tick += new EventHandler(autoRender);
+                    _autoRenderTimer.Tick += new EventHandler(AutoRender);
                     _autoRenderTimer.Interval = new TimeSpan(0, 0, 1);
                     _autoRenderTimer.Start();
                 }
@@ -77,10 +76,10 @@ namespace Mazeinator
             }
         }
 
-        private void autoRender(object sender, EventArgs e)
+        private void AutoRender(object sender, EventArgs e)
         {
             _autoRenderTimer.Stop();
-            _autoRenderTimer.Tick -= autoRender;
+            _autoRenderTimer.Tick -= AutoRender;
             _controller.Render(GetCanvasSizePixels());
         }
 
@@ -116,6 +115,16 @@ namespace Mazeinator
             else { Application.Current.Shutdown(); }
         }
 
+        private void AboutClick(object sender, RoutedEventArgs e)
+        {
+            About about = new About();
+            About abouthidden = new About(true);
+            abouthidden.Show();
+            abouthidden.Hide();
+            about.ShowDialog();
+            abouthidden.Show();
+        }
+
         #endregion Menu
 
         #region MazeFunctions
@@ -125,9 +134,23 @@ namespace Mazeinator
             _controller.MazeGeneration(GetCanvasSizePixels());
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void NewBlank_click(object sender, RoutedEventArgs e)
+        {
+            _controller.MazeGenBlank(GetCanvasSizePixels());
+        }
+
+        private void Greedy_click(object sender, RoutedEventArgs e)
+        {
+            _controller.PathGreedy();
+        }
+        
+        private void Dijkstra_click(object sender, RoutedEventArgs e)
         {
             _controller.PathDijkstra();
+        }
+        private void AStar_click(object sender, RoutedEventArgs e)
+        {
+            _controller.PathAStar();
         }
 
         private void SelectNode(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -187,6 +210,10 @@ namespace Mazeinator
             return new Tuple<int, int>(canvasSizeX, canvasSizeY);
         }
 
+
+
         #endregion CustomFunctions
+
+
     }
 }
