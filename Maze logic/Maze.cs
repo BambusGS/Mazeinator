@@ -28,6 +28,8 @@ namespace Mazeinator
         public Path AStarPath = new Path();
 
         private int _nodeCountX, _nodeCountY;
+        public int NodeCountX { get { return _nodeCountX; } }
+        public int NodeCountY { get { return _nodeCountY; } }
         public int renderSizeX, renderSizeY;
 
         [NonSerialized]
@@ -780,7 +782,6 @@ namespace Mazeinator
 
         public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
         {
-            Console.WriteLine("HERE" + currentPath);
             pathToRender = currentPath;
             if (/*currentPath != null &&*/ nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
             {

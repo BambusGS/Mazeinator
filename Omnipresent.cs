@@ -151,27 +151,29 @@ namespace Mazeinator
         {
             if (MainMaze != null)
             {
-                Stopwatch RenderTime = new Stopwatch();
-                RenderTime.Start();
+                //_mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
+                //Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
 
-                _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
+                new Task(() =>
+                {
+                    Stopwatch RenderTime = new Stopwatch();
+                    RenderTime.Start();
+                    _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
 
-                Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
-                //new Task(() =>
-                //{
-                //    _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
-                //    Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
-                //}).Start();
+                    BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+                    mazeRender.Freeze();
+                    Maze = mazeRender;
 
-                RenderTime.Stop();
-                LastRenderTime = RenderTime.ElapsedMilliseconds;
+                    RenderTime.Stop();
+                    LastRenderTime = RenderTime.ElapsedMilliseconds;
 
-                Status = "Rendering done";
-                RenderSizeX = MainMaze.renderSizeX;
-                RenderSizeY = MainMaze.renderSizeY;
-                CanvasSizeX = CanvasSize.Item1;
-                CanvasSizeY = CanvasSize.Item2;
-                GC.Collect();
+                    Status = "Rendering done";
+                    RenderSizeX = MainMaze.renderSizeX;
+                    RenderSizeY = MainMaze.renderSizeY;
+                    CanvasSizeX = CanvasSize.Item1;
+                    CanvasSizeY = CanvasSize.Item2;
+                    GC.Collect();
+                }).Start();
             }
         }
 
@@ -485,9 +487,19 @@ namespace Mazeinator
                             MainMaze.pathToRender = MainMaze.AStarPath;
                         }
 
+                        //_mazeBMP = MainMaze.RenderMaze(CanvasSizeX, CanvasSizeY, MazeStyle);
+                        //var temp = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+                        //temp.Freeze();
+                        //Maze = temp;
+                        //Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+
+                        Render();
+
                         ProcessTime.Stop();
                         LastGenTime = ProcessTime.ElapsedMilliseconds;
                         Status = "Loading done";
+                        NodeCountX = MainMaze.NodeCountX;
+                        NodeCountY = MainMaze.NodeCountY;
                         NodeCount = MainMaze.nodes.Length;
                     }
                     catch (Exception exc)
@@ -540,6 +552,8 @@ namespace Mazeinator
 
                         ProcessTime.Stop();
                         LastRenderTime = ProcessTime.ElapsedMilliseconds;
+
+                        Render();
 
                         MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                         Status = "Export done";
