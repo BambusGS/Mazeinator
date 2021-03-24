@@ -95,12 +95,15 @@ namespace Mazeinator
         private ICommand _saveFileCMD; public ICommand SaveFileCMD { get { return _saveFileCMD ?? (_saveFileCMD = new ActionCommand(() => { SaveMaze(); })); } }
         private ICommand _loadFileCMD; public ICommand LoadFileCMD { get { return _loadFileCMD ?? (_loadFileCMD = new ActionCommand(() => { LoadMaze(); })); } }
         private ICommand _generateCMD; public ICommand GenerateCMD { get { return _generateCMD ?? (_generateCMD = new ActionCommand(() => { MazeGeneration(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
+        private ICommand _generateBlankCMD; public ICommand GenerateBlankCMD { get { return _generateBlankCMD ?? (_generateBlankCMD = new ActionCommand(() => { MazeGenBlank(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
         private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(); })); } }
         private ICommand _quitCMD; public ICommand QuitCMD { get { return _quitCMD ?? (_quitCMD = new ActionCommand(() => { Application.Current.MainWindow.Close(); })); } }
 
         #endregion Global_shortcuts
 
         #region Maze_functions
+
+        private Task OneToRunThemAll;
 
         public void MazeGeneration(Tuple<int, int> CanvasSize)
         {
@@ -145,59 +148,86 @@ namespace Mazeinator
 
         public void PathGreedy()
         {
-            Stopwatch ProcessTime = new Stopwatch();
-            ProcessTime.Start();
+            if (MainMaze != null)
+            {
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
+                    {
+                        Stopwatch ProcessTime = new Stopwatch();
+                        ProcessTime.Start();
 
-            if (MainMaze == null || !MainMaze.GreedyBFS())
-                Status = "Pathfinding failed";
-            else
-                Status = "Greedy best-first search done";
+                        if (!MainMaze.GreedyBFS())
+                            Status = "Pathfinding failed";
+                        else
+                            Status = "Greedy best-first search done";
 
-            LastGenTime = ProcessTime.ElapsedMilliseconds;
-            ProcessTime.Restart();
+                        LastGenTime = ProcessTime.ElapsedMilliseconds;
+                        ProcessTime.Restart();
 
-            RenderPath(MainMaze.GreedyPath);
+                        RenderPath(MainMaze.GreedyPath);
 
-            ProcessTime.Stop();
-            LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                        ProcessTime.Stop();
+                        LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                    });
+            }
         }
 
         public void PathDijkstra()
         {
-            Stopwatch ProcessTime = new Stopwatch();
-            ProcessTime.Start();
+            if (MainMaze != null)
+            {
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
+                {
+                    Stopwatch ProcessTime = new Stopwatch();
+                    ProcessTime.Start();
 
-            if (MainMaze == null || !MainMaze.Dijkstra())
-                Status = "Pathfinding failed";
-            else
-                Status = "Dijkstra done";
+                    if (!MainMaze.Dijkstra())
+                        Status = "Pathfinding failed";
+                    else
+                        Status = "Dijkstra done";
 
-            LastGenTime = ProcessTime.ElapsedMilliseconds;
-            ProcessTime.Restart();
+                    LastGenTime = ProcessTime.ElapsedMilliseconds;
+                    ProcessTime.Restart();
 
-            RenderPath(MainMaze.DijkstraPath);
+                    RenderPath(MainMaze.DijkstraPath);
 
-            ProcessTime.Stop();
-            LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                    ProcessTime.Stop();
+                    LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                });
+            }
         }
 
         public void PathAStar()
         {
-            Stopwatch ProcessTime = new Stopwatch();
-            ProcessTime.Start();
+            if (MainMaze != null)
+            {
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
+                {
+                    Stopwatch ProcessTime = new Stopwatch();
+                    ProcessTime.Start();
 
-            if (MainMaze == null || !MainMaze.AStar())
-                Status = "Pathfinding failed";
-            else
-                Status = "A* done";
+                    if (!MainMaze.AStar())
+                        Status = "Pathfinding failed";
+                    else
+                        Status = "A* done";
 
-            LastGenTime = ProcessTime.ElapsedMilliseconds;
-            ProcessTime.Restart();
+                    LastGenTime = ProcessTime.ElapsedMilliseconds;
+                    ProcessTime.Restart();
 
-            RenderPath(MainMaze.AStarPath);
+                    RenderPath(MainMaze.AStarPath);
 
-            ProcessTime.Stop();
-            LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                    ProcessTime.Stop();
+                    LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                });
+            }
         }
 
         /// <summary>
@@ -258,34 +288,34 @@ namespace Mazeinator
 
                 if (NodeSelector.ShowDialog() == true)
                 {
-                    int selector = NodeSelector.selector;
+                    NodeAction nodeAction = NodeSelector.nodeAction;
                     MainMaze.pathToRender.Clear();
 
                     Node targetNode = MainMaze.nodes[selectX, selectY];
 
-                    switch (selector)
+                    switch (nodeAction)
                     {
-                        case Node.North:
-                            MainMaze.ToggleNeighbour(targetNode, selector);
+                        case NodeAction.NorthNodeSelect:
+                            MainMaze.ToggleNeighbour(targetNode, Node.North);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
                             break;
 
-                        case Node.East:
-                            MainMaze.ToggleNeighbour(targetNode, selector);
+                        case NodeAction.EastNodeSelect:
+                            MainMaze.ToggleNeighbour(targetNode, Node.East);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
                             break;
 
-                        case Node.South:
-                            MainMaze.ToggleNeighbour(targetNode, selector);
+                        case NodeAction.SouthNodeSelect:
+                            MainMaze.ToggleNeighbour(targetNode, Node.South);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
                             break;
 
-                        case Node.West:
-                            MainMaze.ToggleNeighbour(targetNode, selector);
+                        case NodeAction.WestNodeSelect:
+                            MainMaze.ToggleNeighbour(targetNode, Node.West);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
                             break;
 
-                        case 10: //startNode
+                        case NodeAction.StartNodeSelect:
                             if (targetNode == MainMaze.endNode)
                                 MainMaze.endNode = null;
 
@@ -295,7 +325,7 @@ namespace Mazeinator
                                 MainMaze.startNode = targetNode;
                             break;
 
-                        case 11: //endNode
+                        case NodeAction.EndNodeSelect:
                             if (targetNode == MainMaze.startNode)
                                 MainMaze.startNode = null;
 
@@ -305,7 +335,7 @@ namespace Mazeinator
                                 MainMaze.endNode = targetNode;
                             break;
 
-                        case 20: //auxilary button
+                        case NodeAction.AUX:
                             PathDijkstra();
                             break;
 
@@ -346,10 +376,14 @@ namespace Mazeinator
                 //_mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
                 //Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
 
-                new Task(() =>
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
                 {
                     Stopwatch RenderTime = new Stopwatch();
                     RenderTime.Start();
+
                     _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
 
                     BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
@@ -365,24 +399,42 @@ namespace Mazeinator
                     CanvasSizeX = CanvasSize.Item1;
                     CanvasSizeY = CanvasSize.Item2;
                     GC.Collect();
-                }).Start();
+                });
             }
         }
 
         public void RenderPath()
         {
-            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+            Stopwatch RenderTime = new Stopwatch();
+            RenderTime.Start();
 
+            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+            mazeRender.Freeze();
+            Maze = mazeRender;
+
+            RenderTime.Stop();
+            LastRenderTime = RenderTime.ElapsedMilliseconds;
+
+            Status = "Rendering done";
             GC.Collect();   //collect the leftovers
         }
 
         //overloaded method (similar to the one in Maze) to render specific paths
         public void RenderPath(Path path)
         {
-            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
+            Stopwatch RenderTime = new Stopwatch();
+            RenderTime.Start();
 
+            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
+            mazeRender.Freeze();
+            Maze = mazeRender;
+
+            RenderTime.Stop();
+            LastRenderTime = RenderTime.ElapsedMilliseconds;
+
+            Status = "Rendering done";
             GC.Collect();   //collect the leftovers
         }
 
@@ -425,25 +477,29 @@ namespace Mazeinator
             if (_currentFilePath != null)
             {
                 Status = "Saving...";
-                new Task(() =>
-                {
-                    try
-                    {
-                        Stopwatch ProcessTime = new Stopwatch();
-                        ProcessTime.Start();
 
-                        Utilities.SaveBySerializing<Maze>(MainMaze, _currentFilePath);
-
-                        ProcessTime.Stop();
-                        LastGenTime = ProcessTime.ElapsedMilliseconds;
-                        Status = "Saving done";
-                    }
-                    catch (Exception exc)
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
                     {
-                        MessageBox.Show("An unhandled saving exception just occured: " + exc.Message, "Unhandled saving exception", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Status = "Saving failed";
-                    }
-                }).Start();
+                        try
+                        {
+                            Stopwatch ProcessTime = new Stopwatch();
+                            ProcessTime.Start();
+
+                            Utilities.SaveBySerializing<Maze>(MainMaze, _currentFilePath);
+
+                            ProcessTime.Stop();
+                            LastGenTime = ProcessTime.ElapsedMilliseconds;
+                            Status = "Saving done";
+                        }
+                        catch (Exception exc)
+                        {
+                            MessageBox.Show("An unhandled saving exception just occured: " + exc.Message, "Unhandled saving exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Status = "Saving failed";
+                        }
+                    });
             }
         }
 
@@ -469,42 +525,45 @@ namespace Mazeinator
             {
                 Status = "Commencing loading operation...";
 
-                new Task(() =>
-                {
-                    try
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
                     {
-                        Stopwatch ProcessTime = new Stopwatch();
-                        ProcessTime.Start();
-
-                        MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
-
-                        //if there is no start/end-node selected, load the generating tree
-                        if (MainMaze.startNode == null && MainMaze.endNode == null)
+                        try
                         {
-                            MainMaze.pathToRender = (Path)MainMaze.DFSTree.Clone();
+                            Stopwatch ProcessTime = new Stopwatch();
+                            ProcessTime.Start();
+
+                            MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
+
+                            //if there is no start/end-node selected, load the generating tree
+                            if (MainMaze.startNode == null && MainMaze.endNode == null)
+                            {
+                                MainMaze.pathToRender = (Path)MainMaze.DFSTree.Clone();
+                            }
+                            else    //calculate all the algorithms
+                            {
+                                //recalculate the paths (using the best algorithm)
+                                MainMaze.AStar();
+                                MainMaze.pathToRender = MainMaze.AStarPath;
+                            }
+
+                            Render();
+
+                            ProcessTime.Stop();
+                            LastGenTime = ProcessTime.ElapsedMilliseconds;
+                            Status = "Loading done";
+                            NodeCountX = MainMaze.NodeCountX;
+                            NodeCountY = MainMaze.NodeCountY;
+                            NodeCount = MainMaze.nodes.Length;
                         }
-                        else    //calculate all the algorithms
+                        catch (Exception exc)
                         {
-                            //recalculate the paths (using the best algorithm)
-                            MainMaze.AStar();
-                            MainMaze.pathToRender = MainMaze.AStarPath;
+                            MessageBox.Show("An unhandled loading exception just occured: " + exc.Message, "Unhandled loading exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Status = "Loading failed";
                         }
-
-                        Render();
-
-                        ProcessTime.Stop();
-                        LastGenTime = ProcessTime.ElapsedMilliseconds;
-                        Status = "Loading done";
-                        NodeCountX = MainMaze.NodeCountX;
-                        NodeCountY = MainMaze.NodeCountY;
-                        NodeCount = MainMaze.nodes.Length;
-                    }
-                    catch (Exception exc)
-                    {
-                        MessageBox.Show("An unhandled loading exception just occured: " + exc.Message, "Unhandled loading exception", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Status = "Loading failed";
-                    }
-                }).Start();
+                    });
             }
         }
 
@@ -533,34 +592,36 @@ namespace Mazeinator
             if (dialog.ShowDialog() == true && exportWindow.ShowDialog() == true)
             {
                 Status = "Commencing export";
-                new Task(() =>
-                {
-                    try
+
+                //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
+                //[use of operator evaluation] for thread safety
+                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
+                    OneToRunThemAll = Task.Run(() =>
                     {
-                        Stopwatch ProcessTime = new Stopwatch();
-                        ProcessTime.Start();
+                        try
+                        {
+                            Stopwatch ProcessTime = new Stopwatch();
+                            ProcessTime.Start();
 
-                        MazeStyle.IsSquare = exportWindow.IsSquare;
-                        //draws the path(generates bitmap)
-                        System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
+                            MazeStyle.IsSquare = exportWindow.IsSquare;
+                            //draws the path(generates bitmap)
+                            System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, true), MazeStyle);
 
-                        //resize the rendered bitmap (only does it, if it's needed)
-                        new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
+                            //resize the rendered bitmap (only does it, if it's needed)
+                            new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
 
-                        ProcessTime.Stop();
-                        LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                            ProcessTime.Stop();
+                            LastRenderTime = ProcessTime.ElapsedMilliseconds;
 
-                        Render();
-
-                        MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
-                        Status = "Export done";
-                    }
-                    catch (Exception exc)
-                    {
-                        MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
-                        Status = "Export failed";
-                    }
-                }).Start();
+                            MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
+                            Status = "Export done";
+                        }
+                        catch (Exception exc)
+                        {
+                            MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Status = "Export failed";
+                        }
+                    });
             }
         }
 

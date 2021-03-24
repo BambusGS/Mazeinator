@@ -6,6 +6,8 @@ using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/e
 
 /*  ===TODO===
  *  pathfinding show visited node count & final path length
+ *  enumerator + image at load (generate or load)
+ *  rickroll?!
  *  maze after_load setup
  *  right-click menus
  *  Either create new file or load another one
@@ -134,8 +136,8 @@ namespace Mazeinator
         {
             _controller.MazeGeneration(GetCanvasSizePixels());
         }
-
-        private void NewBlank_click(object sender, RoutedEventArgs e)
+        
+        private void MazeBlankGeneration(object sender, RoutedEventArgs e)
         {
             _controller.MazeGenBlank(GetCanvasSizePixels());
         }

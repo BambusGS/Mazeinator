@@ -6,9 +6,22 @@ namespace Mazeinator
     /// <summary>
     /// Interaction logic for NodeSettings.xaml
     /// </summary>
+
+    public enum NodeAction
+    {
+        NorthNodeSelect,
+        EastNodeSelect,
+        SouthNodeSelect,
+        WestNodeSelect,
+        StartNodeSelect,
+        EndNodeSelect,
+        AUX
+    }
+
     public partial class NodeSettings : Window
     {
         public int selector = 0;
+        public NodeAction nodeAction;
 
         public NodeSettings(int nodeSize)
         {
@@ -21,31 +34,31 @@ namespace Mazeinator
             switch ((sender as Button).Tag)
             {
                 case "NorthNodeSelect":
-                    selector = Node.North;
+                    nodeAction = NodeAction.NorthNodeSelect;
                     break;
 
                 case "EastNodeSelect":
-                    selector = Node.East;
+                    nodeAction = NodeAction.EastNodeSelect;
                     break;
 
                 case "SouthNodeSelect":
-                    selector = Node.South;
+                    nodeAction = NodeAction.SouthNodeSelect;
                     break;
 
                 case "WestNodeSelect":
-                    selector = Node.West;
+                    nodeAction = NodeAction.WestNodeSelect;
                     break;
 
                 case "StartNodeSelect":
-                    selector = 10;
+                    nodeAction = NodeAction.StartNodeSelect;
                     break;
 
                 case "EndNodeSelect":
-                    selector = 11;
+                    nodeAction = NodeAction.EndNodeSelect;
                     break;
 
                 case "AUX":
-                    selector = 20;
+                    nodeAction = NodeAction.AUX;
                     break;
             }
 

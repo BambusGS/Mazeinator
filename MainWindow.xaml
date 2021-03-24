@@ -18,6 +18,7 @@
         <KeyBinding Command="{Binding SaveFileCMD}" Modifiers="Ctrl" Key="S" />
         <KeyBinding Command="{Binding LoadFileCMD}" Modifiers="Ctrl" Key="W" />
         <KeyBinding Command="{Binding GenerateCMD}" Modifiers="Ctrl" Key="D" />
+        <KeyBinding Command="{Binding GenerateBlankCMD}" Modifiers="Ctrl+Shift" Key="D" />
         <KeyBinding Command="{Binding ExportCMD}" Modifiers="Ctrl" Key="E" />
         <KeyBinding Command="{Binding QuitCMD}" Modifiers="Ctrl" Key="Q" />
     </Window.InputBindings>
@@ -30,8 +31,8 @@
         </Style>
 
         <Style x:Key="MenuItemStyle" TargetType="MenuItem">
-            <Setter Property="Padding" Value="3,0" />
-            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="Padding" Value="3,0,1,0" />
+            <Setter Property="Margin" Value="1,0,0,0" />
         </Style>
     </Window.Resources>
 
@@ -41,6 +42,7 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Click="NewMaze" InputGestureText="Ctrl+N"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Generate" Click="MazeGeneration" InputGestureText="Ctrl+D"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="Generate _Blank" Click="MazeBlankGeneration" InputGestureText="Ctrl+Shift+D"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Save" Click="SaveMaze" InputGestureText="Ctrl+S"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W"  Style="{StaticResource MenuItemStyle}">
                     <MenuItem.ToolTip>
@@ -64,7 +66,6 @@
 
             <MenuItem Header="_Options">
                 <MenuItem Header="Visual _Settings" Click="SettingOpen" Style="{StaticResource MenuItemStyle}" />
-                <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
@@ -102,7 +103,6 @@
                 <Canvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Visual _Settings" Click="SettingOpen"  Style="{StaticResource MenuItemStyle}" />
-                        <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
                         <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
                         <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
                         <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />

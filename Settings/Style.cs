@@ -41,6 +41,7 @@ namespace Mazeinator
 
         #endregion Variables
 
+        //Implements the ICloneable interface; deeply inspired by the link below
         //https://stackoverflow.com/questions/6569486/creating-a-copy-of-an-object-in-c-sharp
         public object Clone()
         {
