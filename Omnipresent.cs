@@ -138,41 +138,9 @@ namespace Mazeinator
 
             Status = "Generating done";
             NodeCount = MainMaze.nodes.Length;
+            MazeStyle.RenderPoint = true;   //so the user can see the individual nodes
 
             Render(CanvasSize);
-        }
-
-        public void Render()
-        {
-            Render(new Tuple<int, int>(CanvasSizeX, CanvasSizeY));
-        }
-
-        public void Render(Tuple<int, int> CanvasSize)
-        {
-            if (MainMaze != null)
-            {
-                Stopwatch RenderTime = new Stopwatch();
-                RenderTime.Start();
-
-                _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
-
-                Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
-                //new Task(() =>
-                //{
-                //    _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
-                //    Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
-                //}).Start();
-
-                RenderTime.Stop();
-                LastRenderTime = RenderTime.ElapsedMilliseconds;
-
-                Status = "Rendering done";
-                RenderSizeX = MainMaze.renderSizeX;
-                RenderSizeY = MainMaze.renderSizeY;
-                CanvasSizeX = CanvasSize.Item1;
-                CanvasSizeY = CanvasSize.Item2;
-                GC.Collect();
-            }
         }
 
         public void PathGreedy()
@@ -187,6 +155,7 @@ namespace Mazeinator
 
             LastGenTime = ProcessTime.ElapsedMilliseconds;
             ProcessTime.Restart();
+
             RenderPath(MainMaze.GreedyPath);
 
             ProcessTime.Stop();
@@ -220,7 +189,7 @@ namespace Mazeinator
             if (MainMaze == null || !MainMaze.AStar())
                 Status = "Pathfinding failed";
             else
-                Status = "AStar done";
+                Status = "A* done";
 
             LastGenTime = ProcessTime.ElapsedMilliseconds;
             ProcessTime.Restart();
@@ -229,23 +198,6 @@ namespace Mazeinator
 
             ProcessTime.Stop();
             LastRenderTime = ProcessTime.ElapsedMilliseconds;
-        }
-
-        public void RenderPath()
-        {
-            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
-
-            GC.Collect();   //collect the leftovers
-        }
-
-        //overloaded method (similar to the one in Maze) to render specific paths
-        public void RenderPath(Path path)
-        {
-            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
-            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
-
-            GC.Collect();   //collect the leftovers
         }
 
         /// <summary>
@@ -380,6 +332,62 @@ namespace Mazeinator
 
         #endregion Maze_functions
 
+        #region Maze_render
+
+        public void Render()
+        {
+            Render(new Tuple<int, int>(CanvasSizeX, CanvasSizeY));
+        }
+
+        public void Render(Tuple<int, int> CanvasSize)
+        {
+            if (MainMaze != null)
+            {
+                //_mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
+                //Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+
+                new Task(() =>
+                {
+                    Stopwatch RenderTime = new Stopwatch();
+                    RenderTime.Start();
+                    _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
+
+                    BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+                    mazeRender.Freeze();
+                    Maze = mazeRender;
+
+                    RenderTime.Stop();
+                    LastRenderTime = RenderTime.ElapsedMilliseconds;
+
+                    Status = "Rendering done";
+                    RenderSizeX = MainMaze.renderSizeX;
+                    RenderSizeY = MainMaze.renderSizeY;
+                    CanvasSizeX = CanvasSize.Item1;
+                    CanvasSizeY = CanvasSize.Item2;
+                    GC.Collect();
+                }).Start();
+            }
+        }
+
+        public void RenderPath()
+        {
+            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+
+            GC.Collect();   //collect the leftovers
+        }
+
+        //overloaded method (similar to the one in Maze) to render specific paths
+        public void RenderPath(Path path)
+        {
+            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            Maze = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
+
+            GC.Collect();   //collect the leftovers
+        }
+
+        #endregion Maze_render
+
         #region Data_manipulation
 
         public void NewMaze()
@@ -477,17 +485,18 @@ namespace Mazeinator
                         }
                         else    //calculate all the algorithms
                         {
-                            //recalculate the paths
-                            MainMaze.GreedyBFS();
-                            MainMaze.Dijkstra();
+                            //recalculate the paths (using the best algorithm)
                             MainMaze.AStar();
-
                             MainMaze.pathToRender = MainMaze.AStarPath;
                         }
+
+                        Render();
 
                         ProcessTime.Stop();
                         LastGenTime = ProcessTime.ElapsedMilliseconds;
                         Status = "Loading done";
+                        NodeCountX = MainMaze.NodeCountX;
+                        NodeCountY = MainMaze.NodeCountY;
                         NodeCount = MainMaze.nodes.Length;
                     }
                     catch (Exception exc)
@@ -540,6 +549,8 @@ namespace Mazeinator
 
                         ProcessTime.Stop();
                         LastRenderTime = ProcessTime.ElapsedMilliseconds;
+
+                        Render();
 
                         MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                         Status = "Export done";

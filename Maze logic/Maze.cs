@@ -28,6 +28,8 @@ namespace Mazeinator
         public Path AStarPath = new Path();
 
         private int _nodeCountX, _nodeCountY;
+        public int NodeCountX { get { return _nodeCountX; } }
+        public int NodeCountY { get { return _nodeCountY; } }
         public int renderSizeX, renderSizeY;
 
         [NonSerialized]
@@ -532,6 +534,74 @@ namespace Mazeinator
             return originalBMP;
         }
 
+        public Bitmap RenderPath(Bitmap originalBMP, Style style)
+        {
+            return RenderPath(originalBMP, style, pathToRender);
+        }
+
+        public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
+        {
+            pathToRender = currentPath;
+            if (/*currentPath != null &&*/ nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
+            {
+                using (Graphics gr = Graphics.FromImage(originalBMP))
+                {
+                    gr.SmoothingMode = SmoothingMode.AntiAlias;
+                    gr.CompositingQuality = CompositingQuality.HighSpeed;
+
+                    //draw explored nodes (while checking if they are large enough)
+                    if (currentPath.exploredNodes != null)
+                    {
+                        for (int column = 0; column < _nodeCountX; column++)
+                        {
+                            for (int row = 0; row < _nodeCountY; row++)
+                            {
+                                //assign the nodes's roots to the current path diagram
+                                nodes[column, row].Root = currentPath.exploredNodes[column, row];
+
+                                if (style.RenderRoot == true && (nodes[0, 0].Bounds.Width > 6 && nodes[0, 0].Bounds.Height > 6))
+                                    nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
+                            }
+                        }
+                    }
+
+                    //draw the shortest path
+                    if (currentPath.path != null && currentPath.path.Count > 0)
+                    {
+                        //path has set rootnodes from END to START; path=4 -> we need 3 intervals
+                        double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(currentPath.path.Count - 1);
+                        double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(currentPath.path.Count - 1);
+                        double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(currentPath.path.Count - 1);
+
+                        //because root nodes are drawn - there is no need to draw the first root node
+                        for (int i = 0; i < currentPath.path.Count - 1; i++)
+                        {
+                            Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
+                            Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+
+                            //reverse the drawing order -> we draw from the start
+                            float thickness = (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness);
+                            currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, thickness, style.PathEndCap, style.PathEndCap);
+                        }
+                    }
+
+                    if (startNode != null)
+                    {
+                        startNode.DrawBox(gr, new Pen(Utilities.ConvertColor(style.StartPointColor), _nodePen.Width), (int)_wallsPen.Width / 2);
+                        startNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.StartPointColor), (_pointPen.Width / 2) * style.PathThickness / style.PointThickness));
+                    }
+
+                    if (endNode != null)
+                    {
+                        endNode.DrawBox(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), _nodePen.Width), (int)_wallsPen.Width / 2);
+                        endNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), (_pointPen.Width / 2) * style.PathThickness / style.PointThickness));
+                    }
+                }
+            }
+
+            return originalBMP;
+        }
+
         #endregion Rendering
 
         #region PathPlanning
@@ -771,75 +841,6 @@ namespace Mazeinator
                 AStarPath.exploredNodes = WhereDidIComeFrom;
             }
             return true;
-        }
-
-        public Bitmap RenderPath(Bitmap originalBMP, Style style)
-        {
-            return RenderPath(originalBMP, style, pathToRender);
-        }
-
-        public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
-        {
-            Console.WriteLine("HERE" + currentPath);
-            pathToRender = currentPath;
-            if (/*currentPath != null &&*/ nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
-            {
-                using (Graphics gr = Graphics.FromImage(originalBMP))
-                {
-                    gr.SmoothingMode = SmoothingMode.AntiAlias;
-                    gr.CompositingQuality = CompositingQuality.HighSpeed;
-
-                    //draw explored nodes (while checking if they are large enough)
-                    if (currentPath.exploredNodes != null)
-                    {
-                        for (int column = 0; column < _nodeCountX; column++)
-                        {
-                            for (int row = 0; row < _nodeCountY; row++)
-                            {
-                                //assign the nodes's roots to the current path diagram
-                                nodes[column, row].Root = currentPath.exploredNodes[column, row];
-
-                                if (style.RenderRoot == true && (nodes[0, 0].Bounds.Width > 6 && nodes[0, 0].Bounds.Height > 6))
-                                    nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
-                            }
-                        }
-                    }
-
-                    //draw the shortest path
-                    if (currentPath.path != null && currentPath.path.Count > 0)
-                    {
-                        //path has set rootnodes from END to START; path=4 -> we need 3 intervals
-                        double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(currentPath.path.Count - 1);
-                        double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(currentPath.path.Count - 1);
-                        double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(currentPath.path.Count - 1);
-
-                        //because root nodes are drawn - there is no need to draw the first root node
-                        for (int i = 0; i < currentPath.path.Count - 1; i++)
-                        {
-                            Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
-                            Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
-
-                            //reverse the drawing order -> we draw from the start
-                            float thickness = (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness);
-                            currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, thickness, style.PathEndCap, style.PathEndCap);
-                        }
-                    }
-
-                    if (startNode != null)
-                    {
-                        startNode.DrawBox(gr, new Pen(Utilities.ConvertColor(style.StartPointColor), _nodePen.Width), (int)_wallsPen.Width / 2);
-                        startNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.StartPointColor), (_pointPen.Width / 2) * style.PathThickness / style.PointThickness));
-                    }
-
-                    if (endNode != null)
-                    {
-                        endNode.DrawBox(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), _nodePen.Width), (int)_wallsPen.Width / 2);
-                        endNode.DrawCentre(gr, new Pen(Utilities.ConvertColor(style.EndPointColor), (_pointPen.Width / 2) * style.PathThickness / style.PointThickness));
-                    }
-                }
-            }
-
-            return originalBMP;
         }
 
         #endregion PathPlanning

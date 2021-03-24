@@ -59,7 +59,7 @@ namespace Mazeinator
                 if (_autoRenderTimer.IsEnabled == false)
                 {
                     _autoRenderTimer.Tick += new EventHandler(AutoRender);
-                    _autoRenderTimer.Interval = new TimeSpan(0, 0, 1);
+                    _autoRenderTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
                     _autoRenderTimer.Start();
                 }
 
