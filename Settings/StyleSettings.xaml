@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
         Title="Maze Visual Settings" Height="450" Width="750" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
 
     <Window.Resources>
         <Style x:Key="ColorPickerStyle" TargetType="xctk:ColorPicker">

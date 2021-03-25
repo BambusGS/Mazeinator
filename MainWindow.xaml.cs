@@ -6,14 +6,11 @@ using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/e
 
 /*  ===TODO===
  *  pathfinding show visited node count & final path length
- *  enumerator + image at load (generate or load)
+ *  F1 for help shortcut
+ *  Either create new file or load another one 
  *  rickroll?!
- *  maze after_load setup
- *  right-click menus
- *  Either create new file or load another one
- *  add blank maze option
- *  progress bar is nonexistent as hell
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
+ *  progress bar is nonexistent as hell
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
  *  http://www.astrolog.org/labyrnth/algrithm.htm
@@ -48,6 +45,7 @@ namespace Mazeinator
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            e.Cancel = true;    //override the closing operation
             CloseApp(null, null);
         }
 
@@ -83,7 +81,7 @@ namespace Mazeinator
         {
             _autoRenderTimer.Stop();
             _autoRenderTimer.Tick -= AutoRender;
-            _controller.Render(GetCanvasSizePixels());
+            _controller.RenderAsync(GetCanvasSizePixels());
         }
 
         #endregion AutoRe-Render
@@ -103,7 +101,7 @@ namespace Mazeinator
         private void LoadMaze(object sender, RoutedEventArgs e)
         {
             _controller.LoadMaze();
-            _controller.Render(GetCanvasSizePixels());
+            _controller.RenderAsync(GetCanvasSizePixels());
         }
 
         private void ExportMaze(object sender, RoutedEventArgs e)
@@ -113,7 +111,7 @@ namespace Mazeinator
 
         private void CloseApp(object sender, RoutedEventArgs e)
         {
-            if (Utilities.isWorking) //do not exit the app when file is being saved/loaded
+            if (Utilities.isWorking == true) //do not exit the app when file is being saved/loaded
                 MessageBox.Show("Cannot quit: File is being processed", "Unable to quit", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             else { Application.Current.Shutdown(); }
         }

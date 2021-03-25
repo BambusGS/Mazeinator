@@ -608,6 +608,7 @@ namespace Mazeinator
 
         public bool GreedyBFS()
         {
+            GreedyPath = new Path();
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
@@ -619,7 +620,6 @@ namespace Mazeinator
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
 
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
-            GreedyPath = new Path();
             GreedyPath.startNode = startNode;
             GreedyPath.endNode = endNode;
 
@@ -689,6 +689,7 @@ namespace Mazeinator
 
         public bool Dijkstra()
         {
+            DijkstraPath = new Path();
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
@@ -700,7 +701,6 @@ namespace Mazeinator
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
 
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
-            DijkstraPath = new Path();
             DijkstraPath.startNode = startNode;
             DijkstraPath.endNode = endNode;
 
@@ -765,6 +765,7 @@ namespace Mazeinator
 
         public bool AStar()
         {
+            AStarPath = new Path();
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
@@ -776,7 +777,6 @@ namespace Mazeinator
             int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
 
             Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
-            AStarPath = new Path();
             AStarPath.startNode = startNode;
             AStarPath.endNode = endNode;
 
@@ -842,16 +842,6 @@ namespace Mazeinator
             }
             return true;
         }
-
-
-
-
-
-
-
-
-
-
 
         #endregion PathPlanning
     }
