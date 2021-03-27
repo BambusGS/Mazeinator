@@ -5,12 +5,11 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  pathfinding show visited node count & final path length
+ *  pathfinding show visited node count & final path length in a TAB? for all of them
  *  F1 for help shortcut
  *  Either create new file or load another one 
  *  rickroll?!
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
- *  progress bar is nonexistent as hell
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
  *  http://www.astrolog.org/labyrnth/algrithm.htm
@@ -118,12 +117,7 @@ namespace Mazeinator
 
         private void AboutClick(object sender, RoutedEventArgs e)
         {
-            About about = new About();
-            About abouthidden = new About(true);
-            abouthidden.Show();
-            abouthidden.Hide();
-            about.ShowDialog();
-            abouthidden.Show();
+            _controller.About();
         }
 
         #endregion Menu

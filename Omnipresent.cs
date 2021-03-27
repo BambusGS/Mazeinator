@@ -67,17 +67,16 @@ namespace Mazeinator
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
 
-        private int _nodeCountX = 3; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
-        private int _nodeCountY = 3; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
+        private int _nodeCountX = 32; public int NodeCountX { get => _nodeCountX; set { _nodeCountX = value; OnPropertyChanged(nameof(NodeCountX)); } }
+        private int _nodeCountY = 18; public int NodeCountY { get => _nodeCountY; set { _nodeCountY = value; OnPropertyChanged(nameof(NodeCountY)); } }
         private long _lastGenTime = 0; public long LastGenTime { get => _lastGenTime; set { _lastGenTime = value; OnPropertyChanged(nameof(LastGenTime)); } }
         private long _lastRenderTime = 0; public long LastRenderTime { get => _lastRenderTime; set { _lastRenderTime = value; OnPropertyChanged(nameof(LastRenderTime)); } }
+        private int _pathLength = 0; public int PathLength { get => _pathLength; set { _pathLength = value; OnPropertyChanged(nameof(PathLength)); } }
+        private int _exploredNodes = 0; public int ExploredNodes { get => _exploredNodes; set { _exploredNodes = value; OnPropertyChanged(nameof(ExploredNodes)); } }
         private int _renderSizeX = 0; public int RenderSizeX { get => _renderSizeX; set { _renderSizeX = value; OnPropertyChanged(nameof(RenderSizeX)); } }
         private int _renderSizeY = 0; public int RenderSizeY { get => _renderSizeY; set { _renderSizeY = value; OnPropertyChanged(nameof(RenderSizeY)); } }
         private int _canvasSizeX = 0; public int CanvasSizeX { get => _canvasSizeX; set { _canvasSizeX = value; OnPropertyChanged(nameof(CanvasSizeX)); } }
         private int _canvasSizeY = 0; public int CanvasSizeY { get => _canvasSizeY; set { _canvasSizeY = value; OnPropertyChanged(nameof(CanvasSizeY)); } }
-
-        //TESTING↓
-        private int _percent = 20; public int Percent { get => _percent; set { _percent = value; OnPropertyChanged(nameof(Percent)); } }
 
         //status bar program status string
         private string _status = "Ready"; public string Status { get => _status; set { _status = value; OnPropertyChanged(nameof(Status)); } }
@@ -101,6 +100,7 @@ namespace Mazeinator
         private ICommand _generateBlankCMD; public ICommand GenerateBlankCMD { get { return _generateBlankCMD ?? (_generateBlankCMD = new ActionCommand(() => { MazeGenBlank(new Tuple<int, int>(CanvasSizeX, CanvasSizeY)); ; })); } }
         private ICommand _exportCMD; public ICommand ExportCMD { get { return _exportCMD ?? (_exportCMD = new ActionCommand(() => { Export(); })); } }
         private ICommand _quitCMD; public ICommand QuitCMD { get { return _quitCMD ?? (_quitCMD = new ActionCommand(() => { Application.Current.MainWindow.Close(); })); } }
+        private ICommand _aboutCMD; public ICommand AboutCMD { get { return _aboutCMD ?? (_aboutCMD = new ActionCommand(() => { About(); })); } }
 
         #endregion Global_shortcuts
 
@@ -165,6 +165,9 @@ namespace Mazeinator
                         else
                             Status = "Greedy best-first search done";
 
+                        PathLength = MainMaze.GreedyPath.PathLength;
+                        ExploredNodes = MainMaze.GreedyPath.ExploredCount;
+
                         LastGenTime = ProcessTime.ElapsedMilliseconds;
                         ProcessTime.Restart();
 
@@ -194,6 +197,9 @@ namespace Mazeinator
                     else
                         Status = "Dijkstra done";
 
+                    PathLength = MainMaze.DijkstraPath.PathLength;
+                    ExploredNodes = MainMaze.DijkstraPath.ExploredCount;
+
                     LastGenTime = ProcessTime.ElapsedMilliseconds;
                     ProcessTime.Restart();
 
@@ -222,6 +228,9 @@ namespace Mazeinator
                         Status = "Pathfinding failed";
                     else
                         Status = "A* done";
+
+                    PathLength = MainMaze.AStarPath.PathLength;
+                    ExploredNodes = MainMaze.AStarPath.ExploredCount;
 
                     LastGenTime = ProcessTime.ElapsedMilliseconds;
                     ProcessTime.Restart();
@@ -362,6 +371,16 @@ namespace Mazeinator
                 RenderAsync();
                 Status = "Setting applied";
             }
+        }
+
+        public void About()
+        {
+            About about = new About();
+            About abouthidden = new About(true);
+            abouthidden.Show();
+            abouthidden.Hide();
+            about.ShowDialog();
+            abouthidden.Show();
         }
 
         #endregion Maze_functions

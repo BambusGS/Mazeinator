@@ -21,6 +21,7 @@
         <KeyBinding Command="{Binding GenerateBlankCMD}" Modifiers="Ctrl+Shift" Key="D" />
         <KeyBinding Command="{Binding ExportCMD}" Modifiers="Ctrl" Key="E" />
         <KeyBinding Command="{Binding QuitCMD}" Modifiers="Ctrl" Key="Q" />
+        <KeyBinding Command="{Binding AboutCMD}" Key="F1" />
     </Window.InputBindings>
 
     <Window.Resources>
@@ -121,7 +122,11 @@
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0" Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
@@ -148,9 +153,19 @@
                         <TextBlock Text="{Binding Path=CanvasSizeY, Mode=OneWay}" />
                     </TextBlock>
 
-                    <ProgressBar Grid.Column="5" Width="250" Height="auto" Padding="3,0" Margin="3,0" Value="0" />
+                    <Separator Grid.Column="5" Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                    <TextBlock Grid.Column="6" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
+                    <TextBlock Grid.Column="6" Text="Path length: " Style="{StaticResource StatusBarTextStyle}">
+                        <TextBlock Text="{Binding Path=PathLength, Mode=OneWay}" />
+                    </TextBlock>
+                    
+                    <TextBlock Grid.Column="7" Text="Explored nodes: " Style="{StaticResource StatusBarTextStyle}">
+                        <TextBlock Text="{Binding Path=ExploredNodes, Mode=OneWay}" />
+                    </TextBlock>
+
+                    <Separator Grid.Column="8" Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                    <TextBlock Grid.Column="9" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
                 </Grid>
             </StatusBar>
         </Grid>

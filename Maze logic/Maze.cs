@@ -559,7 +559,7 @@ namespace Mazeinator
                                 //assign the nodes's roots to the current path diagram
                                 nodes[column, row].Root = currentPath.exploredNodes[column, row];
 
-                                if (style.RenderRoot == true && (nodes[0, 0].Bounds.Width > 6 && nodes[0, 0].Bounds.Height > 6))
+                                if (style.RenderRoot == true && (nodes[0, 0].Bounds.Width > 4 && nodes[0, 0].Bounds.Height > 4))
                                     nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
                             }
                         }
@@ -608,20 +608,23 @@ namespace Mazeinator
 
         public bool GreedyBFS()
         {
-            GreedyPath = new Path();
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
-            int edgeLength = 1;
-            LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>();       //holds distance from start (in here used as the sorting value), actual Node
+            if (GreedyPath != null && GreedyPath.startNode == startNode && GreedyPath.endNode == endNode)        //no need to recalculate, because everything is the same
+                return true;
 
-            bool pathFindErrored = false;
-            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
-
-            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            GreedyPath = new Path();
             GreedyPath.startNode = startNode;
             GreedyPath.endNode = endNode;
+
+            int edgeLength = 1;
+            bool pathFindErrored = false;
+
+            LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node
             frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
@@ -700,19 +703,23 @@ namespace Mazeinator
 
         public bool Dijkstra()
         {
-            DijkstraPath = new Path();
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
-            int edgeLength = 1;
-            LinkedList<Tuple<int, int, Node>> frontier = new LinkedList<Tuple<int, int, Node>>();       //holds distance from start (in here used as the sorting value), actual Node
-            bool pathFindErrored = false;
-            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];
+            if (DijkstraPath != null && DijkstraPath.startNode == startNode && DijkstraPath.endNode == endNode)        //no need to recalculate, because everything is the same
+                return true;
 
-            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            DijkstraPath = new Path();
             DijkstraPath.startNode = startNode;
             DijkstraPath.endNode = endNode;
+
+            int edgeLength = 1;
+            bool pathFindErrored = false;
+
+            LinkedList<Tuple<int, int, Node>> frontier = new LinkedList<Tuple<int, int, Node>>(); //holds sorting value, distance from start, actual Node
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node
             frontier.AddFirst(new Tuple<int, int, Node>(0, 0, startNode));
@@ -753,7 +760,7 @@ namespace Mazeinator
                     }
                 }
 
-                if (frontier.Count == 0)
+                if (frontier.Count == 0)        //we exhausted all available nodes and still haven't found the end
                 {
                     pathFindErrored = true;
                     DijkstraPath.exploredNodes = WhereDidIComeFrom;
@@ -876,19 +883,23 @@ namespace Mazeinator
 
         public bool AStar()
         {
-            AStarPath = new Path();
             if (startNode == null || endNode == null || nodes == null)
                 return false;
 
-            int edgeLength = 1;
-            LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
-            bool pathFindErrored = false;
-            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            if (AStarPath != null && AStarPath.startNode == startNode && AStarPath.endNode == endNode)        //no need to recalculate, because everything is the same
+                return true;
 
-            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            AStarPath = new Path();
             AStarPath.startNode = startNode;
             AStarPath.endNode = endNode;
+
+            int edgeLength = 1;
+            bool pathFindErrored = false;
+
+            LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node to the tree
             frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
@@ -932,7 +943,7 @@ namespace Mazeinator
                     }
                 }
 
-                if (frontier.Count == 0)
+                if (frontier.Count == 0)        //we exhausted all available nodes and still haven't found the end
                 {
                     pathFindErrored = true;
                     AStarPath.exploredNodes = WhereDidIComeFrom;
@@ -968,6 +979,4 @@ namespace Mazeinator
 
         #endregion PathPlanning
     }
-
-    //Percent = (column * 100 / (_nodeCountX - 1));    //https://designforge.wordpress.com/2008/07/03/wpf-data-binding-to-a-simple-c-class/
 }
