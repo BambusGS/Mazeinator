@@ -85,7 +85,7 @@ namespace Mazeinator
         private string _currentFilePath = null;
 
         //one task object, so as one async task is run at a time
-        private Task OneToRunThemAll;
+        private Task _oneToRunThemAll;
 
         private BitmapImage _maze = null; public BitmapImage Maze { get => _maze; set { _maze = value; OnPropertyChanged(nameof(Maze)); } }
         private System.Drawing.Bitmap _mazeBMP = null;      //stores raw rendered maze; used as a base image for further drawing of start/end nodes and path
@@ -153,11 +153,12 @@ namespace Mazeinator
             {
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                     {
                         Stopwatch ProcessTime = new Stopwatch();
                         ProcessTime.Start();
+                        Status = "Started searching...";
 
                         if (!MainMaze.GreedyBFS())
                             Status = "Pathfinding failed";
@@ -181,11 +182,12 @@ namespace Mazeinator
             {
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                 {
                     Stopwatch ProcessTime = new Stopwatch();
                     ProcessTime.Start();
+                    Status = "Started searching...";
 
                     if (!MainMaze.Dijkstra())
                         Status = "Pathfinding failed";
@@ -209,11 +211,12 @@ namespace Mazeinator
             {
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                 {
                     Stopwatch ProcessTime = new Stopwatch();
                     ProcessTime.Start();
+                    Status = "Started searching...";
 
                     if (!MainMaze.AStar())
                         Status = "Pathfinding failed";
@@ -378,8 +381,8 @@ namespace Mazeinator
             {
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                     {
                         Render(CanvasSize);
                     });
@@ -487,8 +490,8 @@ namespace Mazeinator
 
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                     {
                         try
                         {
@@ -535,8 +538,8 @@ namespace Mazeinator
 
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                     {
                         try
                         {
@@ -598,12 +601,12 @@ namespace Mazeinator
 
             if (dialog.ShowDialog() == true && exportWindow.ShowDialog() == true)
             {
-                Status = "Commencing export";
+                Status = "Commencing export...";
 
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
-                if (OneToRunThemAll == null || OneToRunThemAll.Status != TaskStatus.Running)
-                    OneToRunThemAll = Task.Run(() =>
+                if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+                    _oneToRunThemAll = Task.Run(() =>
                     {
                         try
                         {
