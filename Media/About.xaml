@@ -19,15 +19,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-
-        <TextBlock Grid.Column="1" Grid.Row="0" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center">
-            To be added
-            <LineBreak />
-            Hope you enjoyed it!
+        <TextBlock Grid.Column="1" Grid.Row="0" 
+                   xml:space="preserve" TextAlignment="Center"
+                   HorizontalAlignment="Center" VerticalAlignment="Center">
+            Desktop application designed for showcasing three different pathfinding algorithms: Greedy Best-First Search, Dijsktra and A*
+            Supported are automatic maze generation, maze visual settings, 
         </TextBlock>
-        
-        <TextBlock  Grid.Column="1" Grid.Row="1" Text="(c) BambusGS 2021" HorizontalAlignment="Right" VerticalAlignment="Center" />
-        
-        <WebBrowser Grid.Column="1" Grid.Row="2" Name="wbSample"/>
+
+        <TextBlock  Grid.Column="1" Grid.Row="1" 
+                    Text="© BambusGS 2021" 
+                    HorizontalAlignment="Right" VerticalAlignment="Center" />
     </Grid>
 </Window>

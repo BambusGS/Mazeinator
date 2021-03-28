@@ -5,13 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Mazeinator" Height="720" Width="1280" MinHeight="360" MinWidth="640"
+        Title="Mazeinator" Height="720" Width="1280" MinHeight="360" MinWidth="640" Background="Ivory"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
         SizeChanged="Window_SizeChanged"
-        Closing="Window_Closing"
-        Loaded="Window_Loaded"
-        ResizeMode="CanResizeWithGrip"
-        Background="Ivory">
+        Closing="Window_Closing" Loaded="Window_Loaded" ResizeMode="CanResizeWithGrip">
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding NewFileCMD}" Modifiers="Ctrl" Key="N" />
@@ -85,12 +82,18 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Margin="0,3">
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal" VerticalAlignment="Center"
+                        Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Value="{Binding Path=NodeCountX, Mode=TwoWay}" Name="WidthBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="2048" />
+                <xctk:IntegerUpDown Name="WidthBox" Value="{Binding Path=NodeCountX, Mode=TwoWay}" Minimum="1" Maximum="2048"
+                                    TextAlignment="Center" VerticalContentAlignment="Center"
+                                    Width="55" Padding="3,0" />
 
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Value="{Binding Path=NodeCountY, Mode=TwoWay}" Name="HeightBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="2048" />
+                <xctk:IntegerUpDown  Name="HeightBox" Value="{Binding Path=NodeCountY, Mode=TwoWay}" Minimum="1" Maximum="2048"
+                                    TextAlignment="Center" VerticalContentAlignment="Center"
+                                    Width="55" Padding="3,0" />
 
                 <Button Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">Generate</Button>
 
@@ -110,7 +113,9 @@
                     </ContextMenu>
                 </Canvas.ContextMenu>
 
-                <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+                <Image x:Name="pictureBox" Source="{Binding Path=Maze, Mode=OneWay}" MouseLeftButtonDown="SelectNode"
+                       Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}"
+                       Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" />
             </Canvas>
 
             <StatusBar Grid.Row="2">
@@ -158,7 +163,7 @@
                     <TextBlock Grid.Column="6" Text="Path length: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=PathLength, Mode=OneWay}" />
                     </TextBlock>
-                    
+
                     <TextBlock Grid.Column="7" Text="Explored nodes: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=ExploredNodes, Mode=OneWay}" />
                     </TextBlock>

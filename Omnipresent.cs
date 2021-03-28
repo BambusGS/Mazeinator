@@ -311,21 +311,25 @@ namespace Mazeinator
                         case NodeAction.NorthNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.North);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            RenderPath();
                             break;
 
                         case NodeAction.EastNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.East);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            RenderPath();
                             break;
 
                         case NodeAction.SouthNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.South);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            RenderPath();
                             break;
 
                         case NodeAction.WestNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.West);
                             MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            RenderPath();
                             break;
 
                         case NodeAction.StartNodeSelect:
@@ -336,6 +340,7 @@ namespace Mazeinator
                                 MainMaze.startNode = null;
                             else
                                 MainMaze.startNode = targetNode;
+                            RenderPath();
                             break;
 
                         case NodeAction.EndNodeSelect:
@@ -346,16 +351,32 @@ namespace Mazeinator
                                 MainMaze.endNode = null;
                             else
                                 MainMaze.endNode = targetNode;
+                            RenderPath();
                             break;
 
                         case NodeAction.AUX:
-                            PathDijkstra();
+                            switch (MainMaze.pathToRender.Algorithm)
+                            {
+                                case AlgoType.Greedy:
+                                    PathGreedy();
+                                    break;
+
+                                case AlgoType.Dijkstra:
+                                    PathDijkstra();
+                                    break;
+
+                                case AlgoType.Astar:
+                                    PathAStar();
+                                    break;
+
+                                case AlgoType.Other:
+                                    break;
+                            }
                             break;
 
                         default:
                             break;
                     }
-                    RenderPath();
                 }
             }
         }
@@ -376,11 +397,7 @@ namespace Mazeinator
         public void About()
         {
             About about = new About();
-            About abouthidden = new About(true);
-            abouthidden.Show();
-            abouthidden.Hide();
-            about.ShowDialog();
-            abouthidden.Show();
+            about.Show();
         }
 
         #endregion Maze_functions

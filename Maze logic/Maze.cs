@@ -19,13 +19,13 @@ namespace Mazeinator
         public Path pathToRender;
 
         [NonSerialized]
-        public Path GreedyPath = new Path();    //has to be assigned, because if pathfinding fails, there would be no path to be rendered!
+        public Path GreedyPath = new Path(AlgoType.Greedy);    //has to be assigned, because if pathfinding fails, there would be no path to be rendered!
 
         [NonSerialized]
-        public Path DijkstraPath = new Path();
+        public Path DijkstraPath = new Path(AlgoType.Dijkstra);
 
         [NonSerialized]
-        public Path AStarPath = new Path();
+        public Path AStarPath = new Path(AlgoType.Astar);
 
         private int _nodeCountX, _nodeCountY;
         public int NodeCountX { get { return _nodeCountX; } }
@@ -614,7 +614,7 @@ namespace Mazeinator
             if (GreedyPath != null && GreedyPath.startNode == startNode && GreedyPath.endNode == endNode)        //no need to recalculate, because everything is the same
                 return true;
 
-            GreedyPath = new Path();
+            GreedyPath = new Path(AlgoType.Greedy);
             GreedyPath.startNode = startNode;
             GreedyPath.endNode = endNode;
 
@@ -709,7 +709,7 @@ namespace Mazeinator
             if (DijkstraPath != null && DijkstraPath.startNode == startNode && DijkstraPath.endNode == endNode)        //no need to recalculate, because everything is the same
                 return true;
 
-            DijkstraPath = new Path();
+            DijkstraPath = new Path(AlgoType.Dijkstra);
             DijkstraPath.startNode = startNode;
             DijkstraPath.endNode = endNode;
 
@@ -889,7 +889,7 @@ namespace Mazeinator
             if (AStarPath != null && AStarPath.startNode == startNode && AStarPath.endNode == endNode)        //no need to recalculate, because everything is the same
                 return true;
 
-            AStarPath = new Path();
+            AStarPath = new Path(AlgoType.Astar);
             AStarPath.startNode = startNode;
             AStarPath.endNode = endNode;
 

@@ -1,6 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
+public enum AlgoType
+{
+    Greedy,
+    Dijkstra,
+    Astar,
+    Other
+}
+
 namespace Mazeinator
 {
     [Serializable]
@@ -11,27 +19,31 @@ namespace Mazeinator
 
         public Node[,] exploredNodes;
 
+        public AlgoType Algorithm;
         public int PathLength { get { return (path != null) ? (path.Count - 1) : 0; } }
         public int ExploredCount { get { return CountNodes(); } }
 
-        public Path()
+        public Path(AlgoType algo = AlgoType.Other)
         {
+            Algorithm = algo;
             this.startNode = null;
             this.endNode = null;
             this.path = null;
             this.exploredNodes = null;
         }
 
-        public Path(Node[,] nodes)
+        public Path(Node[,] nodes, AlgoType algo = AlgoType.Other)
         {
+            Algorithm = algo;
             this.startNode = null;
             this.endNode = null;
             this.path = null;
             this.exploredNodes = nodes;
         }
 
-        public Path(Node startNode, Node endNode, List<Node> path, Node[,] nodes)
+        public Path(Node startNode, Node endNode, List<Node> path, Node[,] nodes, AlgoType algo = AlgoType.Other)
         {
+            Algorithm = algo;
             this.startNode = startNode;
             this.endNode = endNode;
             this.path = path;

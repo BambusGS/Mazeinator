@@ -6,9 +6,8 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Export Settings" Height="250" Width="300" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
-
-        WindowStartupLocation="CenterScreen">
+        Title="Maze Export Settings" Height="250" Width="300" Topmost="True"
+        ResizeMode="CanMinimize" ShowInTaskbar="False" WindowStartupLocation="CenterScreen">
     <!--xmlns:local="clr-namespace:Mazeinator"-->
 
     <Window.Resources>
@@ -17,7 +16,6 @@
             <Setter Property="VerticalAlignment" Value="Center" />
 
             <Setter Property="Margin" Value="6,2,6,2" />
-
         </Style>
     </Window.Resources>
 
@@ -28,7 +26,6 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="auto" />
-
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -38,29 +35,39 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Text="Export width: " Style="{StaticResource TextStyle}" HorizontalAlignment="Right" />
-        <xctk:IntegerUpDown Name="XIUD" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2" Minimum="5" Maximum="15360" Value="{Binding Path=ExportSizeX, Mode=TwoWay}" ValueChanged="XIUD_ValueChanged" />
+        <TextBlock  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" 
+                    Text="Export width: " 
+                    Style="{StaticResource TextStyle}" HorizontalAlignment="Right" />
+        <xctk:IntegerUpDown Name="XIUD" Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2"
+                            Minimum="5" Maximum="15360" 
+                            Value="{Binding Path=ExportSizeX, Mode=TwoWay}" ValueChanged="XIUD_ValueChanged" />
 
-        <TextBlock  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Text="Export height: " Style="{StaticResource TextStyle}" HorizontalAlignment="Right" />
-        <xctk:IntegerUpDown Name="YIUD" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Minimum="5" Maximum="15360" Value="{Binding Path=ExportSizeY, Mode=TwoWay}" ValueChanged="YIUD_ValueChanged" />
+        <TextBlock  Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                    Text="Export height: "
+                    Style="{StaticResource TextStyle}" HorizontalAlignment="Right" />
+        <xctk:IntegerUpDown Name="YIUD" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" 
+                            Minimum="5" Maximum="15360" 
+                            Value="{Binding Path=ExportSizeY, Mode=TwoWay}" ValueChanged="YIUD_ValueChanged" />
 
-        <StackPanel Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Left">
+        <StackPanel Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="2"
+                    Orientation="Horizontal" HorizontalAlignment="Left">
             <TextBlock Text="Maintain aspect ratio:" Style="{StaticResource TextStyle}" />
-            <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=MaintainAspectRatio, Mode=TwoWay}" Checked="AspectRatio" Unchecked="AspectRatio" />
+            <CheckBox VerticalAlignment="Center" 
+                      IsChecked="{Binding Path=MaintainAspectRatio, Mode=TwoWay}" Checked="AspectRatio" Unchecked="AspectRatio" />
         </StackPanel>
 
         <Separator Grid.ColumnSpan="4" Grid.Row="4" Height="5" />
 
-        <TextBlock Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="4" Text="Best values calculated for pixel-perfect render: "  Style="{StaticResource TextStyle}" />
+        <TextBlock Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="4"
+                   Text="Best values calculated for pixel-perfect render: "  
+                   Style="{StaticResource TextStyle}" />
 
         <TextBlock  Grid.Column="0" Grid.Row="6" Text="Node count X: " Style="{StaticResource TextStyle}" />
         <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Path=nodeCountX, Mode=OneTime}" Style="{StaticResource TextStyle}" />
@@ -80,16 +87,23 @@
         <TextBlock  Grid.Column="2" Grid.Row="8" Text="Export height: " Style="{StaticResource TextStyle}" />
         <TextBlock Grid.Column="3" Grid.Row="8" Text="{Binding Path=renderSizeY, Mode=OneWay, NotifyOnSourceUpdated=True}" Style="{StaticResource TextStyle}" />
 
-        <StackPanel Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Grid.Column="0" Grid.Row="9" Grid.ColumnSpan="4"
+                    Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="Square nodes:" Style="{StaticResource TextStyle}" />
-            <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="SquareNodes" Unchecked="SquareNodes" />
+            <CheckBox VerticalAlignment="Center"
+                      IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="SquareNodes" Unchecked="SquareNodes" />
         </StackPanel>
-        
-        <StackPanel Grid.Row="20" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Click="AutoSize" MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_AUTO</Button>
-            <Button IsDefault="True" Click="Export" MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_Export</Button>
 
-            <Button IsCancel="True" MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
+        <StackPanel Grid.Row="20" Grid.ColumnSpan="4" 
+                    HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Click="AutoSize" 
+                    MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_AUTO</Button>
+            <Button Click="Export" 
+                    IsDefault="True"
+                    MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_Export</Button>
+
+            <Button IsCancel="True"
+                    MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>

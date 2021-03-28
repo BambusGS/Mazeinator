@@ -6,7 +6,8 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Visual Settings" Height="450" Width="750" Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        Title="Maze Visual Settings" Height="450" Width="750"
+        Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
 
@@ -41,8 +42,11 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Canvas x:Name="MainCanvas" Grid.Column="0" Grid.Row="0"  Background="Transparent" Width="auto" Height="auto" Margin="10,10,10,10">
-            <Image x:Name="MazePreview" Stretch="None" Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+        <Canvas Grid.Column="0" Grid.Row="0"
+                x:Name="MainCanvas"  Background="Transparent"
+                Width="auto" Height="auto" Margin="10,10,10,10">
+            <Image x:Name="MazePreview" Stretch="None"
+                   Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
         </Canvas>
 
         <Grid Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Margin="10,0,10,10">
@@ -58,22 +62,40 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"
+                        Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Square nodes: " ToolTip="Make node width and height the same size" />
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
+                <CheckBox IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
+                          VerticalAlignment="Center" />
             </StackPanel>
 
-            <TextBlock Grid.Column="1" Grid.Row="0" Text="Wall width % " HorizontalAlignment="Right" />
-            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="0" Value="{Binding Path=WallThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="0"
+                       Text="Wall width % "
+                       HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="0"
+                                Value="{Binding Path=WallThickness, Mode=TwoWay}"
+                                Style="{StaticResource MultiplierStyle}" />
 
-            <TextBlock Grid.Column="1" Grid.Row="1" Text="Path size % " HorizontalAlignment="Right" />
-            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="1" Value="{Binding Path=PathThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="1"
+                       Text="Path size % "
+                       HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="1"
+                                Value="{Binding Path=PathThickness, Mode=TwoWay}"
+                                Style="{StaticResource MultiplierStyle}" />
 
-            <TextBlock Grid.Column="1" Grid.Row="2" Text="Boundary width % " HorizontalAlignment="Right" />
-            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="2" IsEnabled="{Binding Path=RenderNode, Mode=OneWay}" Value="{Binding Path=NodeThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="2"
+                       Text="Boundary width % "
+                       HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="2"
+                                IsEnabled="{Binding Path=RenderNode, Mode=OneWay}" Value="{Binding Path=NodeThickness, Mode=TwoWay}"
+                                Style="{StaticResource MultiplierStyle}" />
 
-            <TextBlock Grid.Column="1" Grid.Row="3" Text="Centerpoint size % " HorizontalAlignment="Right" />
-            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="3" IsEnabled="{Binding Path=RenderPoint, Mode=OneWay}" Value="{Binding Path=PointThickness, Mode=TwoWay}" Style="{StaticResource MultiplierStyle}" />
+            <TextBlock Grid.Column="1" Grid.Row="3"
+                       Text="Centerpoint size % "
+                       HorizontalAlignment="Right" />
+            <xctk:IntegerUpDown Grid.Column="2" Grid.Row="3"
+                                IsEnabled="{Binding Path=RenderPoint, Mode=OneWay}" Value="{Binding Path=PointThickness, Mode=TwoWay}"
+                                Style="{StaticResource MultiplierStyle}" />
         </Grid>
 
         <!--https://github.com/xceedsoftware/wpftoolkit/wiki/ColorPicker-->
@@ -100,55 +122,95 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" Text="Maze background color:" VerticalAlignment="Center" />
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="0" SelectedColor="{Binding Path=BackgroundColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <TextBlock Grid.Column="0" Grid.Row="0"
+                       Text="Maze background color:"
+                       VerticalAlignment="Center" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="0"
+                              SelectedColor="{Binding Path=BackgroundColor, Mode=TwoWay}"
+                              Style="{StaticResource ColorPickerStyle}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="1" Text="Maze wall color:" VerticalAlignment="Center" />
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="1" SelectedColor="{Binding Path=WallColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <TextBlock Grid.Column="0" Grid.Row="1"
+                       Text="Maze wall color:"
+                       VerticalAlignment="Center" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="1"
+                              SelectedColor="{Binding Path=WallColor, Mode=TwoWay}"
+                              Style="{StaticResource ColorPickerStyle}" />
 
-            <CheckBox Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" IsChecked="{Binding Path=RenderNode, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked">
+            <CheckBox Grid.Column="0" Grid.Row="2"
+                     IsChecked="{Binding Path=RenderNode, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
+                       VerticalAlignment="Center">
                 <TextBlock  Text="Node boundary color:" />
             </CheckBox>
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="2" IsEnabled="{Binding Path=RenderNode, Mode=OneWay}" SelectedColor="{Binding Path=NodeColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="2"
+                              IsEnabled="{Binding Path=RenderNode, Mode=OneWay}" SelectedColor="{Binding Path=NodeColor, Mode=TwoWay}"
+                              Style="{StaticResource ColorPickerStyle}" />
 
-            <CheckBox Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" IsChecked="{Binding Path=RenderPoint, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked">
+            <CheckBox Grid.Column="0" Grid.Row="3"
+                      IsChecked="{Binding Path=RenderPoint, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
+                      VerticalAlignment="Center">
                 <TextBlock  Text="Node centerpoint color:" />
             </CheckBox>
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="3" IsEnabled="{Binding Path=RenderPoint, Mode=OneWay}" SelectedColor="{Binding Path=PointColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="3"
+                              IsEnabled="{Binding Path=RenderPoint, Mode=OneWay}" SelectedColor="{Binding Path=PointColor, Mode=TwoWay}"
+                              Style="{StaticResource ColorPickerStyle}" />
 
             <Separator Grid.ColumnSpan="2" Grid.Row="4" Height="5" />
 
-            <TextBlock Grid.Column="0" Grid.Row="5" Text="Start node color:" VerticalAlignment="Center" />
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="5" SelectedColor="{Binding Path=StartPointColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <TextBlock Grid.Column="0" Grid.Row="5"
+                       Text="Start node color:"
+                       VerticalAlignment="Center" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="5"
+                              SelectedColor="{Binding Path=StartPointColor, Mode=TwoWay}"
+                              Style="{StaticResource ColorPickerStyle}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="6" Text="End node color:" VerticalAlignment="Center" />
-            <xctk:ColorPicker Grid.Column="1" Grid.Row="6" SelectedColor="{Binding Path=EndPointColor, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
+            <TextBlock Grid.Column="0" Grid.Row="6"
+                       Text="End node color:"
+                       VerticalAlignment="Center" />
+            <xctk:ColorPicker Grid.Column="1" Grid.Row="6"
+                              SelectedColor="{Binding Path=EndPointColor, Mode=TwoWay}"
+                              Style="{StaticResource ColorPickerStyle}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="7" Text="Path color:" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="0" Grid.Row="7"
+                       Text="Path color:"
+                       VerticalAlignment="Center" />
             <StackPanel Grid.Column="1" Grid.Row="7" Orientation="Vertical">
                 <xctk:ColorPicker SelectedColor="{Binding Path=RootColorBegin, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
                 <xctk:ColorPicker SelectedColor="{Binding Path=RootColorEnd, Mode=TwoWay}" Style="{StaticResource ColorPickerStyle}" />
             </StackPanel>
 
-            <StackPanel Grid.Column="0" Grid.Row="8" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <StackPanel Grid.Column="0" Grid.Row="8"
+                        Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                 <TextBlock Text="Show explored nodes: " />
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=RenderRoot, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" />
+                <CheckBox IsChecked="{Binding Path=RenderRoot, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
+                          VerticalAlignment="Center" />
             </StackPanel>
 
             <Separator Grid.ColumnSpan="2" Grid.Row="9" Height="5" />
 
-            <TextBlock Grid.Column="0" Grid.Row="10" Text="Wall line end shape:" VerticalAlignment="Center" />
-            <ComboBox Name="cmbLineCap" Grid.Column="1" Grid.Row="10" SelectionChanged="CmbLineCap_SelectionChanged" Margin="2,2,2,2" />
+            <TextBlock Grid.Column="0" Grid.Row="10"
+                       Text="Wall line end shape:"
+                       VerticalAlignment="Center" />
+            <ComboBox Name="cmbLineCap" Grid.Column="1" Grid.Row="10"
+                      SelectionChanged="CmbLineCap_SelectionChanged" Margin="2,2,2,2" />
 
-            <TextBlock Grid.Column="0" Grid.Row="11" Text="Path line end shape:" VerticalAlignment="Center" />
-            <ComboBox Name="cmbPathCap" Grid.Column="1" Grid.Row="11" SelectionChanged="CmbPathCap_SelectionChanged" Margin="2,2,2,2" />
+            <TextBlock Grid.Column="0" Grid.Row="11"
+                       Text="Path line end shape:"
+                       VerticalAlignment="Center" />
+            <ComboBox Name="cmbPathCap" Grid.Column="1" Grid.Row="11"
+                      SelectionChanged="CmbPathCap_SelectionChanged"
+                      Margin="2,2,2,2" />
         </Grid>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="4" HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Click="PlainStyle" MinWidth="60" Margin="0,7,5,7"  Padding="15,0,15,2" >_Plain</Button>
-            <Button Click="DefaultValues" MinWidth="60" Margin="5,7,5,7" Padding="12,0,12,2">_Default</Button>
-            <Button IsDefault="True" Click="BtnDialogOK_Click" MinWidth="60" Margin="5,7,5,7"  Padding="20,0,20,2">_Ok</Button>
-            <Button IsCancel="True" MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="4"
+                    HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Click="PlainStyle"
+                    MinWidth="60" Margin="0,7,5,7"  Padding="15,0,15,2" >_Plain</Button>
+            <Button Click="DefaultValues"
+                    MinWidth="60" Margin="5,7,5,7" Padding="12,0,12,2">_Default</Button>
+            <Button Click="BtnDialogOK_Click" IsDefault="True"
+                    MinWidth="60" Margin="5,7,5,7"  Padding="20,0,20,2">_Ok</Button>
+            <Button IsCancel="True"
+                    MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>
