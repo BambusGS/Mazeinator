@@ -36,6 +36,7 @@ namespace Mazeinator
         private Pen _wallsPen, _nodePen, _pointPen, _rootPen;
 
         //TESTING OLD
+        [NonSerialized]
         private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
 
         #endregion Variables
@@ -230,6 +231,9 @@ namespace Mazeinator
         /// <param name="direction">the Node.direction of the neighbour to toggle</param>
         public void ToggleNeighbour(Node node, int direction)
         {
+            GreedyPath = null;      //delete all the paths, because the underlying maze has changed (this works cooperatively with path not being recalculated if start/end-nodes haven't changed)
+            DijkstraPath = null;
+            AStarPath = null;
             switch (direction)
             {
                 case Node.North:
