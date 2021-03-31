@@ -45,11 +45,11 @@
                 <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W"  Style="{StaticResource MenuItemStyle}">
                     <MenuItem.ToolTip>
                         <StackPanel>
-                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Load file</TextBlock>
+                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Load maze</TextBlock>
                             <TextBlock>
                                     Search your computer or local network
                                     <LineBreak />
-                                    for a file and open it for editing.
+                                    for a file maze open it for editing.
                             </TextBlock>
                             <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
                             <WrapPanel>
@@ -119,59 +119,46 @@
             </Canvas>
 
             <StatusBar Grid.Row="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
 
-                    <TextBlock Grid.Column="0" Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="1" Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastGenTime, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="2" Text="Render time: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Render time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastRenderTime, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="3" Text="Render size: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Render size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=RenderSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=RenderSizeY, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="4" Text="Canvas size: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Canvas size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=CanvasSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=CanvasSizeY, Mode=OneWay}" />
                     </TextBlock>
 
-                    <Separator Grid.Column="5" Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                    <Separator Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                    <TextBlock Grid.Column="6" Text="Path length: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Path length: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=PathLength, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="7" Text="Explored nodes: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Explored nodes: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=ExploredNodes, Mode=OneWay}" />
                     </TextBlock>
 
-                    <Separator Grid.Column="8" Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+                    <Separator Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                    <TextBlock Grid.Column="9" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
-                </Grid>
+                    <TextBlock Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
+                </StackPanel>
             </StatusBar>
         </Grid>
     </DockPanel>
