@@ -35,10 +35,6 @@ namespace Mazeinator
         [NonSerialized]
         private Pen _wallsPen, _nodePen, _pointPen, _rootPen;
 
-        //TESTING OLD
-        [NonSerialized]
-        private Tuple<Color, float> _rootRootNodePenHolder = new Tuple<Color, float>(Color.LightGoldenrodYellow, 0);
-
         #endregion Variables
 
         #region MazeGeneration

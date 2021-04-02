@@ -132,7 +132,7 @@ namespace Mazeinator
                 gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
         }
 
-        //Method for drawing node's root via a normal pen
+        //Method for drawing node's root with a normal pen
         public void DrawRootNode(Graphics gr, Pen pen)
         {
             if (Root != null && Root != this)

@@ -6,8 +6,8 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         UseLayoutRounding="True" Background="Ivory"
-        Title="Maze Visual Settings" Height="500" Width="750"
-        Topmost="True" ResizeMode="CanMinimize" ShowInTaskbar="False"
+        Title="Maze Visual Settings" Height="500" Width="800"
+        Topmost="True" ResizeMode="CanResizeWithGrip" ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
 
@@ -60,7 +60,7 @@
         <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
                     Orientation="Vertical">
 
-            <GroupBox Header="Settings 1" Style="{StaticResource GroupStyle}">
+            <GroupBox Header="Color " Style="{StaticResource GroupStyle}">
                 <Grid Style="{StaticResource StackGrid}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -91,7 +91,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Header="Settings 2" Style="{StaticResource GroupStyle}">
+            <GroupBox Header="Path " Style="{StaticResource GroupStyle}">
                 <Grid Style="{StaticResource StackGrid}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -121,7 +121,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Header="Settings 3" Style="{StaticResource GroupStyle}">
+            <GroupBox Header="Shape " Style="{StaticResource GroupStyle}">
                 <Grid Style="{StaticResource StackGrid}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -130,6 +130,11 @@
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Wall line end shape:" Style="{StaticResource TextStyle}" />
                         <TextBlock Text="Path line end shape:" Style="{StaticResource TextStyle}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,2,3,1">
+                            <TextBlock Text="Square nodes: " ToolTip="Make node width and height the same size" />
+                            <CheckBox IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
+                                      VerticalAlignment="Center" />
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1">
@@ -139,7 +144,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Header="Settings 4" Style="{StaticResource GroupStyle}">
+            <GroupBox Header="Size " Style="{StaticResource GroupStyle}">
                 <Grid Style="{StaticResource StackGrid}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -151,11 +156,6 @@
                         <TextBlock Text="Path size % " Style="{StaticResource TextStyle}" />
                         <TextBlock Text="Boundary width % " Style="{StaticResource TextStyle}" />
                         <TextBlock Text="Centerpoint size % " Style="{StaticResource TextStyle}" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="6,2,3,1">
-                            <TextBlock Text="Square nodes: " ToolTip="Make node width and height the same size" />
-                            <CheckBox IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked"
-                                      VerticalAlignment="Center" />
-                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1">

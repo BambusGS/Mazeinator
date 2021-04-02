@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Mazeinator" Height="720" Width="1280" MinHeight="360" MinWidth="640" Background="Ivory"
+        Title="Mazeinator" Height="720" Width="1280" MinHeight="480" MinWidth="960" Background="Ivory"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
         SizeChanged="Window_SizeChanged"
         Closing="Window_Closing" Loaded="Window_Loaded" ResizeMode="CanResizeWithGrip">

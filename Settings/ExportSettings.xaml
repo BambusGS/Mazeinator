@@ -19,7 +19,7 @@
     </Window.Resources>
 
     <StackPanel Orientation="Vertical">
-        <GroupBox Header="Export dimensions" Margin="5,0,5,0">
+        <GroupBox Header="Dimensions" Margin="5,0,5,0">
             <Grid Margin="1,3,1,1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
@@ -28,26 +28,26 @@
 
                 <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Vertical">
                     <TextBlock Text="Export width: "
-                               Style="{StaticResource TextStyle}" HorizontalAlignment="Right" />
+                               Style="{StaticResource TextStyle}" />
                     <TextBlock Text="Export height: "
-                               Style="{StaticResource TextStyle}" HorizontalAlignment="Right" />
+                               Style="{StaticResource TextStyle}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical">
                     <xctk:IntegerUpDown Name="XIUD" Minimum="5" Maximum="15360"
-                            Value="{Binding Path=ExportSizeX, Mode=TwoWay}" ValueChanged="XIUD_ValueChanged" />
+                                        Value="{Binding Path=ExportSizeX, Mode=TwoWay}" ValueChanged="XIUD_ValueChanged" />
                     <xctk:IntegerUpDown Name="YIUD" Minimum="5" Maximum="15360"
                                         Value="{Binding Path=ExportSizeY, Mode=TwoWay}" ValueChanged="YIUD_ValueChanged" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,2,0">
                         <TextBlock Text="Maintain aspect ratio:" Style="{StaticResource TextStyle}" />
                         <CheckBox VerticalAlignment="Center"
-                      IsChecked="{Binding Path=MaintainAspectRatio, Mode=TwoWay}" Checked="AspectRatio" Unchecked="AspectRatio" />
+                                  IsChecked="{Binding Path=MaintainAspectRatio, Mode=TwoWay}" Checked="AspectRatio" Unchecked="AspectRatio" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Best values calculated for pixel-perfect render" Margin="5,0,5,0">
+        <GroupBox Header="Calculated best values for pixel-perfect render" Margin="5,0,5,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
@@ -88,7 +88,7 @@
                     Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock Text="Square nodes:" Style="{StaticResource TextStyle}" />
                     <CheckBox VerticalAlignment="Center"
-                      IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="SquareNodes" Unchecked="SquareNodes" />
+                              IsChecked="{Binding Path=IsSquare, Mode=TwoWay}" Checked="SquareNodes" Unchecked="SquareNodes" />
                 </StackPanel>
             </Grid>
         </GroupBox>
@@ -99,7 +99,6 @@
             <Button Click="Export"
                     IsDefault="True"
                     MinWidth="60" Margin="5,7,5,7"  Padding="15,0,15,2">_Export</Button>
-
             <Button IsCancel="True"
                     MinWidth="60" Margin="5,7,7,7" Padding="15,0,15,2">_Cancel</Button>
         </StackPanel>
