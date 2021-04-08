@@ -86,12 +86,12 @@
                         Orientation="Horizontal" VerticalAlignment="Center"
                         Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Name="WidthBox" Value="{Binding Path=NodeCountX, Mode=TwoWay}" Minimum="1" Maximum="2048"
+                <xctk:IntegerUpDown Name="WidthBox" Value="{Binding Path=NodeCountX, Mode=TwoWay}" Minimum="1" Maximum="1024"
                                     TextAlignment="Center" VerticalContentAlignment="Center"
                                     Width="55" Padding="3,0" />
 
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown  Name="HeightBox" Value="{Binding Path=NodeCountY, Mode=TwoWay}" Minimum="1" Maximum="2048"
+                <xctk:IntegerUpDown  Name="HeightBox" Value="{Binding Path=NodeCountY, Mode=TwoWay}" Minimum="1" Maximum="1024"
                                     TextAlignment="Center" VerticalContentAlignment="Center"
                                     Width="55" Padding="3,0" />
 

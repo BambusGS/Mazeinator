@@ -23,7 +23,9 @@
                    xml:space="preserve" TextAlignment="Center"
                    HorizontalAlignment="Center" VerticalAlignment="Center">
             Desktop application designed for showcasing three different pathfinding algorithms: Greedy Best-First Search, Dijsktra and A*
-            Supported are automatic maze generation, maze visual settings, 
+            Supported are automatic maze generation, maze visual settings, and single node editation (click the node to be edited)
+            Mazes can also be saved or loaded
+            Export to a picture is also possible
         </TextBlock>
 
         <TextBlock  Grid.Column="1" Grid.Row="1" 

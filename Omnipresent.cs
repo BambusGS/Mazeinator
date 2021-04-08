@@ -155,27 +155,29 @@ namespace Mazeinator
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() =>
-                    {
-                        Stopwatch ProcessTime = new Stopwatch();
-                        ProcessTime.Start();
-                        Status = "Started searching...";
+                        {
+                            Stopwatch ProcessTime = new Stopwatch();
+                            ProcessTime.Start();
+                            Status = "Started searching...";
 
-                        if (!MainMaze.GreedyBFS())
-                            Status = "Pathfinding failed";
-                        else
-                            Status = "Greedy best-first search done";
+                            if (!MainMaze.GreedyBFS())
+                                Status = "Pathfinding failed";
+                            else
+                                Status = "Greedy best-first search done";
 
-                        PathLength = MainMaze.GreedyPath.PathLength;
-                        ExploredNodes = MainMaze.GreedyPath.ExploredCount;
+                            PathLength = MainMaze.GreedyPath.PathLength;
+                            ExploredNodes = MainMaze.GreedyPath.ExploredCount;
 
-                        LastGenTime = ProcessTime.ElapsedMilliseconds;
-                        ProcessTime.Restart();
+                            LastGenTime = ProcessTime.ElapsedMilliseconds;
+                            ProcessTime.Restart();
 
-                        RenderPath(MainMaze.GreedyPath);
+                            RenderPath(MainMaze.GreedyPath);
 
-                        ProcessTime.Stop();
-                        LastRenderTime = ProcessTime.ElapsedMilliseconds;
-                    });
+                            ProcessTime.Stop();
+                            LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                        });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -187,27 +189,29 @@ namespace Mazeinator
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() =>
-                {
-                    Stopwatch ProcessTime = new Stopwatch();
-                    ProcessTime.Start();
-                    Status = "Started searching...";
+                    {
+                        Stopwatch ProcessTime = new Stopwatch();
+                        ProcessTime.Start();
+                        Status = "Started searching...";
 
-                    if (!MainMaze.Dijkstra())
-                        Status = "Pathfinding failed";
-                    else
-                        Status = "Dijkstra done";
+                        if (!MainMaze.Dijkstra())
+                            Status = "Pathfinding failed";
+                        else
+                            Status = "Dijkstra done";
 
-                    PathLength = MainMaze.DijkstraPath.PathLength;
-                    ExploredNodes = MainMaze.DijkstraPath.ExploredCount;
+                        PathLength = MainMaze.DijkstraPath.PathLength;
+                        ExploredNodes = MainMaze.DijkstraPath.ExploredCount;
 
-                    LastGenTime = ProcessTime.ElapsedMilliseconds;
-                    ProcessTime.Restart();
+                        LastGenTime = ProcessTime.ElapsedMilliseconds;
+                        ProcessTime.Restart();
 
-                    RenderPath(MainMaze.DijkstraPath);
+                        RenderPath(MainMaze.DijkstraPath);
 
-                    ProcessTime.Stop();
-                    LastRenderTime = ProcessTime.ElapsedMilliseconds;
-                });
+                        ProcessTime.Stop();
+                        LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                    });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -219,27 +223,29 @@ namespace Mazeinator
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() =>
-                {
-                    Stopwatch ProcessTime = new Stopwatch();
-                    ProcessTime.Start();
-                    Status = "Started searching...";
+                    {
+                        Stopwatch ProcessTime = new Stopwatch();
+                        ProcessTime.Start();
+                        Status = "Started searching...";
 
-                    if (!MainMaze.AStar())
-                        Status = "Pathfinding failed";
-                    else
-                        Status = "A* done";
+                        if (!MainMaze.AStar())
+                            Status = "Pathfinding failed";
+                        else
+                            Status = "A* done";
 
-                    PathLength = MainMaze.AStarPath.PathLength;
-                    ExploredNodes = MainMaze.AStarPath.ExploredCount;
+                        PathLength = MainMaze.AStarPath.PathLength;
+                        ExploredNodes = MainMaze.AStarPath.ExploredCount;
 
-                    LastGenTime = ProcessTime.ElapsedMilliseconds;
-                    ProcessTime.Restart();
+                        LastGenTime = ProcessTime.ElapsedMilliseconds;
+                        ProcessTime.Restart();
 
-                    RenderPath(MainMaze.AStarPath);
+                        RenderPath(MainMaze.AStarPath);
 
-                    ProcessTime.Stop();
-                    LastRenderTime = ProcessTime.ElapsedMilliseconds;
-                });
+                        ProcessTime.Stop();
+                        LastRenderTime = ProcessTime.ElapsedMilliseconds;
+                    });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -418,10 +424,9 @@ namespace Mazeinator
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
-                    _oneToRunThemAll = Task.Run(() =>
-                    {
-                        Render(CanvasSize);
-                    });
+                    _oneToRunThemAll = Task.Run(() => { Render(CanvasSize); });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -490,9 +495,16 @@ namespace Mazeinator
 
         public void NewMaze()
         {
-            MainMaze = null;
-            _currentFilePath = null;
-            Maze = null;
+            if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
+            {
+                _oneToRunThemAll = null;
+                MainMaze = null;
+                _currentFilePath = null;
+                Maze = null;
+                Status = "New file created";
+            }
+            else
+                MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
         }
 
         public void SaveMaze()
@@ -522,13 +534,12 @@ namespace Mazeinator
 
             if (_currentFilePath != null)
             {
-                Status = "Saving...";
-
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() =>
                     {
+                        Status = "Saving...";
                         try
                         {
                             Stopwatch ProcessTime = new Stopwatch();
@@ -547,6 +558,8 @@ namespace Mazeinator
                             MessageBox.Show("An unhandled saving exception just occured: " + exc.Message, "Unhandled saving exception", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -570,13 +583,12 @@ namespace Mazeinator
             //asynhronously load the maze, in a try/catch
             if (_currentFilePath != null)
             {
-                Status = "Commencing loading operation...";
-
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() =>
                     {
+                        Status = "Commencing loading operation...";
                         try
                         {
                             Stopwatch ProcessTime = new Stopwatch();
@@ -610,6 +622,8 @@ namespace Mazeinator
                             MessageBox.Show("An unhandled loading exception just occured: " + exc.Message, "Unhandled loading exception", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -637,13 +651,12 @@ namespace Mazeinator
 
             if (dialog.ShowDialog() == true && exportWindow.ShowDialog() == true)
             {
-                Status = "Commencing export...";
-
                 //if it does not exist -> run; (check if the task exists) ONLY THEN check if there is not any other running task and run
                 //[use of operator evaluation] for thread safety
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() =>
                     {
+                        Status = "Commencing export...";
                         try
                         {
                             Stopwatch ProcessTime = new Stopwatch();
@@ -669,6 +682,8 @@ namespace Mazeinator
                             MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                     });
+                else
+                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
