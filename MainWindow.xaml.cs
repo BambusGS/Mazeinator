@@ -5,11 +5,10 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  implement A*; pathfinding show visited node count & final path length
- *  right-click menus
- *  Either create new file or load another one
- *  add blank maze option
- *  progress bar is nonexistent as hell
+ *  pathfinding show visited node count & final path length in a TAB? for all of them
+ *  F1 for help shortcut
+ *  Either create new file or load another one 
+ *  rickroll?!
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
@@ -45,6 +44,7 @@ namespace Mazeinator
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            e.Cancel = true;    //override the closing operation
             CloseApp(null, null);
         }
 
@@ -58,7 +58,7 @@ namespace Mazeinator
                 if (_autoRenderTimer.IsEnabled == false)
                 {
                     _autoRenderTimer.Tick += new EventHandler(AutoRender);
-                    _autoRenderTimer.Interval = new TimeSpan(0, 0, 1);
+                    _autoRenderTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
                     _autoRenderTimer.Start();
                 }
 
@@ -80,7 +80,7 @@ namespace Mazeinator
         {
             _autoRenderTimer.Stop();
             _autoRenderTimer.Tick -= AutoRender;
-            _controller.Render(GetCanvasSizePixels());
+            _controller.RenderAsync(GetCanvasSizePixels());
         }
 
         #endregion AutoRe-Render
@@ -100,7 +100,7 @@ namespace Mazeinator
         private void LoadMaze(object sender, RoutedEventArgs e)
         {
             _controller.LoadMaze();
-            _controller.Render(GetCanvasSizePixels());
+            _controller.RenderAsync(GetCanvasSizePixels());
         }
 
         private void ExportMaze(object sender, RoutedEventArgs e)
@@ -110,19 +110,14 @@ namespace Mazeinator
 
         private void CloseApp(object sender, RoutedEventArgs e)
         {
-            if (Utilities.isWorking) //do not exit the app when file is being saved/loaded
+            if (Utilities.isWorking == true) //do not exit the app when file is being saved/loaded
                 MessageBox.Show("Cannot quit: File is being processed", "Unable to quit", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             else { Application.Current.Shutdown(); }
         }
 
         private void AboutClick(object sender, RoutedEventArgs e)
         {
-            About about = new About();
-            About abouthidden = new About(true);
-            abouthidden.Show();
-            abouthidden.Hide();
-            about.ShowDialog();
-            abouthidden.Show();
+            _controller.About();
         }
 
         #endregion Menu
@@ -133,8 +128,8 @@ namespace Mazeinator
         {
             _controller.MazeGeneration(GetCanvasSizePixels());
         }
-
-        private void NewBlank_click(object sender, RoutedEventArgs e)
+        
+        private void MazeBlankGeneration(object sender, RoutedEventArgs e)
         {
             _controller.MazeGenBlank(GetCanvasSizePixels());
         }

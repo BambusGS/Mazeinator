@@ -19,15 +19,9 @@ namespace Mazeinator
     /// </summary>
     public partial class About : Window
     {
-        public About(bool rickroll = false)
+        public About()
         {
             InitializeComponent();
-
-            if (rickroll == true)
-            {
-                this.WindowStyle = WindowStyle.None;
-                wbSample.Navigate("https://www.youtube.com/watch?v=QtBDL8EiNZo");
-            }
         }
     }
 }

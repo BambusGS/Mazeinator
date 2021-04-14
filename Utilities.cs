@@ -31,7 +31,7 @@ namespace Mazeinator
 
         public static System.Drawing.Color ConvertColor(System.Windows.Media.Color WMColor) => System.Drawing.Color.FromArgb(WMColor.R, WMColor.G, WMColor.B);
 
-        //clamp function - useful, but is not built in as far as I know
+        //clamp function - useful, but not built in as far as I know
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0)
@@ -45,7 +45,7 @@ namespace Mazeinator
         #region DataManipulation
 
         public static bool isWorking = false;
-
+        //Profoundly inspired by the link below, while incorporating additional logic of my own creation
         //https://stackoverflow.com/questions/129389/how-do-you-do-a-deep-copy-of-an-object-in-net
         public static bool SaveBySerializing<T>(T thing, string path)
         {
@@ -60,7 +60,8 @@ namespace Mazeinator
             }
             catch (Exception)
             {
-                throw new FileFormatException();
+                isWorking = false;
+                throw;      //passes the exception up
             }
             isWorking = false;
             return true;
@@ -80,7 +81,8 @@ namespace Mazeinator
             }
             catch (Exception)
             {
-                throw new FileFormatException();
+                isWorking = false;
+                throw;      //passes the exception up the chain of commands
             }
 
             isWorking = false;

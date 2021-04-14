@@ -5,21 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Mazeinator" Height="720" Width="1280" MinHeight="360" MinWidth="640"
+        Title="Mazeinator" Height="720" Width="1280" MinHeight="480" MinWidth="960" Background="Ivory"
         UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
         SizeChanged="Window_SizeChanged"
-        Closing="Window_Closing"
-        Loaded="Window_Loaded"
-        ResizeMode="CanResizeWithGrip"
-        Background="Ivory">
+        Closing="Window_Closing" Loaded="Window_Loaded" ResizeMode="CanResizeWithGrip">
 
     <Window.InputBindings>
         <KeyBinding Command="{Binding NewFileCMD}" Modifiers="Ctrl" Key="N" />
         <KeyBinding Command="{Binding SaveFileCMD}" Modifiers="Ctrl" Key="S" />
         <KeyBinding Command="{Binding LoadFileCMD}" Modifiers="Ctrl" Key="W" />
         <KeyBinding Command="{Binding GenerateCMD}" Modifiers="Ctrl" Key="D" />
+        <KeyBinding Command="{Binding GenerateBlankCMD}" Modifiers="Ctrl+Shift" Key="D" />
         <KeyBinding Command="{Binding ExportCMD}" Modifiers="Ctrl" Key="E" />
         <KeyBinding Command="{Binding QuitCMD}" Modifiers="Ctrl" Key="Q" />
+        <KeyBinding Command="{Binding AboutCMD}" Key="F1" />
     </Window.InputBindings>
 
     <Window.Resources>
@@ -30,8 +29,8 @@
         </Style>
 
         <Style x:Key="MenuItemStyle" TargetType="MenuItem">
-            <Setter Property="Padding" Value="3,0" />
-            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="Padding" Value="3,0,1,0" />
+            <Setter Property="Margin" Value="1,0,0,0" />
         </Style>
     </Window.Resources>
 
@@ -41,15 +40,16 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_New" Click="NewMaze" InputGestureText="Ctrl+N"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Generate" Click="MazeGeneration" InputGestureText="Ctrl+D"  Style="{StaticResource MenuItemStyle}" />
+                <MenuItem Header="Generate _Blank" Click="MazeBlankGeneration" InputGestureText="Ctrl+Shift+D"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Save" Click="SaveMaze" InputGestureText="Ctrl+S"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Load" Click="LoadMaze" InputGestureText="Ctrl+W"  Style="{StaticResource MenuItemStyle}">
                     <MenuItem.ToolTip>
                         <StackPanel>
-                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Load file</TextBlock>
+                            <TextBlock FontWeight="Bold" FontSize="12" Margin="0,0,0,5">Load maze</TextBlock>
                             <TextBlock>
                                     Search your computer or local network
                                     <LineBreak />
-                                    for a file and open it for editing.
+                                    for a file maze open it for editing.
                             </TextBlock>
                             <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
                             <WrapPanel>
@@ -64,7 +64,6 @@
 
             <MenuItem Header="_Options">
                 <MenuItem Header="Visual _Settings" Click="SettingOpen" Style="{StaticResource MenuItemStyle}" />
-                <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
@@ -83,12 +82,18 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center" Height="auto" Margin="0,3">
+            <StackPanel Grid.Row="0"
+                        Orientation="Horizontal" VerticalAlignment="Center"
+                        Height="auto" Margin="0,3">
                 <TextBlock Text="Width:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Value="{Binding Path=NodeCountX, Mode=TwoWay}" Name="WidthBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="2048" />
+                <xctk:IntegerUpDown Name="WidthBox" Value="{Binding Path=NodeCountX, Mode=TwoWay}" Minimum="1" Maximum="1024"
+                                    TextAlignment="Center" VerticalContentAlignment="Center"
+                                    Width="55" Padding="3,0" />
 
                 <TextBlock Text="Height:" Style="{StaticResource StatusBarTextStyle}" />
-                <xctk:IntegerUpDown Value="{Binding Path=NodeCountY, Mode=TwoWay}" Name="HeightBox" Width="55" Padding="3,0" TextAlignment="Center" VerticalContentAlignment="Center" Minimum="1" Maximum="2048" />
+                <xctk:IntegerUpDown  Name="HeightBox" Value="{Binding Path=NodeCountY, Mode=TwoWay}" Minimum="1" Maximum="1024"
+                                    TextAlignment="Center" VerticalContentAlignment="Center"
+                                    Width="55" Padding="3,0" />
 
                 <Button Click="MazeGeneration" Height="auto" Padding="3,0" Margin="3,0,0,0">Generate</Button>
 
@@ -102,56 +107,58 @@
                 <Canvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Visual _Settings" Click="SettingOpen"  Style="{StaticResource MenuItemStyle}" />
-                        <MenuItem Header="_New blank" Click="NewBlank_click" Style="{StaticResource MenuItemStyle}" />
                         <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
                         <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
                         <MenuItem Header="_A*" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
                     </ContextMenu>
                 </Canvas.ContextMenu>
 
-                <Image x:Name="pictureBox" MouseLeftButtonDown="SelectNode" Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" Source="{Binding Path=Maze, Mode=OneWay}"  Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}" />
+                <Image x:Name="pictureBox" Source="{Binding Path=Maze, Mode=OneWay}" MouseLeftButtonDown="SelectNode"
+                       Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}"
+                       Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" />
             </Canvas>
 
             <StatusBar Grid.Row="2">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="300" />
-                    </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal">
 
-                    <TextBlock Grid.Column="0" Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Node count: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=NodeCount, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="1" Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Processing time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastGenTime, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="2" Text="Render time: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Render time: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=LastRenderTime, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="3" Text="Render size: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Render size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=RenderSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=RenderSizeY, Mode=OneWay}" />
                     </TextBlock>
 
-                    <TextBlock Grid.Column="4" Text="Canvas size: " Style="{StaticResource StatusBarTextStyle}">
+                    <TextBlock Text="Canvas size: " Style="{StaticResource StatusBarTextStyle}">
                         <TextBlock Text="{Binding Path=CanvasSizeX, Mode=OneWay}" />
                         <TextBlock Text="×" />
                         <TextBlock Text="{Binding Path=CanvasSizeY, Mode=OneWay}" />
                     </TextBlock>
 
-                    <ProgressBar Grid.Column="5" Width="250" Height="auto" Padding="3,0" Margin="3,0" Value="0" />
+                    <Separator Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
 
-                    <TextBlock Grid.Column="6" Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
-                </Grid>
+                    <TextBlock Text="Path length: " Style="{StaticResource StatusBarTextStyle}">
+                        <TextBlock Text="{Binding Path=PathLength, Mode=OneWay}" />
+                    </TextBlock>
+
+                    <TextBlock Text="Explored nodes: " Style="{StaticResource StatusBarTextStyle}">
+                        <TextBlock Text="{Binding Path=ExploredNodes, Mode=OneWay}" />
+                    </TextBlock>
+
+                    <Separator Margin="1,2,1,0" Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
+
+                    <TextBlock Text="{Binding Path=Status, Mode=OneWay}" Style="{StaticResource StatusBarTextStyle}" />
+                </StackPanel>
             </StatusBar>
         </Grid>
     </DockPanel>

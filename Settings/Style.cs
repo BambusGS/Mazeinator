@@ -34,13 +34,14 @@ namespace Mazeinator
         public int PathThickness { get; set; } = 200;
         public int RootThickness { get; set; } = 100;
 
-        public bool RenderNode { get; set; } = true;
+        public bool RenderNode { get; set; } = false;
         public bool RenderPoint { get; set; } = false;
         public bool RenderRoot { get; set; } = true;
         public bool RenderRootRootNode { get; set; } = true;
 
         #endregion Variables
 
+        //Implements the ICloneable interface; deeply inspired by the link below
         //https://stackoverflow.com/questions/6569486/creating-a-copy-of-an-object-in-c-sharp
         public object Clone()
         {

@@ -37,12 +37,15 @@ namespace Mazeinator
 
             _maze.Dijkstra();
 
-            //combobox line end cap setup
+            //combobox line_end_cap setup
             cmbLineCap.ItemsSource = SettingsStyle.LineCapOptions;
             cmbLineCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.WallEndCap);
             cmbPathCap.ItemsSource = SettingsStyle.LineCapOptions;
             cmbPathCap.SelectedIndex = Array.IndexOf(SettingsStyle.LineCapOptions, SettingsStyle.PathEndCap);
+        }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
             RedrawPreview();
         }
 
@@ -111,12 +114,15 @@ namespace Mazeinator
 
         private void RedrawPreview()
         {
-            //get canvas size & work out the rectangular cell size from the current window size
-            int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
-            int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
+            if (IsLoaded == true)       //prevent rendering calls when elements are initialized
+            {
+                //get canvas size & work out the rectangular cell size from the current window size
+                int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
+                int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
 
-            MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle, _maze.DijkstraPath));
-            GC.Collect();
+                MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle, _maze.DijkstraPath));
+                GC.Collect();
+            }
         }
     }
 }
