@@ -22,6 +22,7 @@ namespace Mazeinator
     {
         public int selector = 0;
         public NodeAction nodeAction;
+        public AlgoType lastAlgorithm;  //set in window_loaded
 
         public NodeSettings(int nodeSize)
         {
@@ -123,6 +124,27 @@ namespace Mazeinator
 
                     TargetGrid.SetValue(Grid.ColumnProperty, 1);
                     TargetGrid.SetValue(Grid.RowProperty, 1);
+                    break;
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            switch (lastAlgorithm)
+            {
+                case AlgoType.Greedy:
+                    AUXbtn.Content = "Greedy";
+                    break;
+
+                case AlgoType.Dijkstra:
+                    AUXbtn.Content = "Dijkstra";
+                    break;
+
+                case AlgoType.Astar:
+                    AUXbtn.Content = "A☆";
+                    break;
+
+                default:
                     break;
             }
         }

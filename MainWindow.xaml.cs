@@ -1,12 +1,11 @@
 using System;
 using System.Windows;
-using System.Runtime;
 using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
  *  pathfinding show visited node count & final path length in a TAB? for all of them
- *  Either create new file or load another one 
+ *  Either create new file or load another one
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
@@ -125,7 +124,7 @@ namespace Mazeinator
         {
             _controller.MazeGeneration(GetCanvasSizePixels());
         }
-        
+
         private void MazeBlankGeneration(object sender, RoutedEventArgs e)
         {
             _controller.MazeGenBlank(GetCanvasSizePixels());
@@ -135,11 +134,12 @@ namespace Mazeinator
         {
             _controller.PathGreedy();
         }
-        
+
         private void Dijkstra_click(object sender, RoutedEventArgs e)
         {
             _controller.PathDijkstra();
         }
+
         private void AStar_click(object sender, RoutedEventArgs e)
         {
             _controller.PathAStar();
@@ -150,13 +150,6 @@ namespace Mazeinator
             //https://stackoverflow.com/questions/741956/pan-zoom-image
             if (pictureBox.Source != null)
             {
-                //TESTING
-                //Console.WriteLine("SystemParameters.PrimaryScreenWidth:" + SystemParameters.PrimaryScreenWidth);
-                //Console.WriteLine("SystemParameters.FullPrimaryScreenWidth:" + SystemParameters.FullPrimaryScreenWidth);
-                //Console.WriteLine("SystemParameters.VirtualScreenWidth:" + SystemParameters.VirtualScreenWidth);
-                //Console.WriteLine("SystemParameters.VirtualScreenLeft:" + SystemParameters.VirtualScreenLeft);
-                //Console.WriteLine("e.GetPosition(this):" + e.GetPosition(this));
-
                 Point pointPicture = e.GetPosition(pictureBox);
                 Point monitorPoint = PointToScreen(e.GetPosition(this));
                 //(real_Width / WPF_Width) -> image scaling
@@ -202,10 +195,6 @@ namespace Mazeinator
             return new Tuple<int, int>(canvasSizeX, canvasSizeY);
         }
 
-
-
         #endregion CustomFunctions
-
-
     }
 }

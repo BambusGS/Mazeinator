@@ -301,15 +301,21 @@ namespace Mazeinator
                     NodeSelector.TargetSwap(Node.South);
                 else if (NodeSelector.Top < Screen.Bounds.Top / DPI)
                     NodeSelector.TargetSwap(Node.North);
+             
+                if (MainMaze.pathToRender != null && MainMaze.pathToRender.Algorithm != AlgoType.Other)
+                {
+                    NodeSelector.lastAlgorithm = MainMaze.pathToRender.Algorithm;   //select the last used algorithm
+                }
+                else
+                    NodeSelector.lastAlgorithm = AlgoType.Astar;
 
                 if (NodeSelector.ShowDialog() == true)
                 {
-                    NodeAction nodeAction = NodeSelector.nodeAction;
                     MainMaze.pathToRender.Clear();
 
                     Node targetNode = MainMaze.nodes[selectX, selectY];
 
-                    switch (nodeAction)
+                    switch (NodeSelector.nodeAction)
                     {
                         case NodeAction.NorthNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.North);
@@ -358,7 +364,7 @@ namespace Mazeinator
                             break;
 
                         case NodeAction.AUX:
-                            switch (MainMaze.pathToRender.Algorithm)
+                            switch (NodeSelector.lastAlgorithm)
                             {
                                 case AlgoType.Greedy:
                                     PathGreedy();
@@ -591,7 +597,7 @@ namespace Mazeinator
                             ProcessTime.Start();
 
                             MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
-                            
+
                             //fix after deserialization; [nonserialized] items are set to null instead of the type written in their class constructor
                             MainMaze.GreedyPath = new Path(AlgoType.Greedy);
                             MainMaze.DijkstraPath = new Path(AlgoType.Dijkstra);
@@ -602,7 +608,7 @@ namespace Mazeinator
                             {
                                 MainMaze.pathToRender = (Path)MainMaze.DFSTree.Clone();
                             }
-                            else 
+                            else
                             {
                                 //recalculate the paths (using the best algorithm)
                                 MainMaze.AStar();
@@ -615,7 +621,7 @@ namespace Mazeinator
                             NodeCountY = MainMaze.NodeCountY;
                             NodeCount = MainMaze.nodes.Length;
 
-                            RenderAsync(nonAsync: true);   //run normal render, because a parallel task is already running                            
+                            RenderAsync(nonAsync: true);   //run normal render, because a parallel task is already running
                         }
                         catch (Exception exc)
                         {
