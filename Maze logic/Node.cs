@@ -35,14 +35,14 @@ namespace Mazeinator
             }
         }
 
-        //Just the logic consturctor
+        //Just the logical consturctor
         public Node(int x, int y)
         {
             X = x;
             Y = y;
         }
 
-        //Overloaded full constructor
+        //Overloaded full constructor (logic + rendering)
         public Node(int x, int y, int xPixel, int yPixel, int width, int height)
         {
             X = x;
@@ -150,7 +150,7 @@ namespace Mazeinator
                 Pen pen = new Pen(brush, width);
                 gr.DrawLine(pen, Center, Root.Center);
 
-                //workaround for the lineEndCaps to be the proper color (they would not follow the gradient); this is not particularly efficient
+                //workaround for the lineEndCaps to be the proper color (they do not follow the gradient!)
                 //line startCap
                 Pen aux = new Pen(startColor, width) { StartCap = endLineCap };
                 gr.DrawLine(aux, Root.Center.X, Root.Center.Y, Root.Center.X + (this.X - Root.X), Root.Center.Y + (this.Y - Root.Y));

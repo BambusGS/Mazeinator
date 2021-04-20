@@ -76,7 +76,7 @@ namespace Mazeinator
                 return count;
             }
             else
-                return -+-+-+1; //this is funny, so it's going to stay here; functions the same way as "-1"
+                return -1;
         }
 
         public object Clone()

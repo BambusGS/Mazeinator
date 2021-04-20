@@ -6,9 +6,7 @@ using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/e
 
 /*  ===TODO===
  *  pathfinding show visited node count & final path length in a TAB? for all of them
- *  F1 for help shortcut
  *  Either create new file or load another one 
- *  rickroll?!
  *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
  *  REMOVE ALL TESTING comments
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
@@ -100,7 +98,6 @@ namespace Mazeinator
         private void LoadMaze(object sender, RoutedEventArgs e)
         {
             _controller.LoadMaze();
-            _controller.RenderAsync(GetCanvasSizePixels());
         }
 
         private void ExportMaze(object sender, RoutedEventArgs e)
