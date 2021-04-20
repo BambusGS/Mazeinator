@@ -163,10 +163,11 @@ namespace Mazeinator
                             if (!MainMaze.GreedyBFS())
                                 Status = "Pathfinding failed";
                             else
+                            {
                                 Status = "Greedy best-first search done";
-
-                            PathLength = MainMaze.GreedyPath.PathLength;
-                            ExploredNodes = MainMaze.GreedyPath.ExploredCount;
+                                PathLength = MainMaze.GreedyPath.PathLength;
+                                ExploredNodes = MainMaze.GreedyPath.ExploredCount;
+                            }
 
                             LastGenTime = ProcessTime.ElapsedMilliseconds;
                             ProcessTime.Restart();
@@ -197,11 +198,11 @@ namespace Mazeinator
                         if (!MainMaze.Dijkstra())
                             Status = "Pathfinding failed";
                         else
+                        {
                             Status = "Dijkstra done";
-
-                        PathLength = MainMaze.DijkstraPath.PathLength;
-                        ExploredNodes = MainMaze.DijkstraPath.ExploredCount;
-
+                            PathLength = MainMaze.DijkstraPath.PathLength;
+                            ExploredNodes = MainMaze.DijkstraPath.ExploredCount;
+                        }
                         LastGenTime = ProcessTime.ElapsedMilliseconds;
                         ProcessTime.Restart();
 
@@ -231,10 +232,11 @@ namespace Mazeinator
                         if (!MainMaze.AStar())
                             Status = "Pathfinding failed";
                         else
+                        {
                             Status = "A* done";
-
-                        PathLength = MainMaze.AStarPath.PathLength;
-                        ExploredNodes = MainMaze.AStarPath.ExploredCount;
+                            PathLength = MainMaze.AStarPath.PathLength;
+                            ExploredNodes = MainMaze.AStarPath.ExploredCount;
+                        }
 
                         LastGenTime = ProcessTime.ElapsedMilliseconds;
                         ProcessTime.Restart();
@@ -273,11 +275,6 @@ namespace Mazeinator
                 int selectX = Utilities.Clamp((int)((imageXinPX - cellXStart) / cellWidth), 0, MainMaze.nodes.GetLength(0) - 1);
                 int selectY = Utilities.Clamp((int)((imageYinPX - cellYStart) / cellHeight), 0, MainMaze.nodes.GetLength(1) - 1);
 
-                //string text = (selectX).ToString() + " | " + (selectY).ToString();
-                //Console.WriteLine(text);
-                //text = (coordX).ToString() + " | " + (coordY).ToString();
-                //Console.WriteLine(text);
-
                 //node snap_to_grid functionality - calculates offset (where_is_the_center - where_user_clicked)
                 double gridSnapX = (selectX * cellWidth + cellXStart + (double)cellWidth / 2) - (imageXinPX) + 0.5;
                 double gridSnapY = (selectY * cellHeight + cellYStart + (double)cellHeight / 2) - (imageYinPX) + 0.5;
@@ -304,15 +301,21 @@ namespace Mazeinator
                     NodeSelector.TargetSwap(Node.South);
                 else if (NodeSelector.Top < Screen.Bounds.Top / DPI)
                     NodeSelector.TargetSwap(Node.North);
+             
+                if (MainMaze.pathToRender != null && MainMaze.pathToRender.Algorithm != AlgoType.Other)
+                {
+                    NodeSelector.lastAlgorithm = MainMaze.pathToRender.Algorithm;   //select the last used algorithm
+                }
+                else
+                    NodeSelector.lastAlgorithm = AlgoType.Astar;
 
                 if (NodeSelector.ShowDialog() == true)
                 {
-                    NodeAction nodeAction = NodeSelector.nodeAction;
                     MainMaze.pathToRender.Clear();
 
                     Node targetNode = MainMaze.nodes[selectX, selectY];
 
-                    switch (nodeAction)
+                    switch (NodeSelector.nodeAction)
                     {
                         case NodeAction.NorthNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.North);
@@ -361,7 +364,7 @@ namespace Mazeinator
                             break;
 
                         case NodeAction.AUX:
-                            switch (MainMaze.pathToRender.Algorithm)
+                            switch (NodeSelector.lastAlgorithm)
                             {
                                 case AlgoType.Greedy:
                                     PathGreedy();
@@ -426,7 +429,7 @@ namespace Mazeinator
                 if (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running)
                     _oneToRunThemAll = Task.Run(() => { Render(CanvasSize); });
                 else
-                    MessageBox.Show("Other calculations are still in progress\nCould not perform the action", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                    MessageBox.Show("Other calculations are still in progress\nCould not render asynchronously", "Action in Progress", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
             }
         }
 
@@ -463,7 +466,7 @@ namespace Mazeinator
             Stopwatch RenderTime = new Stopwatch();
             RenderTime.Start();
 
-            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
+            //draw on Bitmap without changing the original
             BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
             mazeRender.Freeze();
             Maze = mazeRender;
@@ -479,7 +482,6 @@ namespace Mazeinator
             Stopwatch RenderTime = new Stopwatch();
             RenderTime.Start();
 
-            //wanted to draw on a bitmap, but Bitmap is a class -> I've to copy it, then draw on it, then return and display it
             BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
             mazeRender.Freeze();
             Maze = mazeRender;
@@ -596,12 +598,17 @@ namespace Mazeinator
 
                             MainMaze = Utilities.LoadFromTheDead<Maze>(dialog.FileName);
 
+                            //fix after deserialization; [nonserialized] items are set to null instead of the type written in their class constructor
+                            MainMaze.GreedyPath = new Path(AlgoType.Greedy);
+                            MainMaze.DijkstraPath = new Path(AlgoType.Dijkstra);
+                            MainMaze.AStarPath = new Path(AlgoType.Astar);
+
                             //if there is no start/end-node selected, load the generating tree
                             if (MainMaze.startNode == null || MainMaze.endNode == null)
                             {
                                 MainMaze.pathToRender = (Path)MainMaze.DFSTree.Clone();
                             }
-                            else    //calculate all the algorithms
+                            else
                             {
                                 //recalculate the paths (using the best algorithm)
                                 MainMaze.AStar();

@@ -57,7 +57,6 @@ namespace Mazeinator
                     nodes[column, row] = new Node(column, row);
                 }
             }
-            ; ; ; //three lonely semicolons; they do absolutely nothing, just convey the emotions of a programmer
         }
 
         /// <summary>
@@ -91,7 +90,7 @@ namespace Mazeinator
             while (VisitedCellsCount < _nodeCountX * _nodeCountY)
             {
                 UnvisitedNeighbours.Clear();
-                if (BackTheTrack.Count == 0)    //not used, just for old safety
+                if (BackTheTrack.Count == 0)
                     break;
                 Node currentNode = BackTheTrack.Peek();
 
@@ -542,7 +541,7 @@ namespace Mazeinator
         public Bitmap RenderPath(Bitmap originalBMP, Style style, Path currentPath)
         {
             pathToRender = currentPath;
-            if (/*currentPath != null &&*/ nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
+            if (currentPath != null && nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
             {
                 using (Graphics gr = Graphics.FromImage(originalBMP))
                 {
@@ -673,13 +672,6 @@ namespace Mazeinator
                     GreedyPath.exploredNodes = WhereDidIComeFrom;
                     return false;
                 }
-
-                //4TESTING↓
-                //foreach (var Node in frontier)
-                //{
-                //    Console.Write("Node: " + Node.Item3.ToString() + "|sort: " + Node.Item1 + "|d: " + Node.Item2 + " \t");
-                //}
-                //Console.WriteLine();
             }
 
             if (pathFindErrored == false)
@@ -766,13 +758,6 @@ namespace Mazeinator
                     DijkstraPath.exploredNodes = WhereDidIComeFrom;
                     return false;
                 }
-
-                //4TESTING↓
-                //foreach (var Node in frontier)
-                //{
-                //    Console.Write("Node: " + Node.Item3.ToString() + "|sort: " + Node.Item1 + "|d: " + Node.Item2 + " \t");
-                //}
-                //Console.WriteLine();
             }
 
             if (pathFindErrored == false)
@@ -793,93 +778,6 @@ namespace Mazeinator
             }
             return true;
         }
-
-        //public bool AStarOLD()
-        //{
-        //    AStarPath = new Path();
-        //    if (startNode == null || endNode == null || nodes == null)
-        //        return false;
-
-        //    int edgeLength = 1;
-        //    List<Tuple<double, int, Node>> frontier = new List<Tuple<double, int, Node>>();         //holds sorting value, distance from start, actual Node
-        //    bool pathFindErrored = false;
-        //    bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-        //    int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
-
-        //    Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
-        //    AStarPath.startNode = startNode;
-        //    AStarPath.endNode = endNode;
-
-        //    //add the starting node to the tree
-        //    frontier.Add(new Tuple<double, int, Node>(0, 0, startNode));
-
-        //    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        //    int temp = 0;
-        //    //try to find distance from the startnode for all reachable nodes
-        //    while (frontier[0].Item3 != endNode)
-        //    {
-        //        int currentNodeDistance = frontier[0].Item2;
-        //        Node currentNode = frontier[0].Item3;
-        //        frontier.RemoveAt(0);
-
-        //        frontierWasHere[currentNode.X, currentNode.Y] = true;
-        //        for (int i = 0; i < 4; i++)
-        //        {
-        //            Node nodeToVisit = currentNode.Neighbours[i];
-        //            if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
-        //            {
-        //                int diffX = endNode.X - currentNode.X;
-        //                int diffY = endNode.Y - currentNode.Y;
-        //                double sortValue = currentNodeDistance + edgeLength + Math.Sqrt(diffX * diffX + diffY * diffY);     //this line makes all the difference in algorithms
-
-        //                frontier.Add(new Tuple<double, int, Node>(sortValue, currentNodeDistance + edgeLength, nodeToVisit));    //add the node for further exploration
-        //                frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
-
-        //                distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
-        //                WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
-        //            }
-        //        }
-
-        //        if (frontier.Count == 0)
-        //        {
-        //            pathFindErrored = true;
-        //            AStarPath.exploredNodes = WhereDidIComeFrom;
-        //            return false;
-        //        }
-
-        //        sw.Start();
-        //        frontier.Sort((t1, t2) => t1.Item1.CompareTo(t2.Item1));    //try it from the closest nodes first (calculation of A* takes into account node distance + it's distance from the finish node)
-        //        sw.Stop();
-        //        temp++;
-        //        //4TESTING↓
-        //        //for (int i = 0; i < frontier.Count; i++)
-        //        //{
-        //        //    Console.Write(frontier[i].Item2.ToString() + "|sort:" + frontier[i].Item3 + "|d:" + frontier[i].Item1 + " \t");
-        //        //}
-        //        //Console.WriteLine();
-        //    }
-
-        //    Console.WriteLine(sw.ElapsedTicks / temp);
-        //    Console.WriteLine("Time:" + sw.ElapsedMilliseconds + "|Count:" + temp);
-
-        //    if (pathFindErrored == false)
-        //    {
-        //        //clear and write the backtracked shortest path
-        //        AStarPath.path = new List<Node>();
-
-        //        AStarPath.path.Add(endNode);
-        //        Node backTrackNode = endNode;
-        //        while (backTrackNode != startNode && backTrackNode != null)
-        //        {
-        //            AStarPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
-        //            backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
-        //        }
-
-        //        //add the spanning tree to the root visualized
-        //        AStarPath.exploredNodes = WhereDidIComeFrom;
-        //    }
-        //    return true;
-        //}
 
         public bool AStar()
         {
@@ -949,13 +847,6 @@ namespace Mazeinator
                     AStarPath.exploredNodes = WhereDidIComeFrom;
                     return false;
                 }
-
-                //4TESTING↓
-                //foreach (var Node in frontier)
-                //{
-                //    Console.Write("Node: " + Node.Item3.ToString() + "|sort: " + Node.Item1 + "|d: " + Node.Item2 + " \t");
-                //}
-                //Console.WriteLine();
             }
 
             if (pathFindErrored == false)
