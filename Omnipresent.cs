@@ -58,8 +58,10 @@ namespace Mazeinator
         //define the powerful Maze class
         public Maze MainMaze = null;
 
-        //define the maze style class
+        //define the maze style class and the renderer class
         public Style MazeStyle = new Style();
+
+        public Renderer Renderer = new Renderer();
 
         //holds the current window scaling factor
         public double DPI = 1;
@@ -301,7 +303,7 @@ namespace Mazeinator
                     NodeSelector.TargetSwap(Node.South);
                 else if (NodeSelector.Top < Screen.Bounds.Top / DPI)
                     NodeSelector.TargetSwap(Node.North);
-             
+
                 if (MainMaze.pathToRender != null && MainMaze.pathToRender.Algorithm != AlgoType.Other)
                 {
                     NodeSelector.lastAlgorithm = MainMaze.pathToRender.Algorithm;   //select the last used algorithm
@@ -319,25 +321,25 @@ namespace Mazeinator
                     {
                         case NodeAction.NorthNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.North);
-                            MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            Renderer.RenderNode(_mazeBMP, MainMaze, targetNode, MazeStyle);
                             RenderPath();
                             break;
 
                         case NodeAction.EastNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.East);
-                            MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            Renderer.RenderNode(_mazeBMP, MainMaze, targetNode, MazeStyle);
                             RenderPath();
                             break;
 
                         case NodeAction.SouthNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.South);
-                            MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            Renderer.RenderNode(_mazeBMP, MainMaze, targetNode, MazeStyle);
                             RenderPath();
                             break;
 
                         case NodeAction.WestNodeSelect:
                             MainMaze.ToggleNeighbour(targetNode, Node.West);
-                            MainMaze.RenderNode(_mazeBMP, targetNode, MazeStyle);
+                            Renderer.RenderNode(_mazeBMP, MainMaze, targetNode, MazeStyle);
                             RenderPath();
                             break;
 
@@ -443,9 +445,9 @@ namespace Mazeinator
                 Stopwatch RenderTime = new Stopwatch();
                 RenderTime.Start();
 
-                _mazeBMP = MainMaze.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MazeStyle);
+                _mazeBMP = Renderer.RenderMaze(CanvasSize.Item1, CanvasSize.Item2, MainMaze, MazeStyle);
 
-                BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+                BitmapImage mazeRender = Utilities.BitmapToImageSource(Renderer.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MainMaze, MazeStyle));
                 mazeRender.Freeze();
                 Maze = mazeRender;
 
@@ -467,7 +469,7 @@ namespace Mazeinator
             RenderTime.Start();
 
             //draw on Bitmap without changing the original
-            BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle));
+            BitmapImage mazeRender = Utilities.BitmapToImageSource(Renderer.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MainMaze, MazeStyle));
             mazeRender.Freeze();
             Maze = mazeRender;
 
@@ -482,7 +484,7 @@ namespace Mazeinator
             Stopwatch RenderTime = new Stopwatch();
             RenderTime.Start();
 
-            BitmapImage mazeRender = Utilities.BitmapToImageSource(MainMaze.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MazeStyle, path));
+            BitmapImage mazeRender = Utilities.BitmapToImageSource(Renderer.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MainMaze, MazeStyle, path));
             mazeRender.Freeze();
             Maze = mazeRender;
 
@@ -671,7 +673,7 @@ namespace Mazeinator
 
                             MazeStyle.IsSquare = exportWindow.IsSquare;
                             //draws the path(generates bitmap)
-                            System.Drawing.Bitmap mazeRender = MainMaze.RenderPath(MainMaze.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MazeStyle, isRendering: true), MazeStyle);
+                            System.Drawing.Bitmap mazeRender = Renderer.RenderPath(Renderer.RenderMaze(exportWindow.ExportSizeX, exportWindow.ExportSizeY, MainMaze, MazeStyle, isRendering: true), MainMaze, MazeStyle);
 
                             //resize the rendered bitmap (only does it, if it's needed) and saves it under the specified file format
                             new System.Drawing.Bitmap(mazeRender, exportWindow.ExportSizeX, exportWindow.ExportSizeY).Save(dialog.FileName, ImageFormats[dialog.FilterIndex - 1]);
