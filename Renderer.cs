@@ -19,6 +19,8 @@ namespace Mazeinator
         /// <returns>Bitmap rendered maze of the specified size</returns>
         public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Maze maze, Style style, bool isRendering = false, bool fill = false)
         {
+            //!maze render size is compromised when isRendering == true -> auto in-window re-render needed
+
             //this pen's width is needed for tight cellSize calculation; therefore, I cannot use cellSize for it's width
             int cellWallWidthX = (int)((canvasWidth / (5 * (maze.NodeCountX + 4))) * style.WallThickness / 100.0);
             int cellWallWidthY = (int)((canvasHeight / (5 * (maze.NodeCountY + 4))) * style.WallThickness / 100.0);
@@ -107,7 +109,7 @@ namespace Mazeinator
                 //fill edges(&corners) with wallColor 1px offset from the centre in both X and Y
                 gr.DrawRectangle(_wallsPen, -1, -1, maze.renderSizeX + 1, maze.renderSizeY + 1);
 
-                if (isRendering == true)   //slower render, but render every cell (thus eliminating AntiAliasing glitches
+                if (isRendering == true)   //slower render, but renders every cell (thus eliminating AntiAliasing glitches
                 {
                     for (int column = 0; column < maze.NodeCountX; column++)
                     {
@@ -161,8 +163,7 @@ namespace Mazeinator
                     gr.DrawImage(bmp, ((canvasWidth - maze.renderSizeX) / 2), ((canvasHeight - maze.renderSizeY) / 2));
                 }
                 bmp = backBmp;
-            }
-
+            }           
             return bmp;
         }
 

@@ -682,6 +682,9 @@ namespace Mazeinator
                             LastGenTime = ProcessTime.ElapsedMilliseconds;
                             LastRenderTime = ProcessTime.ElapsedMilliseconds;
 
+                            //re-render the displayed image
+                            RenderAsync(nonAsync: true);   //run normal render, because a parallel task is already running
+
                             Status = "Export done";
                             MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
