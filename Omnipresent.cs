@@ -682,9 +682,6 @@ namespace Mazeinator
                             LastGenTime = ProcessTime.ElapsedMilliseconds;
                             LastRenderTime = ProcessTime.ElapsedMilliseconds;
 
-                            //re-render the displayed image
-                            RenderAsync(nonAsync: true);   //run normal render, because a parallel task is already running
-
                             Status = "Export done";
                             MessageBox.Show("Export done", "Export done", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
@@ -692,6 +689,11 @@ namespace Mazeinator
                         {
                             Status = "Export failed";
                             MessageBox.Show("An unhandled exporting exception just occured: " + exc.Message, "Unhandled export exception", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                        finally
+                        {
+                            //re-render the displayed image - whether the export failed or not
+                            RenderAsync(nonAsync: true);   //run normal render, because a parallel task is already running
                         }
                     });
                 else
