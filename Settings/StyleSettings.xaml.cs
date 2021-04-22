@@ -14,6 +14,7 @@ namespace Mazeinator
     {
         public Style SettingsStyle = null;
         private Maze _maze = new Maze(3, 3);
+        private Renderer Renderer = new Renderer();
         private double DPI;
 
         public StyleSettings(Style style, double DPI)
@@ -120,7 +121,7 @@ namespace Mazeinator
                 int canvasSizeX = (int)Math.Round((MainCanvas.ActualWidth * DPI));
                 int canvasSizeY = (int)Math.Round((MainCanvas.ActualHeight * DPI));
 
-                MazePreview.Source = Utilities.BitmapToImageSource(_maze.RenderPath(_maze.RenderMaze(canvasSizeX, canvasSizeY, SettingsStyle), SettingsStyle, _maze.DijkstraPath));
+                MazePreview.Source = Utilities.BitmapToImageSource(Renderer.RenderPath(Renderer.RenderMaze(canvasSizeX, canvasSizeY, _maze, SettingsStyle), _maze, SettingsStyle, _maze.DijkstraPath));
                 GC.Collect();
             }
         }

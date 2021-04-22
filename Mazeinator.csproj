@@ -107,6 +107,7 @@
     <Compile Include="Media\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Renderer.cs" />
     <Compile Include="Settings\ExportSettings.xaml.cs">
       <DependentUpon>ExportSettings.xaml</DependentUpon>
     </Compile>
