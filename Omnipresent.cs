@@ -694,6 +694,7 @@ namespace Mazeinator
                         {
                             //re-render the displayed image - whether the export failed or not
                             RenderAsync(nonAsync: true);   //run normal render, because a parallel task is already running
+                            GC.Collect();
                         }
                     });
                 else
