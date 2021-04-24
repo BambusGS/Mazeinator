@@ -245,47 +245,50 @@ namespace Mazeinator
 
         public Bitmap RenderPath(Bitmap originalBMP, Maze maze, Style style, Path currentPath)
         {
-            maze.pathToRender = currentPath;
-            if (currentPath != null && maze.nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
+            if (maze.nodes != null && (_wallsPen != null && _nodePen != null && _pointPen != null && _rootPen != null))
             {
                 using (Graphics gr = Graphics.FromImage(originalBMP))
                 {
                     gr.SmoothingMode = SmoothingMode.AntiAlias;
                     gr.CompositingQuality = CompositingQuality.HighSpeed;
 
-                    //draw explored maze.nodes (while checking if they are large enough)
-                    if (currentPath.exploredNodes != null)
+                    if (currentPath != null)
                     {
-                        for (int column = 0; column < maze.NodeCountX; column++)
+                        maze.pathToRender = currentPath;
+                        //draw explored maze.nodes (while checking if they are large enough)
+                        if (currentPath.exploredNodes != null)
                         {
-                            for (int row = 0; row < maze.NodeCountY; row++)
+                            for (int column = 0; column < maze.NodeCountX; column++)
                             {
-                                //assign the maze.nodes's roots to the current path diagram
-                                maze.nodes[column, row].Root = currentPath.exploredNodes[column, row];
+                                for (int row = 0; row < maze.NodeCountY; row++)
+                                {
+                                    //assign the maze.nodes's roots to the current path diagram
+                                    maze.nodes[column, row].Root = currentPath.exploredNodes[column, row];
 
-                                if (style.RenderRoot == true && (maze.nodes[0, 0].Bounds.Width > 4 && maze.nodes[0, 0].Bounds.Height > 4))
-                                    maze.nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
+                                    if (style.RenderRoot == true && (maze.nodes[0, 0].Bounds.Width > 4 && maze.nodes[0, 0].Bounds.Height > 4))
+                                        maze.nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
+                                }
                             }
                         }
-                    }
 
-                    //draw the shortest path
-                    if (currentPath.path != null && currentPath.path.Count > 0)
-                    {
-                        //path has set rootnodes from END to START; path=4 -> we need 3 intervals
-                        double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(currentPath.path.Count - 1);
-                        double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(currentPath.path.Count - 1);
-                        double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(currentPath.path.Count - 1);
-
-                        //because root maze.nodes are drawn - there is no need to draw the first root node
-                        for (int i = 0; i < currentPath.path.Count - 1; i++)
+                        //draw the shortest path
+                        if (currentPath.path != null && currentPath.path.Count > 0)
                         {
-                            Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
-                            Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+                            //path has set rootnodes from END to START; path=4 -> we need 3 intervals
+                            double step_R = (style.RootColorEnd.R - style.RootColorBegin.R) / (double)(currentPath.path.Count - 1);
+                            double step_G = (style.RootColorEnd.G - style.RootColorBegin.G) / (double)(currentPath.path.Count - 1);
+                            double step_B = (style.RootColorEnd.B - style.RootColorBegin.B) / (double)(currentPath.path.Count - 1);
 
-                            //reverse the drawing order -> we draw from the start
-                            float thickness = (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness);
-                            currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, thickness, style.PathEndCap, style.PathEndCap);
+                            //because root maze.nodes are drawn - there is no need to draw the first root node
+                            for (int i = 0; i < currentPath.path.Count - 1; i++)
+                            {
+                                Color startColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * i), style.RootColorBegin.G + (int)(step_G * i), style.RootColorBegin.B + (int)(step_B * i));
+                                Color endColor = Color.FromArgb(style.RootColorBegin.R + (int)(step_R * (i + 1)), style.RootColorBegin.G + (int)(step_G * (i + 1)), style.RootColorBegin.B + (int)(step_B * (i + 1)));
+
+                                //reverse the drawing order -> we draw from the start
+                                float thickness = (float)Math.Ceiling((_pointPen.Width / 2 - 1) * style.PathThickness / style.PointThickness);
+                                currentPath.path[currentPath.path.Count - i - 2].DrawRootNode(gr, startColor, endColor, thickness, style.PathEndCap, style.PathEndCap);
+                            }
                         }
                     }
 

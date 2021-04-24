@@ -316,8 +316,8 @@ namespace Mazeinator
 
             LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
-            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] whereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node
             frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
@@ -355,15 +355,15 @@ namespace Mazeinator
                         }
                         frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
 
-                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
-                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        whereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
                     }
                 }
 
                 if (frontier.Count == 0)
                 {
                     pathFindErrored = true;
-                    GreedyPath.exploredNodes = WhereDidIComeFrom;
+                    GreedyPath.exploredNodes = whereDidIComeFrom;
                     return false;
                 }
             }
@@ -377,12 +377,12 @@ namespace Mazeinator
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
-                    GreedyPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
-                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                    GreedyPath.path.Add(whereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = whereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
                 }
 
                 //add the spanning tree to the root visualized
-                GreedyPath.exploredNodes = WhereDidIComeFrom;
+                GreedyPath.exploredNodes = whereDidIComeFrom;
             }
             return true;
         }
@@ -404,8 +404,8 @@ namespace Mazeinator
 
             LinkedList<Tuple<int, int, Node>> frontier = new LinkedList<Tuple<int, int, Node>>(); //holds sorting value, distance from start, actual Node
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
-            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] whereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node
             frontier.AddFirst(new Tuple<int, int, Node>(0, 0, startNode));
@@ -441,15 +441,15 @@ namespace Mazeinator
                         }
                         frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
 
-                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
-                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        whereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
                     }
                 }
 
                 if (frontier.Count == 0)        //we exhausted all available nodes and still haven't found the end
                 {
                     pathFindErrored = true;
-                    DijkstraPath.exploredNodes = WhereDidIComeFrom;
+                    DijkstraPath.exploredNodes = whereDidIComeFrom;
                     return false;
                 }
             }
@@ -463,12 +463,12 @@ namespace Mazeinator
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
-                    DijkstraPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
-                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                    DijkstraPath.path.Add(whereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = whereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
                 }
 
                 //add the spanning tree to the root visualized
-                DijkstraPath.exploredNodes = WhereDidIComeFrom;
+                DijkstraPath.exploredNodes = whereDidIComeFrom;
             }
             return true;
         }
@@ -490,8 +490,8 @@ namespace Mazeinator
 
             LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
-            Node[,] WhereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] whereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
 
             //add the starting node to the tree
             frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
@@ -530,15 +530,15 @@ namespace Mazeinator
 
                         frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
 
-                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
-                        WhereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        whereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
                     }
                 }
 
                 if (frontier.Count == 0)        //we exhausted all available nodes and still haven't found the end
                 {
                     pathFindErrored = true;
-                    AStarPath.exploredNodes = WhereDidIComeFrom;
+                    AStarPath.exploredNodes = whereDidIComeFrom;
                     return false;
                 }
             }
@@ -552,12 +552,12 @@ namespace Mazeinator
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
-                    AStarPath.path.Add(WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
-                    backTrackNode = WhereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                    AStarPath.path.Add(whereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = whereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
                 }
 
                 //add the spanning tree to the root visualized
-                AStarPath.exploredNodes = WhereDidIComeFrom;
+                AStarPath.exploredNodes = whereDidIComeFrom;
             }
             return true;
         }
