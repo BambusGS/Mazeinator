@@ -163,7 +163,7 @@ namespace Mazeinator
                     gr.DrawImage(bmp, ((canvasWidth - maze.renderSizeX) / 2), ((canvasHeight - maze.renderSizeY) / 2));
                 }
                 bmp = backBmp;
-            }           
+            }
             return bmp;
         }
 

@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;    //INotifyPropertyChanged
 using System.Diagnostics;   //Stopwatch
 using System.Drawing.Imaging; //ImageFormat (export operation)
-using System.Threading.Tasks;   //Tasks so as not to freeze the UI  //https://stackoverflow.com/questions/27089263/how-to-run-and-interact-with-an-async-task-from-a-wpf-gui
+using System.Threading.Tasks;   //Tasks so as not to freeze the UI  //https://docs.microsoft.com/cs-cz/dotnet/api/system.threading.tasks.task-1?view=net-5.0
 using System.Windows;   //MessageBox
 using System.Windows.Input; //ICommands
 using System.Windows.Media.Imaging; //BitmapImage
@@ -13,7 +13,7 @@ namespace Mazeinator
     /// <summary>
     /// Class that implements global shortcut binding and subsequent commands (Ctrl+S -> save file)
     /// </summary>
-    public class ActionCommand : ICommand
+    public class ActionCommand : ICommand       //https://docs.microsoft.com/en-us/dotnet/api/system.windows.input.icommand?view=net-5.0
     {
         private readonly Action _action;
 
@@ -289,7 +289,7 @@ namespace Mazeinator
                 NodeSelector.Top = ((monitorClick.Y + gridSnapY / transfrom.Y) / DPI - NodeSelector.Height / 2);
 
                 //window rendering near the edges screen fix
-                //gets the active screen's X, Y, Width, Height properties in pixels
+                //gets the active screen's X, Y, Width, Height properties in pixels     //https://stackoverflow.com/questions/1927540/how-to-get-the-size-of-the-current-screen-in-wpf
                 System.Windows.Interop.WindowInteropHelper windowInteropHelper = new System.Windows.Interop.WindowInteropHelper(Application.Current.MainWindow);
                 System.Windows.Forms.Screen Screen = System.Windows.Forms.Screen.FromHandle(windowInteropHelper.Handle);
                 //Console.WriteLine(Screen.Bounds);

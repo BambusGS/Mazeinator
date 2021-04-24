@@ -4,13 +4,12 @@ using System.Windows.Media;
 using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/en-us/dotnet/api/system.windows.threading.dispatchertimer?view=net-5.0
 
 /*  ===TODO===
- *  pathfinding show visited node count & final path length in a TAB? for all of them
- *  Either create new file or load another one
- *  add a MazeStyle class - that is saved/loaded indipendently from Maze class; RenderWall and Colors are in there -> save/load it to %appdata%?
- *  REMOVE ALL TESTING comments
- *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp
- *  http://www.astrolog.org/labyrnth/algrithm.htm
- *  https://www.redblobgames.com/pathfinding/a-star/introduction.html
+ *
+ *
+ *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp - DFS generation algorithm
+ *  http://csharphelper.com/blog/2016/11/make-draw-maze-c/ - rendering system general idea
+ *  https://www.redblobgames.com/pathfinding/a-star/introduction.html   - general algorithm explanation
+ *  http://www.astrolog.org/labyrnth/algrithm.htm - not used
  */
 
 namespace Mazeinator
@@ -147,7 +146,6 @@ namespace Mazeinator
 
         private void SelectNode(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            //https://stackoverflow.com/questions/741956/pan-zoom-image
             if (pictureBox.Source != null)
             {
                 Point pointPicture = e.GetPosition(pictureBox);
@@ -176,7 +174,7 @@ namespace Mazeinator
         /// </summary>
         private double GetScaling()
         {
-            //get the current "WPF DPI measure units"
+            //get the current "WPF DPI measure units"   //https://stackoverflow.com/questions/1918877/how-can-i-get-the-dpi-in-wpf
             Matrix m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
             double scaling = m.M11;
 
