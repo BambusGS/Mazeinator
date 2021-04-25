@@ -144,7 +144,7 @@ namespace Mazeinator
 
             Status = "Generating done";
             NodeCount = MainMaze.nodes.Length;
-            MazeStyle.RenderPoint = true;   //so the user can see the individual nodes
+            //MazeStyle.RenderPoint = true;   //so the user can see the individual nodes
 
             RenderAsync(CanvasSize);
         }

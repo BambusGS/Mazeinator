@@ -66,8 +66,10 @@ namespace Mazeinator
             {
                 startNode = nodes[rnd.Next(nodes.GetLength(0)), rnd.Next(nodes.GetLength(1))];
             }
-            DFSTree = new Path();
-            DFSTree.exploredNodes = new Node[_nodeCountX, _nodeCountY];
+            DFSTree = new Path
+            {
+                exploredNodes = new Node[_nodeCountX, _nodeCountY]
+            };
             DFSTree.exploredNodes[startNode.X, startNode.Y] = startNode;                //startNode.Root = startNode;
 
             //create the Visited array and the backtracking stack
@@ -307,9 +309,11 @@ namespace Mazeinator
             if (GreedyPath != null && GreedyPath.startNode == startNode && GreedyPath.endNode == endNode)        //no need to recalculate, because everything is the same
                 return true;
 
-            GreedyPath = new Path(AlgoType.Greedy);
-            GreedyPath.startNode = startNode;
-            GreedyPath.endNode = endNode;
+            GreedyPath = new Path(AlgoType.Greedy)
+            {
+                startNode = startNode,
+                endNode = endNode
+            };
 
             int edgeLength = 1;
             bool pathFindErrored = false;
@@ -371,9 +375,10 @@ namespace Mazeinator
             if (pathFindErrored == false)
             {
                 //clear and write the backtracked shortest path
-                GreedyPath.path = new List<Node>();
-
-                GreedyPath.path.Add(endNode);
+                GreedyPath.path = new List<Node>
+                {
+                    endNode
+                };
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
@@ -395,9 +400,11 @@ namespace Mazeinator
             if (DijkstraPath != null && DijkstraPath.startNode == startNode && DijkstraPath.endNode == endNode)        //no need to recalculate, because everything is the same
                 return true;
 
-            DijkstraPath = new Path(AlgoType.Dijkstra);
-            DijkstraPath.startNode = startNode;
-            DijkstraPath.endNode = endNode;
+            DijkstraPath = new Path(AlgoType.Dijkstra)
+            {
+                startNode = startNode,
+                endNode = endNode
+            };
 
             int edgeLength = 1;
             bool pathFindErrored = false;
@@ -457,9 +464,10 @@ namespace Mazeinator
             if (pathFindErrored == false)
             {
                 //clear and write the backtracked shortest path
-                DijkstraPath.path = new List<Node>();
-
-                DijkstraPath.path.Add(endNode);
+                DijkstraPath.path = new List<Node>
+                {
+                    endNode
+                };
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
@@ -481,9 +489,11 @@ namespace Mazeinator
             if (AStarPath != null && AStarPath.startNode == startNode && AStarPath.endNode == endNode)        //no need to recalculate, because everything is the same
                 return true;
 
-            AStarPath = new Path(AlgoType.Astar);
-            AStarPath.startNode = startNode;
-            AStarPath.endNode = endNode;
+            AStarPath = new Path(AlgoType.Astar)
+            {
+                startNode = startNode,
+                endNode = endNode
+            };
 
             int edgeLength = 1;
             bool pathFindErrored = false;
@@ -546,9 +556,10 @@ namespace Mazeinator
             if (pathFindErrored == false)
             {
                 //clear and write the backtracked shortest path
-                AStarPath.path = new List<Node>();
-
-                AStarPath.path.Add(endNode);
+                AStarPath.path = new List<Node>
+                {
+                    endNode
+                };
                 Node backTrackNode = endNode;
                 while (backTrackNode != startNode && backTrackNode != null)
                 {
