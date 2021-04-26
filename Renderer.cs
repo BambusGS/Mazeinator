@@ -17,7 +17,7 @@ namespace Mazeinator
         ///<param name="isRendering">Enables measures in order to render more perfectly</param>
         /// <param name="fill">Specifies whether to fill background with solid color up to the specified size </param>
         /// <returns>Bitmap rendered maze of the specified size</returns>
-        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Maze maze, Style style, bool isRendering = false, bool fill = false)
+        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Maze maze, Style style, bool isRendering = false/*, bool fill = false*/)
         {
             //!maze render size is compromised when isRendering == true -> auto in-window re-render needed
 
@@ -154,16 +154,17 @@ namespace Mazeinator
                 }
             }
 
-            if (fill == true)
-            {   //overlay the cell image onto a solid color one and center it
-                Bitmap backBmp = new Bitmap(canvasWidth, canvasHeight);
-                using (Graphics gr = Graphics.FromImage(backBmp))
-                {
-                    gr.FillRectangle(_backgroundPen.Brush, 0, 0, canvasWidth, canvasHeight);
-                    gr.DrawImage(bmp, ((canvasWidth - maze.renderSizeX) / 2), ((canvasHeight - maze.renderSizeY) / 2));
-                }
-                bmp = backBmp;
-            }
+            ////implemented, but not used function for covering the rest pixels up to the requested size with background color
+            //if (fill == true)
+            //{   //overlay the cell image onto a solid color one and center it
+            //    Bitmap backBmp = new Bitmap(canvasWidth, canvasHeight);
+            //    using (Graphics gr = Graphics.FromImage(backBmp))
+            //    {
+            //        gr.FillRectangle(_backgroundPen.Brush, 0, 0, canvasWidth, canvasHeight);
+            //        gr.DrawImage(bmp, ((canvasWidth - maze.renderSizeX) / 2), ((canvasHeight - maze.renderSizeY) / 2));
+            //    }
+            //    bmp = backBmp;
+            //}
             return bmp;
         }
 

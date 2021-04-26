@@ -150,7 +150,8 @@ namespace Mazeinator
                 Pen pen = new Pen(brush, width);
                 gr.DrawLine(pen, Center, Root.Center);
 
-                //workaround for the lineEndCaps to be the proper color (they do not follow the gradient!)
+                //workaround for the lineEndCaps to be the proper color (they do not respect the color gradient!)
+                //a tiny line with the appropriate color is drawn -> result is linecap of the proper color and no additional line
                 //line startCap
                 Pen aux = new Pen(startColor, width) { StartCap = endLineCap };
                 gr.DrawLine(aux, Root.Center.X, Root.Center.Y, Root.Center.X + (this.X - Root.X), Root.Center.Y + (this.Y - Root.Y));
@@ -161,6 +162,7 @@ namespace Mazeinator
             }
         }
 
+        //used for debug purposes
         public override string ToString()
         {
             return base.ToString() + ",X:" + X + ",Y:" + Y;
