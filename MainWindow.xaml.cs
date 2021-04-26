@@ -182,7 +182,7 @@ namespace Mazeinator
 
             //check if X and Y scaling are the same - if not (this should never happen) throw an error
             if (m.M11 / m.M22 != 1)
-                throw new ApplicationException("Display scaling is not square?! HOW!");
+                throw new ApplicationException("Display scaling is not square?!");
 
             return scaling;
         }

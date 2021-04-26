@@ -17,7 +17,7 @@ namespace Mazeinator
         ///<param name="isRendering">Enables measures in order to render more perfectly</param>
         /// <param name="fill">Specifies whether to fill background with solid color up to the specified size </param>
         /// <returns>Bitmap rendered maze of the specified size</returns>
-        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Maze maze, Style style, bool isRendering = false/*, bool fill = false*/)
+        public Bitmap RenderMaze(int canvasWidth, int canvasHeight, Maze maze, Style style, bool isRendering = false /*, bool fill = false*/)
         {
             //!maze render size is compromised when isRendering == true -> auto in-window re-render needed
 

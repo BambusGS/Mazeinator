@@ -10,6 +10,7 @@ namespace Mazeinator
     public static class Utilities
     {
         //converts the generated Bitmap to ImageSource for the Image Display
+        //inspired by https://docs.microsoft.com/en-us/answers/questions/59968/binding-a-systemdrawingimage-in-a-wpf-image-elemen.html
         public static BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
             using (MemoryStream memory = new MemoryStream())
