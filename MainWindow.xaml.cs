@@ -176,7 +176,7 @@ namespace Mazeinator
         /// </summary>
         private double GetScaling()
         {
-            //get the current "WPF DPI measure units"   //https://stackoverflow.com/questions/1918877/how-can-i-get-the-dpi-in-wpf
+            //get the current "WPF DPI measure units"   //https://docs.microsoft.com/en-us/archive/blogs/jaimer/getting-system-dpi-in-wpf-app
             Matrix m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
             double scaling = m.M11;
 

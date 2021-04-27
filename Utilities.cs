@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;   //Bitmap and Graphics
-using System.IO;    //MemoryStream
+using System.IO;    //FileStream
 using System.Runtime.Serialization; //Serialization
 using System.Runtime.Serialization.Formatters.Binary;   //BinaryFormatter
 using System.Windows.Media.Imaging; //BitmapImage

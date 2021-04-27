@@ -98,7 +98,7 @@
                     </ContextMenu>
                 </Canvas.ContextMenu>
 
-                <Image x:Name="pictureBox" Source="{Binding Path=Maze, Mode=OneWay}" MouseLeftButtonDown="SelectNode"
+                <Image x:Name="pictureBox" Source="{Binding Path=MazeBindedBitmap, Mode=OneWay}" MouseLeftButtonDown="SelectNode"
                        Width="{Binding Path=ActualWidth, ElementName=MainCanvas}" Height="{Binding Path=ActualHeight, ElementName=MainCanvas}"
                        Stretch="Uniform" RenderOptions.BitmapScalingMode="Fant" />
             </Canvas>

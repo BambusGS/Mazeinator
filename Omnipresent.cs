@@ -42,8 +42,11 @@ namespace Mazeinator
     {
         #region INotify_Binding
 
-        // Create the OnPropertyChanged method to raise the event
-        // The calling member's name will be used as the parameter.
+        // This method is called by the Set accessor of each property.
+        // The CallerMemberName attribute that is applied to the optional propertyName
+        // parameter causes the property name of the caller to be substituted as an argument
+        // https://docs.microsoft.com/en-us/dotnet/desktop/winforms/how-to-implement-the-inotifypropertychanged-interface?view=netframeworkdesktop-4.8
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
@@ -88,7 +91,7 @@ namespace Mazeinator
         //one task object, so as one async task is run at a time
         private Task _oneToRunThemAll;
 
-        private BitmapImage _maze = null; public BitmapImage Maze { get => _maze; set { _maze = value; OnPropertyChanged(nameof(Maze)); } }
+        private BitmapImage _mazeBindedBitmap = null; public BitmapImage MazeBindedBitmap { get => _mazeBindedBitmap; set { _mazeBindedBitmap = value; OnPropertyChanged(nameof(MazeBindedBitmap)); } }
         private System.Drawing.Bitmap _mazeBMP = null;      //stores raw rendered maze; used as a base image for further drawing of start/end nodes and path
 
         #endregion Variables
@@ -449,7 +452,7 @@ namespace Mazeinator
 
                 BitmapImage mazeRender = Utilities.BitmapToImageSource(Renderer.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MainMaze, MazeStyle));
                 mazeRender.Freeze();
-                Maze = mazeRender;
+                MazeBindedBitmap = mazeRender;
 
                 RenderTime.Stop();
                 LastRenderTime = RenderTime.ElapsedMilliseconds;
@@ -471,7 +474,7 @@ namespace Mazeinator
             //draw on Bitmap without changing the original
             BitmapImage mazeRender = Utilities.BitmapToImageSource(Renderer.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MainMaze, MazeStyle));
             mazeRender.Freeze();
-            Maze = mazeRender;
+            MazeBindedBitmap = mazeRender;
 
             RenderTime.Stop();
             LastRenderTime = RenderTime.ElapsedMilliseconds;
@@ -486,7 +489,7 @@ namespace Mazeinator
 
             BitmapImage mazeRender = Utilities.BitmapToImageSource(Renderer.RenderPath((System.Drawing.Bitmap)_mazeBMP.Clone(), MainMaze, MazeStyle, path));
             mazeRender.Freeze();
-            Maze = mazeRender;
+            MazeBindedBitmap = mazeRender;
 
             RenderTime.Stop();
             LastRenderTime = RenderTime.ElapsedMilliseconds;
@@ -504,7 +507,7 @@ namespace Mazeinator
                 _oneToRunThemAll = null;
                 MainMaze = null;
                 _currentFilePath = null;
-                Maze = null;
+                MazeBindedBitmap = null;
                 Status = "New file created";
             }
             else
