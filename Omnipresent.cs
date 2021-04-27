@@ -13,7 +13,7 @@ namespace Mazeinator
     /// <summary>
     /// Class that implements global shortcut binding and subsequent commands (Ctrl+S -> save file)
     /// </summary>
-    public class ActionCommand : ICommand       //https://docs.microsoft.com/en-us/dotnet/api/system.windows.input.icommand?view=net-5.0
+    public class ActionCommand : ICommand       //https://www.c-sharpcorner.com/UploadFile/6f0898/learn-simple-mvvm-and-command-bindings-in-15-mins/
     {
         private readonly Action _action;
 
@@ -314,7 +314,7 @@ namespace Mazeinator
                 else
                     NodeSelector.lastAlgorithm = AlgoType.Astar;
 
-                if (NodeSelector.ShowDialog() == true)
+                if (NodeSelector.ShowDialog() == true && (_oneToRunThemAll == null || _oneToRunThemAll.Status != TaskStatus.Running))   //check if rendering is not currently running (disable modification when running)
                 {
                     MainMaze.pathToRender.Clear();
 
