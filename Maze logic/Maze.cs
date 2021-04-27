@@ -551,6 +551,13 @@ namespace Mazeinator
                     AStarPath.exploredNodes = whereDidIComeFrom;
                     return false;
                 }
+
+                ////4TESTING insertion sort
+                //foreach (var item in frontier)
+                //{
+                //    Console.Write(item.Item1.ToString() + "|d:" + item.Item2 + " \t");
+                //}
+                //Console.WriteLine();
             }
 
             if (pathFindErrored == false)
