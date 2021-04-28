@@ -375,7 +375,7 @@ namespace Mazeinator
             return CalculatePath(AStarPath, (double distToFinish, int distFromStart, Node node) => new Tuple<double, int, Node>(distToFinish + distFromStart, distFromStart, node));     //the final tuple is Tuple<double, int, Node>(sortValue; distance to node from start; node itself)
         }
 
-        private bool CalculatePath(Path pathCacluated, Func<double, int, Node, Tuple<double, int, Node>> calcTuple)
+        private bool CalculatePath(Path pathCacluated, Func<double, int, Node, Tuple<double, int, Node>> calcTuple)     //https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions
         {
             int edgeLength = 1;
             bool pathFindErrored = false;
