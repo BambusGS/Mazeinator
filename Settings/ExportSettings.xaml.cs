@@ -101,7 +101,9 @@ namespace Mazeinator
                 {
                     //stop recursion from occuring by checking if the value change actually occurred
                     if (_isChangingY == false)
+                    {
                         ExportSizeY = (int)Math.Round((double)XIUD.Value / _aspectRatio);
+                    }
                 }
                 _isChangingX = false;
             }
@@ -119,7 +121,9 @@ namespace Mazeinator
                 {
                     //stop recursion from occuring by checking if the value change actually occurred
                     if (_isChangingX == false)
+                    {
                         ExportSizeX = (int)Math.Round((double)YIUD.Value * _aspectRatio);
+                    }
                 }
                 _isChangingY = false;
             }
@@ -136,23 +140,36 @@ namespace Mazeinator
                 int cellWallWidthY = (int)((ExportSizeY / (5 * (nodeCountY + 4))) * _wallThickness / 100.0);
 
                 //prevent the cell wall from dissapearing
-                if (cellWallWidthX <= 1) cellWallWidthX = 1;
-                //else if (cellWallWidthX % 2 == 1) cellWallWidthX -= 1;
-                if (cellWallWidthY <= 1) cellWallWidthY = 1;
-                //else if (cellWallWidthY % 2 == 1) cellWallWidthY -= 1;
+                if (cellWallWidthX <= 1)
+            {
+                cellWallWidthX = 1;
+            }
+            //else if (cellWallWidthX % 2 == 1) cellWallWidthX -= 1;
+            if (cellWallWidthY <= 1)
+            {
+                cellWallWidthY = 1;
+            }
+            //else if (cellWallWidthY % 2 == 1) cellWallWidthY -= 1;
 
-                int cellWallWidth = (cellWallWidthX < cellWallWidthY) ? cellWallWidthX : cellWallWidthY;
+            int cellWallWidth = (cellWallWidthX < cellWallWidthY) ? cellWallWidthX : cellWallWidthY;
 
                 //calculate the needed cell size in the specific dimension + take into account the thickness of the walls
                 cellSizeX = (int)(ExportSizeX - cellWallWidth) / nodeCountX;
                 cellSizeY = (int)(ExportSizeY - cellWallWidth) / nodeCountY;
 
                 //prevent the cell from dissapearing
-                if (cellSizeX <= 1) cellSizeX = 1;
-                if (cellSizeY <= 1) cellSizeY = 1;
+                if (cellSizeX <= 1)
+            {
+                cellSizeX = 1;
+            }
 
-                //finds out the smaller cell size in order for the cell to be square
-                int cellSize = (cellSizeX < cellSizeY) ? cellSizeX : cellSizeY;
+            if (cellSizeY <= 1)
+            {
+                cellSizeY = 1;
+            }
+
+            //finds out the smaller cell size in order for the cell to be square
+            int cellSize = (cellSizeX < cellSizeY) ? cellSizeX : cellSizeY;
                 if (IsSquare == true)
                 {
                     cellSizeX = cellSize;

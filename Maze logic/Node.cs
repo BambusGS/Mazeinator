@@ -129,7 +129,9 @@ namespace Mazeinator
         {
             float size = pen.Width;
             if (Root == this)
+            {
                 gr.FillEllipse(pen.Brush, Center.X - size / 2, Center.Y - size / 2, size, size);
+            }
         }
 
         //Method for drawing node's root with a normal pen

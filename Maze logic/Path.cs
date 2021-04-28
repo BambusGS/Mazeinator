@@ -55,9 +55,14 @@ namespace Mazeinator
             startNode = null;
             endNode = null;
             if (path != null)
+            {
                 path.Clear();
+            }
+
             if (exploredNodes != null)
+            {
                 exploredNodes = new Node[exploredNodes.GetLength(0), exploredNodes.GetLength(1)];
+            }
         }
 
         private int CountNodes()
@@ -70,13 +75,17 @@ namespace Mazeinator
                     for (int row = 0; row < exploredNodes.GetLength(1); row++)
                     {
                         if (exploredNodes[column, row] != null)
+                        {
                             count++;
+                        }
                     }
                 }
                 return count;
             }
             else
+            {
                 return -1;
+            }
         }
 
         public object Clone()
