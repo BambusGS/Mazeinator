@@ -115,7 +115,7 @@ namespace Mazeinator
         {
             _currentFilePath = null; //reset the "save without asking" path
 
-            //stopwatch to measure the generation time and make user predictions
+            //stopwatch to measure the generation time
             Stopwatch GenTime = new Stopwatch();
             GenTime.Start();
 
@@ -135,7 +135,7 @@ namespace Mazeinator
         {
             _currentFilePath = null; //reset the "save without asking" path
 
-            //stopwatch to measure the generation time and make user predictions
+            //stopwatch to measure the generation time
             Stopwatch GenTime = new Stopwatch();
             GenTime.Start();
 

@@ -351,7 +351,7 @@ namespace Mazeinator
                         else
                         {
                             var currentList = frontier.First;
-                            while (currentList.Next != null && currentList.Next.Value.Item1 < sortValue)        //try it from the closest nodes first(calculation of A* takes into account node distance +it's distance from the finish node)
+                            while (currentList.Next != null && currentList.Next.Value.Item1 < sortValue)        //try it from the closest nodes first(calculation of A* takes into account node distance + it's distance from the finish node)
                             {
                                 currentList = currentList.Next;
                             }
@@ -577,7 +577,99 @@ namespace Mazeinator
                 //add the spanning tree to the root visualized
                 AStarPath.exploredNodes = whereDidIComeFrom;
             }
+
+            //CalculatePath(AStarPath, (double distToFinish, int distFromStart, Node node) => new Tuple<double, int, Node>(distToFinish + distFromStart, distFromStart, node));     //the final tuple is (sortValue; distance to node from start; node itself)
+
             return true;
+        }
+
+        private Path CalculatePath(Path pathCacluated, Func<double, int, Node, Tuple<double, int, Node>> calcTuple)
+        {
+            int edgeLength = 1;
+            bool pathFindErrored = false;
+
+            LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
+            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            Node[,] whereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+
+            //add the starting node to the tree
+            frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
+
+            //try to find distance from the startnode for all reachable nodes
+            while (frontier.First.Value.Item3 != endNode)
+            {
+                int currentNodeDistance = frontier.First.Value.Item2;
+                Node currentNode = frontier.First.Value.Item3;
+                frontier.RemoveFirst();
+
+                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                for (int i = 0; i < 4; i++)
+                {
+                    Node nodeToVisit = currentNode.Neighbours[i];
+                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    {
+                        int diffX = endNode.X - currentNode.X;
+                        int diffY = endNode.Y - currentNode.Y;
+                        Tuple<double, int, Node> sortValueTuple = calcTuple(Math.Sqrt(diffX * diffX + diffY * diffY), currentNodeDistance + edgeLength, nodeToVisit);
+                        double sortValue = currentNodeDistance + edgeLength + Math.Sqrt(diffX * diffX + diffY * diffY);     //this line makes all the difference in algorithms
+
+                        //use of insertion sort - newly found nodes are being added to an already sorted Linked list for further exploration
+                        if (frontier.First == null || frontier.First.Value.Item1 > sortValueTuple.Item1)  //if nothing is in frontier or if the new value is smaller -> add it to the start
+                        {
+                            frontier.AddFirst(sortValueTuple);
+                        }
+                        else
+                        {
+                            var currentList = frontier.First;
+                            while (currentList.Next != null && currentList.Next.Value.Item1 < sortValueTuple.Item1)        //try it from the closest nodes first(calculation of A* takes into account node distance +it's distance from the finish node)
+                            {
+                                currentList = currentList.Next;
+                            }
+                            frontier.AddAfter(currentList, sortValueTuple);
+                        }
+
+                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+
+                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        whereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                    }
+                }
+
+                if (frontier.Count == 0)        //we exhausted all available nodes and still haven't found the end
+                {
+                    pathFindErrored = true;
+                    pathCacluated.exploredNodes = whereDidIComeFrom;
+                    return pathCacluated;
+                }
+
+                ////FORTESTING insertion sort
+                //foreach (var item in frontier)
+                //{
+                //    Console.Write(item.Item1.ToString() + "|d:" + item.Item2 + " \t");
+                //}
+                //Console.WriteLine();
+            }
+
+            if (pathFindErrored == false)
+            {
+                //clear and write the backtracked shortest path
+                pathCacluated.path = new List<Node>
+                {
+                    endNode
+                };
+                Node backTrackNode = endNode;
+                while (backTrackNode != startNode && backTrackNode != null)
+                {
+                    pathCacluated.path.Add(whereDidIComeFrom[backTrackNode.X, backTrackNode.Y]);
+                    backTrackNode = whereDidIComeFrom[backTrackNode.X, backTrackNode.Y];
+                }
+
+                //add the spanning tree to the root visualized
+                pathCacluated.exploredNodes = whereDidIComeFrom;
+            }
+
+            return pathCacluated;
         }
 
         #endregion PathPlanning
