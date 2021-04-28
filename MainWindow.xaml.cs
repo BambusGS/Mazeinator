@@ -108,7 +108,9 @@ namespace Mazeinator
         private void CloseApp(object sender, RoutedEventArgs e)
         {
             if (Utilities.isWorking == true) //do not exit the app when file is being saved/loaded
+            {
                 MessageBox.Show("Cannot quit: File is being processed", "Unable to quit", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+            }
             else { Application.Current.Shutdown(); }
         }
 
@@ -182,7 +184,9 @@ namespace Mazeinator
 
             //check if X and Y scaling are the same - if not (this should never happen) throw an error
             if (m.M11 / m.M22 != 1)
+            {
                 throw new ApplicationException("Display scaling is not square?!");
+            }
 
             return scaling;
         }

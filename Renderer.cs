@@ -26,9 +26,15 @@ namespace Mazeinator
             int cellWallWidthY = (int)((canvasHeight / (5 * (maze.NodeCountY + 4))) * style.WallThickness / 100.0);
 
             //prevent the cell wall from dissapearing
-            if (cellWallWidthX <= 1) cellWallWidthX = 1;
+            if (cellWallWidthX <= 1)
+            {
+                cellWallWidthX = 1;
+            }
             //else if (cellWallWidthX % 2 == 1) cellWallWidthX -= 1;
-            if (cellWallWidthY <= 1) cellWallWidthY = 1;
+            if (cellWallWidthY <= 1)
+            {
+                cellWallWidthY = 1;
+            }
             //else if (cellWallWidthY % 2 == 1) cellWallWidthY -= 1;
 
             int cellWallWidth = (cellWallWidthX < cellWallWidthY) ? cellWallWidthX : cellWallWidthY;
@@ -43,8 +49,15 @@ namespace Mazeinator
             int cellSizeY = (int)(canvasHeight - _wallsPen.Width) / maze.NodeCountY;
 
             //prevent the cell from dissapearing
-            if (cellSizeX <= 1) cellSizeX = 1;
-            if (cellSizeY <= 1) cellSizeY = 1;
+            if (cellSizeX <= 1)
+            {
+                cellSizeX = 1;
+            }
+
+            if (cellSizeY <= 1)
+            {
+                cellSizeY = 1;
+            }
 
             //finds out the smaller cell size in order for the cell to be square
             int cellSize = (cellSizeX < cellSizeY) ? cellSizeX : cellSizeY;
@@ -87,21 +100,29 @@ namespace Mazeinator
                 //sets up graphics for smooth circles and fills the background with solid color
                 gr.SmoothingMode = SmoothingMode.AntiAlias;
                 if (isRendering == true)
+                {
                     gr.CompositingQuality = CompositingQuality.HighQuality;
+                }
                 else
+                {
                     gr.CompositingQuality = CompositingQuality.HighSpeed;
+                }
 
                 gr.FillRectangle(_backgroundPen.Brush, 0, 0, maze.renderSizeX, maze.renderSizeY);
 
                 //this for loop draws the single maze.nodes onto the image (with automatic disabling of features when cells get too small)
                 if (style.RenderNode == true && cellSize > 3)
+                {
                     foreach (Node node in maze.nodes) { node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2 + 1); }
+                }
 
                 //if (style.RenderRoot == true && cellSize > 7)
                 //    foreach (Node node in maze.nodes) { node.DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width); }
 
                 if (style.RenderPoint == true && cellSize > 3)
+                {
                     foreach (Node node in maze.nodes) { node.DrawCentre(gr, _pointPen); }
+                }
 
                 //if (style.RenderRootRootNode == true && cellSize > 7)
                 //    foreach (Node node in maze.nodes) { node.DrawRootRootNode(gr, _startNodePen); }
@@ -227,10 +248,14 @@ namespace Mazeinator
                     int cellSize = (node.Bounds.Width < node.Bounds.Height) ? node.Bounds.Width : node.Bounds.Height;
 
                     if (style.RenderNode == true && cellSize > 3)
+                    {
                         node.DrawBox(gr, _nodePen, (int)_wallsPen.Width / 2 + 1);
+                    }
 
                     if (style.RenderPoint == true && cellSize > 3)
+                    {
                         node.DrawCentre(gr, _pointPen);
+                    }
 
                     node.DrawWall(gr, _wallsPen);
                 }
@@ -267,7 +292,9 @@ namespace Mazeinator
                                     maze.nodes[column, row].Root = currentPath.exploredNodes[column, row];
 
                                     if (style.RenderRoot == true && (maze.nodes[0, 0].Bounds.Width > 4 && maze.nodes[0, 0].Bounds.Height > 4))
+                                    {
                                         maze.nodes[column, row].DrawRootNode(gr, Utilities.ConvertColor(style.RootColorBegin), Utilities.ConvertColor(style.RootColorEnd), _rootPen.Width / 3, style.PathEndCap, style.PathEndCap);
+                                    }
                                 }
                             }
                         }
