@@ -382,12 +382,11 @@ namespace Mazeinator
 
             LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
             bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
-            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
             Node[,] whereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
+            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
 
             //add the starting node to the tree
             frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
-
             //try to find distance from the startnode for all reachable nodes
             while (frontier.First.Value.Item3 != endNode)
             {
@@ -401,8 +400,8 @@ namespace Mazeinator
                     Node nodeToVisit = currentNode.Neighbours[i];
                     if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
                     {
-                        int diffX = endNode.X - currentNode.X;
-                        int diffY = endNode.Y - currentNode.Y;
+                        double diffX = endNode.X - currentNode.X;
+                        double diffY = endNode.Y - currentNode.Y;
                         Tuple<double, int, Node> sortValueTuple = calcTuple(Math.Sqrt(diffX * diffX + diffY * diffY), currentNodeDistance + edgeLength, nodeToVisit);   //this line makes all the difference in algorithms
 
                         //use of insertion sort - newly found nodes are being added to an already sorted Linked list for further exploration
@@ -421,9 +420,8 @@ namespace Mazeinator
                         }
 
                         frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
-
-                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
                         whereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
+                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
                     }
                 }
 
