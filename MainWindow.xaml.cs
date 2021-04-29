@@ -7,11 +7,11 @@ using System.Windows.Threading; //DispatcherTimer   https://docs.microsoft.com/e
  *
  *  https://github.com/OneLoneCoder/videos/blob/master/OneLoneCoder_Mazes.cpp - DFS generation algorithm
  *  http://csharphelper.com/blog/2016/11/make-draw-maze-c/ - rendering system general idea
- *  https://www.redblobgames.com/pathfinding/a-star/introduction.html   - general algorithm explanation
- *  http://www.astrolog.org/labyrnth/algrithm.htm - not used
- *  
+ *
+ *
  *  ===IDEAS===
- *  
+ *  add kruskal's algorithm for maze generation
+ *  add check to CalculatePath() whether the new path is shorter (not needed, because all edges are 1 in length)
  */
 
 namespace Mazeinator
