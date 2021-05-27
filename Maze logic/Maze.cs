@@ -394,12 +394,21 @@ namespace Mazeinator
             bool pathFindErrored = false;
 
             LinkedList<Tuple<double, int, Node>> frontier = new LinkedList<Tuple<double, int, Node>>(); //holds sorting value, distance from start, actual Node
-            bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
+            //bool[,] frontierWasHere = new bool[_nodeCountX, _nodeCountY];
             Node[,] whereDidIComeFrom = new Node[_nodeCountX, _nodeCountY];
-            //int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            int[,] distanceToNode = new int[_nodeCountX, _nodeCountY];      // not used in this algorithm, because I search for only 1 target
+            for (int x = 0; x < distanceToNode.GetLength(0); x++)
+            {
+                for (int y = 0; y < distanceToNode.GetLength(1); y++)
+                {
+                    distanceToNode[x, y] = int.MaxValue;
+                }
+            }
+
 
             //add the starting node to the tree
             frontier.AddFirst(new Tuple<double, int, Node>(0, 0, startNode));
+            distanceToNode[startNode.X, startNode.Y] = 0;
             //try to find distance from the startnode for all reachable nodes
             while (frontier.First.Value.Item3 != endNode)
             {
@@ -407,11 +416,11 @@ namespace Mazeinator
                 Node currentNode = frontier.First.Value.Item3;
                 frontier.RemoveFirst();
 
-                frontierWasHere[currentNode.X, currentNode.Y] = true;
+                //frontierWasHere[currentNode.X, currentNode.Y] = true;
                 for (int i = 0; i < 4; i++)
                 {
                     Node nodeToVisit = currentNode.Neighbours[i];
-                    if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
+                    if (nodeToVisit != null && (currentNodeDistance + edgeLength) < (distanceToNode[nodeToVisit.X, nodeToVisit.Y]))
                     {
                         double diffX = Math.Abs(endNode.X - currentNode.X);
                         double diffY = Math.Abs(endNode.Y - currentNode.Y);
@@ -453,9 +462,9 @@ namespace Mazeinator
                             frontier.AddAfter(currentList, sortValueTuple);
                         }
 
-                        frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
+                        //frontierWasHere[nodeToVisit.X, nodeToVisit.Y] = true;       //mark it as frontierWasHere so they do not duplicate in the frontier
                         whereDidIComeFrom[nodeToVisit.X, nodeToVisit.Y] = currentNode;
-                        //distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
+                        distanceToNode[nodeToVisit.X, nodeToVisit.Y] = currentNodeDistance + edgeLength;
                     }
                 }
 
@@ -465,12 +474,22 @@ namespace Mazeinator
                     return false;
                 }
 
+                ////FORTESTING algorithm logic
+                //for (int y = 0; y < distanceToNode.GetLength(1); y++)
+                //{
+                //    for (int x = 0; x < distanceToNode.GetLength(0); x++)
+                //    {
+                //        Console.Write(((distanceToNode[x, y] != int.MaxValue) ? distanceToNode[x, y].ToString() : "×") + " \t");
+                //    }
+                //    Console.WriteLine();
+                //}
+
                 ////FORTESTING insertion sort
                 //foreach (var item in frontier)
                 //{
                 //    Console.Write(item.Item1.ToString() + "|d:" + item.Item2 + " \t");
                 //}
-                //Console.WriteLine();
+                //Console.WriteLine("\n");
             }
 
             if (pathFindErrored == false)
