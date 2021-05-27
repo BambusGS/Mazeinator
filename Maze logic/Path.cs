@@ -16,6 +16,7 @@ namespace Mazeinator
     {
         public Node startNode, endNode;
         public List<Node> path;
+        public Maze.Heuristic heuristic = Maze.Heuristic.Euclidean;
 
         public Node[,] exploredNodes;
 

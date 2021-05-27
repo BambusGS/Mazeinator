@@ -6,12 +6,21 @@ namespace Mazeinator
     [Serializable]
     internal class Maze
     {
+        public enum Heuristic       //http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+        {
+            Euclidean,
+            EuclideanSquared,
+            Manhattan,
+            Diagonal,
+            None
+        }
+
         #region Variables
 
         public Node[,] nodes = null;
 
         public Node startNode, endNode;
-        public Path DFSTree;
+        public Path DFSTree;     
 
         [NonSerialized]
         public Path pathToRender;
@@ -68,7 +77,8 @@ namespace Mazeinator
             }
             DFSTree = new Path
             {
-                exploredNodes = new Node[_nodeCountX, _nodeCountY]
+                exploredNodes = new Node[_nodeCountX, _nodeCountY],
+                heuristic = Heuristic.None
             };
             DFSTree.exploredNodes[startNode.X, startNode.Y] = startNode;                //startNode.Root = startNode;
 
@@ -312,14 +322,14 @@ namespace Mazeinator
 
         #region PathPlanning
 
-        public bool GreedyBFS()
+        public bool GreedyBFS(Heuristic heuristic)
         {
             if (startNode == null || endNode == null || nodes == null)
             {
                 return false;
             }
 
-            if (GreedyPath != null && GreedyPath.startNode == startNode && GreedyPath.endNode == endNode)        //no need to recalculate, because everything is the same
+            if (GreedyPath != null && GreedyPath.startNode == startNode && GreedyPath.endNode == endNode && GreedyPath.heuristic == heuristic)        //no need to recalculate, because everything is the same
             {
                 return true;
             }
@@ -327,13 +337,14 @@ namespace Mazeinator
             GreedyPath = new Path(AlgoType.Greedy)
             {
                 startNode = startNode,
-                endNode = endNode
+                endNode = endNode,
+                heuristic = heuristic
             };
 
             return CalculatePath(GreedyPath, (double distToFinish, int distFromStart, Node node) => new Tuple<double, int, Node>(distToFinish, distFromStart, node));     //the final tuple is Tuple<double, int, Node>(sortValue; distance to node from start; node itself)
         }
 
-        public bool Dijkstra()
+        public bool Dijkstra()       //Dijkstra does not utilize heuristic
         {
             if (startNode == null || endNode == null || nodes == null)
             {
@@ -348,20 +359,21 @@ namespace Mazeinator
             DijkstraPath = new Path(AlgoType.Dijkstra)
             {
                 startNode = startNode,
-                endNode = endNode
+                endNode = endNode,
+                heuristic = Heuristic.None
             };
 
             return CalculatePath(DijkstraPath, (double distToFinish, int distFromStart, Node node) => new Tuple<double, int, Node>(distFromStart, distFromStart, node));     //the final tuple is Tuple<double, int, Node>(sortValue; distance to node from start; node itself)
         }
 
-        public bool AStar()
+        public bool AStar(Heuristic heuristic)
         {
             if (startNode == null || endNode == null || nodes == null)
             {
                 return false;
             }
 
-            if (AStarPath != null && AStarPath.startNode == startNode && AStarPath.endNode == endNode)        //no need to recalculate, because everything is the same
+            if (AStarPath != null && AStarPath.startNode == startNode && AStarPath.endNode == endNode && AStarPath.heuristic == heuristic)        //no need to recalculate, because everything is the same
             {
                 return true;
             }
@@ -369,13 +381,14 @@ namespace Mazeinator
             AStarPath = new Path(AlgoType.Astar)
             {
                 startNode = startNode,
-                endNode = endNode
+                endNode = endNode,
+                heuristic = heuristic
             };
 
             return CalculatePath(AStarPath, (double distToFinish, int distFromStart, Node node) => new Tuple<double, int, Node>(distToFinish + distFromStart, distFromStart, node));     //the final tuple is Tuple<double, int, Node>(sortValue; distance to node from start; node itself)
         }
 
-        private bool CalculatePath(Path pathCacluated, Func<double, int, Node, Tuple<double, int, Node>> calcTuple)     //https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions
+        private bool CalculatePath(Path pathCacluated, Func<double, int, Node, Tuple<double, int, Node>> calcTuple)     //https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions    
         {
             int edgeLength = 1;
             bool pathFindErrored = false;
@@ -400,9 +413,30 @@ namespace Mazeinator
                     Node nodeToVisit = currentNode.Neighbours[i];
                     if (nodeToVisit != null && !frontierWasHere[nodeToVisit.X, nodeToVisit.Y])  //!ADD check for path length; if it's smaller -> rewrite
                     {
-                        double diffX = endNode.X - currentNode.X;
-                        double diffY = endNode.Y - currentNode.Y;
-                        Tuple<double, int, Node> sortValueTuple = calcTuple(Math.Sqrt(diffX * diffX + diffY * diffY), currentNodeDistance + edgeLength, nodeToVisit);   //this line makes all the difference in algorithms
+                        double diffX = Math.Abs(endNode.X - currentNode.X);
+                        double diffY = Math.Abs(endNode.Y - currentNode.Y);
+                        double sortValue = 0;
+
+                        switch (pathCacluated.heuristic)        //no need to multiply by the edgeLength, because it's a square grid with a length of 1 in all directions
+                        {
+                            case Heuristic.Euclidean:
+                                sortValue = Math.Sqrt(diffX * diffX + diffY * diffY);
+                                break;
+                            case Heuristic.EuclideanSquared:
+                                sortValue = diffX * diffX + diffY * diffY;
+                                break;
+                            case Heuristic.Manhattan:
+                                sortValue = diffX + diffY;
+                                break;
+                            case Heuristic.Diagonal:
+                                sortValue = (diffX > diffY) ? ((diffX - diffY) + Math.Sqrt(2) * diffY) : ((diffY - diffX) + Math.Sqrt(2) * diffX);
+                                break;
+                            case Heuristic.None:                                
+                                break;
+                            default:
+                                break;
+                        }
+                        Tuple<double, int, Node> sortValueTuple = calcTuple(sortValue, currentNodeDistance + edgeLength, nodeToVisit);   //this line makes all the difference in algorithms
 
                         //use of insertion sort - newly found nodes are being added to an already sorted Linked list for further exploration
                         if (frontier.First == null || frontier.First.Value.Item1 > sortValueTuple.Item1)  //if nothing is in frontier or if the new value is smaller -> add it to the start

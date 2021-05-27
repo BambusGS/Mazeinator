@@ -52,6 +52,13 @@
                 <MenuItem Header="_Greedy" Click="Greedy_click"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_Dijkstra" Click="Dijkstra_click"  Style="{StaticResource MenuItemStyle}" />
                 <MenuItem Header="_A☆" Click="AStar_click"  Style="{StaticResource MenuItemStyle}" />
+                <ComboBox SelectedIndex="0" Padding="5,2,2,2" Margin="1,1,1,1" Width="100"
+                          Name="HeurSelect" SelectionChanged="HeuristicSelector">
+                    <ComboBoxItem>Euclidean</ComboBoxItem>
+                    <ComboBoxItem>Euclidean Squared</ComboBoxItem>
+                    <ComboBoxItem>Manhattan</ComboBoxItem>
+                    <ComboBoxItem>Diagonal</ComboBoxItem>
+                </ComboBox>
             </MenuItem>
 
             <MenuItem Header="About" Click="AboutClick" Style="{StaticResource MenuItemStyle}" />
