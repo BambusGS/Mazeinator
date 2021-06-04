@@ -69,6 +69,9 @@ namespace Mazeinator
         //holds the current window scaling factor
         public double DPI = 1;
 
+        //holds the requested heuristic algorithm
+        public Maze.Heuristic Heuristic = Maze.Heuristic.Euclidean;
+
         //defines the internal private variable; AND their "public variable wrapper" for WPF binding
         private int _nodeCount = 0; public int NodeCount { get => _nodeCount; set { _nodeCount = value; OnPropertyChanged(nameof(NodeCount)); } }
 
@@ -166,7 +169,7 @@ namespace Mazeinator
                             ProcessTime.Start();
                             Status = "Started searching...";
 
-                            if (!MainMaze.GreedyBFS())
+                            if (!MainMaze.GreedyBFS(Heuristic))
                             {
                                 Status = "Pathfinding failed";
                             }
@@ -247,7 +250,7 @@ namespace Mazeinator
                         ProcessTime.Start();
                         Status = "Started searching...";
 
-                        if (!MainMaze.AStar())
+                        if (!MainMaze.AStar(Heuristic))
                         {
                             Status = "Pathfinding failed";
                         }
@@ -677,7 +680,7 @@ namespace Mazeinator
                             else
                             {
                                 //recalculate the paths (using the best algorithm)
-                                MainMaze.AStar();
+                                MainMaze.AStar(Heuristic);
                                 MainMaze.pathToRender = MainMaze.AStarPath;
                             }
                             ProcessTime.Stop();

@@ -148,6 +148,11 @@ namespace Mazeinator
             _controller.PathAStar();
         }
 
+        private void HeuristicSelector(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            _controller.Heuristic = (Maze.Heuristic)HeurSelect.SelectedIndex;
+        }
+
         private void SelectNode(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (pictureBox.Source != null)
@@ -199,6 +204,6 @@ namespace Mazeinator
             return new Tuple<int, int>(canvasSizeX, canvasSizeY);
         }
 
-        #endregion CustomFunctions
+        #endregion CustomFunctions       
     }
 }
